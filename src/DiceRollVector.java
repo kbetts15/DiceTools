@@ -5,6 +5,20 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * Stores the probabilities of sets of numerical outcomes.
+ * The data is stored as key-value pairs.
+ * Keys take the form of ordered <code>Integer</code> arrays, representing the sets of numerical outcomes.
+ * Values are <code>Double</code>s, representing the probability of each result.
+ * 
+ * <p>Note that unlike a normal {@link HashMap}, no key is ever <code>null</code>,
+ * nor does a key array ever contain <code>null</code>,
+ * nor is a value ever <code>null</code>.
+ * 
+ * <p><code>DiceRollVector</code> can be used to store, eg: The results of rolling several dice.
+ * 
+ * @author kieran
+ */
 public class DiceRollVector extends HashMap<Integer[], Double>
 {
 	private static final long serialVersionUID = 1L;
@@ -131,6 +145,12 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 		return s.toString();
 	}
 	
+	/**
+	 * Generate the {@link DiceRollVector} which results from rolling a set of identical unbiased dice 
+	 * @param numDice	number of dice to be rolled
+	 * @param sides		number of sides on the dice
+	 * @return			probabilities of all possible outcomes
+	 */
 	public static DiceRollVector diceRoll(int numDice, int sides)
 	{
 		DiceRollVector result = new DiceRollVector();
@@ -143,6 +163,12 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 		return result;
 	}
 	
+	/**
+	 * Generate all the possible results of combining the roll arrays from the calling
+	 * {@link DiceRollVector} with each possible roll from the given {@link ProbVector}
+	 * @param pv	<code>ProbVector</code> to be combined
+	 * @return		resulting <code>DiceRollVector</code>
+	 */
 	public DiceRollVector combine(ProbVector pv)
 	{
 		DiceRollVector drvNew = new DiceRollVector();
@@ -178,6 +204,11 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 		return drvNew;
 	}
 	
+	/**
+	 * Combine the rolls in each roll array to a single Integer
+	 * @param function	function which combines the rolls
+	 * @return			{@link ProbVector} storing the combined rolls and their probabilities
+	 */
 	public ProbVector flatten(Function<Integer[], Integer> function)
 	{
 		ProbVector pvNew = new ProbVector();
@@ -198,12 +229,28 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 		return pvNew;
 	}
 	
+	/**
+	 * Combine the rolls in each roll array to a single Integer
+	 * @return			{@link ProbVector} storing the summed rolls and their probabilities
+	 */
 	public ProbVector flatten()
 	{
 		return flatten(sumFlatten);
 	}
 	
-	private BiConsumer<Integer[], Double> putter = new BiConsumer<Integer[], Double>()
+	/**
+	 * Get whether the stored probabilities sum to 1.0
+	 * @return true if the stored probabilities sum to 1.0, false otherwise
+	 */
+	public boolean hasValidProb()
+	{
+		double total = 0;
+		for (Double prob : this.values())
+			total += prob;
+		return total == 1.0;
+	}
+	
+	private final BiConsumer<Integer[], Double> putter = new BiConsumer<Integer[], Double>()
 			{
 				@Override
 				public void accept(Integer[] key, Double value)
@@ -212,7 +259,7 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 				}
 			};
 			
-	private BiConsumer<Integer[], Double> removeNullValues = new BiConsumer<Integer[], Double>()
+	private final BiConsumer<Integer[], Double> removeNullValues = new BiConsumer<Integer[], Double>()
 			{
 				@Override
 				public void accept(Integer[] key, Double value)
@@ -222,7 +269,7 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 				}
 			};
 			
-	private static Function<Integer[], Integer> sumFlatten = new Function<Integer[], Integer>()
+	private static final Function<Integer[], Integer> sumFlatten = new Function<Integer[], Integer>()
 			{
 				@Override
 				public Integer apply(Integer[] key)

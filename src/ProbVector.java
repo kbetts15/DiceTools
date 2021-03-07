@@ -3,6 +3,18 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+/**
+ * Stores the probabilities of numerical outcomes.
+ * The data is stored as key-pair values.
+ * Keys represent the numerical outcome, as an <code>Integer</code>.
+ * Values represent probabilities of those outcomes, as a <code>Double</code>.
+ * 
+ * <p><code>ProbVector</code> can be used to store, eg:<ul>
+ * <li>The result of rolling an unbiased die</li>
+ * <li>The result of summing the rolls of two unbiased dice</li></ul>
+ * 
+ * @author kieran
+ */
 public class ProbVector extends HashMap<Integer, Double>
 {
 	private static final long serialVersionUID = 1L;
@@ -77,6 +89,12 @@ public class ProbVector extends HashMap<Integer, Double>
 		return s.toString();
 	}
 	
+	/**
+	 * Generate the {@link ProbVector} which results from rolling a set of identical unbiased dice
+	 * @param numDice	number of dice to be rolled
+	 * @param sides		number of sides on the dice
+	 * @return			probabilities of all possible outcomes
+	 */
 	public static ProbVector diceRoll(int numDice, int sides)
 	{
 		ProbVector result = new ProbVector();
@@ -97,12 +115,14 @@ public class ProbVector extends HashMap<Integer, Double>
 		
 		return result;
 	}
-	
-	public static ProbVector diceRoll(ProbVector numDice, ProbVector sides)
-	{
-		return null; //TODO
-	}
 
+	/**
+	 * Generate all the possible results of combining the roll outcomes of the calling {@link ProbVector}
+	 * with the given <code>ProbVector</code> using the given <code>BiFunction</code>.
+	 * @param pv		<code>ProbVector</code> to combine
+	 * @param function	<code>BiFunction</code> to calculate combinations
+	 * @return			resulting <code>ProbVector</code>
+	 */
 	public ProbVector combine(ProbVector pv, BiFunction<Integer, Integer, Integer> function)
 	{
 		ProbVector pvNew = new ProbVector();
@@ -124,6 +144,10 @@ public class ProbVector extends HashMap<Integer, Double>
 		return pvNew;
 	}
 	
+	/**
+	 * Get whether the stored probabilities sum to 1.0
+	 * @return true if the stored probabilities sum to 1.0, false otherwise
+	 */
 	public boolean hasValidProb()
 	{
 		double total = 0;
