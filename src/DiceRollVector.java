@@ -19,7 +19,7 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiceRollVector extends ProbMap<List<Integer>>
+public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable lists for storage!
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -129,6 +129,9 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		for (List<Integer> keyList : this.keySet())
 		{
 			List<Integer> newList = function.apply(keyList);
+			
+			if (!keyIsValid(newList))
+				continue;
 			
 			drvNew.merge(newList, this.get(keyList), ProbVector.sumMerger);
 		}

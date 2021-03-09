@@ -2,6 +2,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class ProbMap<K> extends HashMap<K, Double>
 {
@@ -64,9 +65,6 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	@Override
 	public Double get(Object key)
 	{
-//		if (!keyClass.isAssignableFrom(key.getClass()))
-//			return null;
-		
 		@SuppressWarnings("unchecked")
 		K keyK = (K) key;
 		
@@ -75,6 +73,43 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 		K sanitizedKey = sanitizeKey(keyK);
 		
 		return super.get(sanitizedKey);
+	}
+	
+	@Override
+	public boolean containsKey(Object key)
+	{
+		@SuppressWarnings("unchecked")
+		K keyK = (K) key;
+		
+		validateKey(keyK);
+		
+		K sanitizedKey = sanitizeKey(keyK);
+		
+		return super.containsKey(sanitizedKey);
+	}
+	
+	@Override
+	public Double remove(Object key)
+	{
+		@SuppressWarnings("unchecked")
+		K keyK = (K) key;
+		
+		validateKey(keyK);
+		K sanitizedKey = sanitizeKey(keyK);
+		
+		return super.remove(sanitizedKey);
+	}
+	
+	@Override
+	public boolean remove(Object key, Object value)
+	{
+		@SuppressWarnings("unchecked")
+		K keyK = (K) key;
+		
+		validateKey(keyK);
+		K sanitizedKey = sanitizeKey(keyK);
+		
+		return super.remove(sanitizedKey, value);
 	}
 	
 	@Override
@@ -127,6 +162,42 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	{
 		super.replaceAll(function);
 		super.forEach(invalidRemover);
+	}
+	
+	@Override
+	public Double merge(K key, Double value, BiFunction<? super Double, ? super Double, ? extends Double> remappingFunction)
+	{
+		validateKey(key);
+		K sanitizedKey = sanitizeKey(key);
+		
+		return super.merge(sanitizedKey, value, remappingFunction);
+	}
+	
+	@Override
+	public Double compute(K key, BiFunction<? super K, ? super Double, ? extends Double> remappingFunction)
+	{
+		validateKey(key);
+		K sanitizedKey = sanitizeKey(key);
+		
+		return super.compute(sanitizedKey, remappingFunction);
+	}
+	
+	@Override
+	public Double computeIfAbsent(K key, Function<? super K, ? extends Double> mappingFunction)
+	{
+		validateKey(key);
+		K sanitizedKey = sanitizeKey(key);
+		
+		return super.computeIfAbsent(sanitizedKey, mappingFunction);
+	}
+	
+	@Override
+	public Double computeIfPresent(K key, BiFunction<? super K, ? super Double, ? extends Double> remappingFunction)
+	{
+		validateKey(key);
+		K sanitizedKey = sanitizeKey(key);
+
+		return super.computeIfPresent(sanitizedKey, remappingFunction);
 	}
 	
 	@Override
