@@ -108,7 +108,9 @@ public class ProbVector extends ProbMap<Integer>
 		
 		return pvNew;
 	}
-			
+	
+	
+	//TODO: instantiate sumCombine in the static block
 	private static final BiFunction<Integer, Integer, Integer> sumCombine = new BiFunction<Integer, Integer, Integer>()
 			{
 				@Override

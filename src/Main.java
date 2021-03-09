@@ -1,4 +1,7 @@
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
 public class Main
@@ -6,16 +9,7 @@ public class Main
 
 	public static void main(String[] args)
 	{
-//		HashMap<Integer, Double> hm = new HashMap<Integer, Double>();
-		
-//		ProbVector hm = new ProbVector();
-//		
-//		hm.put(1, 3.25);
-//		System.out.println(hm.toString());
-//		hm.put(2, 6.75);
-//		System.out.println(hm.toString());
-		
-		testDRVput();
+		testPutting();
 //		testPVrolls();
 //		testDRVrolls();
 //		testDRVflatten();
@@ -50,10 +44,10 @@ public class Main
 		
 		DiceRollVector drv = DiceRollVector.diceRoll(3, 6);
 		
-		Function<Integer[], Integer> sumFlatten = new Function<Integer[], Integer>()
+		Function<List<Integer>, Integer> sumFlatten = new Function<List<Integer>, Integer>()
 				{
 					@Override
-					public Integer apply(Integer[] key)
+					public Integer apply(List<Integer> key)
 					{
 						int total = 0;
 						
@@ -68,7 +62,7 @@ public class Main
 		System.out.println(flattened.toString());
 	}
 	
-	private static void testDRVput()
+	private static void testPutting()
 	{
 		System.out.println("##### Testing DiceRollVector putting #####");
 		
@@ -81,11 +75,17 @@ public class Main
 		
 		DiceRollVector drv = new DiceRollVector();
 		
-		Integer[] key1 = {1, 1};
-		Integer[] key2 = {2, 1};
+		Integer[] key1arr = {1, 1};
+		Integer[] key2arr = {2, 1};
+		Integer[] key3arr = {1, 3};
 		
-		drv.put(key1, new Double(0.5));
-		drv.put(key2, new Double(0.5));
+		List<Integer> key1 = new LinkedList<Integer>(Arrays.asList(key1arr));
+		List<Integer> key2 = new LinkedList<Integer>(Arrays.asList(key2arr));
+		List<Integer> key3 = new ArrayList<Integer>(Arrays.asList(key3arr));
+		
+		drv.put(key1, new Double(0.2));
+		drv.put(key2, new Double(0.3));
+		drv.put(key3, new Double(0.5));
 		
 		System.out.println(drv.toString());
 		
@@ -93,7 +93,8 @@ public class Main
 		for (Double d : drv.values())
 			System.out.printf("\t%.3f\n", d);
 		
-		Integer[] keyX = {1, 2};
+		Integer[] keyXarr = {1, 3};
+		List<Integer> keyX = new ArrayList<Integer>(Arrays.asList(keyXarr));
 		System.out.printf("get(keyX) = %.3f\n", drv.get(keyX));
 	}
 }

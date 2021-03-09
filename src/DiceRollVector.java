@@ -1,5 +1,7 @@
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -16,16 +18,13 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiceRollVector extends ProbMap<Integer[]>
+public class DiceRollVector extends ProbMap<List<Integer>>
 {
-	//TODO: do not change Integer[] inputs by sorting them! Call .clone then sort
-	//TODO: do not call Function.apply etc on Integer[] keys - clone them first
-	
 	private static final long serialVersionUID = 1L;
 	
 	public DiceRollVector()
 	{
-		super(new Integer[0]);
+		super(new LinkedList<Integer>());
 	}
 	
 	@Override
@@ -34,7 +33,7 @@ public class DiceRollVector extends ProbMap<Integer[]>
 		StringBuffer s = new StringBuffer();
 		s.append('{');
 		
-		for (Entry<Integer[], Double> entry : this.entrySet())
+		for (Entry<List<Integer>, Double> entry : this.entrySet())
 		{
 			if (s.length() != 1)
 				s.append("; ");
@@ -61,7 +60,7 @@ public class DiceRollVector extends ProbMap<Integer[]>
 	}
 	
 	@Override
-	public boolean keyIsValid(Integer[] key)
+	public boolean keyIsValid(List<Integer> key)
 	{
 		if (key == null)
 			return false;
@@ -74,10 +73,10 @@ public class DiceRollVector extends ProbMap<Integer[]>
 	}
 	
 	@Override
-	public Integer[] sanitizeKey(Integer[] key)
+	public List<Integer> sanitizeKey(List<Integer> key)
 	{
-		Integer[] sanitizedKey = key.clone();
-		Arrays.sort(sanitizedKey);
+		List<Integer> sanitizedKey = new LinkedList<Integer>(key);
+		Collections.sort(sanitizedKey);
 		return sanitizedKey;
 	}
 	
@@ -114,8 +113,9 @@ public class DiceRollVector extends ProbMap<Integer[]>
 			
 			for (Integer pvInt : pv.keySet())
 			{
-				Integer[] arrNew = {pvInt};
-				drvNew.put(arrNew, pv.get(pvInt));
+				List<Integer> listNew = new LinkedList<Integer>();
+				listNew.add(pvInt);
+				drvNew.put(listNew, pv.get(pvInt));
 			}
 			
 			return drvNew;
@@ -126,14 +126,14 @@ public class DiceRollVector extends ProbMap<Integer[]>
 //		System.out.printf("\t%s\n", pv.toString());
 //		System.out.println("Results:");
 		
-		for (Integer[] myArr : this.keySet())
+		for (List<Integer> myList : this.keySet())
 		{
 			for (Integer pvInt : pv.keySet())
 			{
-				Integer[] newArr = Arrays.copyOf(myArr, myArr.length + 1);
-				newArr[myArr.length] = pvInt;
+				List<Integer> newList = new LinkedList<Integer>(myList);
+				newList.add(pvInt);
 				
-				drvNew.merge(newArr, drvNew.get(newArr), sumMerger);
+				drvNew.merge(newList, drvNew.get(newList), sumMerger);
 				System.out.printf("\t%s\n", drvNew.toString());
 			}
 		}
@@ -141,15 +141,15 @@ public class DiceRollVector extends ProbMap<Integer[]>
 		return drvNew;
 	}
 	
-	public DiceRollVector morph(Function<Integer[], Integer[]> function)
+	public DiceRollVector morph(Function<List<Integer>, List<Integer>> function)
 	{
 		DiceRollVector drvNew = new DiceRollVector();
 		
-		for (Integer[] keyArr : this.keySet())
+		for (List<Integer> keyList : this.keySet())
 		{
-			Integer[] newArr = function.apply(keyArr);
+			List<Integer> newList = function.apply(keyList);
 			
-			drvNew.merge(newArr, this.get(keyArr), ProbVector.sumMerger);
+			drvNew.merge(newList, this.get(keyList), ProbVector.sumMerger);
 		}
 		
 		return drvNew;
@@ -160,11 +160,11 @@ public class DiceRollVector extends ProbMap<Integer[]>
 	 * @param function	function which combines the rolls
 	 * @return			{@link ProbVector} storing the combined rolls and their probabilities
 	 */
-	public ProbVector flatten(Function<Integer[], Integer> function)
+	public ProbVector flatten(Function<List<Integer>, Integer> function)
 	{
 		ProbVector pvNew = new ProbVector();
 		
-		for (Integer[] myArr : this.keySet())
+		for (List<Integer> myArr : this.keySet())
 		{
 			Integer newInt = function.apply(myArr);
 			
@@ -188,11 +188,12 @@ public class DiceRollVector extends ProbMap<Integer[]>
 	{
 		return flatten(sumFlatten);
 	}
-			
-	private static final Function<Integer[], Integer> sumFlatten = new Function<Integer[], Integer>()
+	
+	//TODO: instantiate sumFlatten in a static block
+	private static final Function<List<Integer>, Integer> sumFlatten = new Function<List<Integer>, Integer>()
 			{
 				@Override
-				public Integer apply(Integer[] key)
+				public Integer apply(List<Integer> key)
 				{
 					int total = 0;
 					

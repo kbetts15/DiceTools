@@ -12,8 +12,6 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	protected final BiConsumer<K, Double> putter;
 	protected final BiConsumer<K, Double> invalidRemover;
 	
-	private final Class<?> keyClass;
-	
 	static
 	{
 		sumMerger = new BiFunction<Double, Double, Double>()
@@ -28,8 +26,6 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	
 	public ProbMap(K keyInstance)
 	{
-		this.keyClass = keyInstance.getClass();
-		
 		putter = new BiConsumer<K, Double>()
 				{
 					@Override
@@ -68,8 +64,8 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	@Override
 	public Double get(Object key)
 	{
-		if (!keyClass.isAssignableFrom(key.getClass()))
-			return null;
+//		if (!keyClass.isAssignableFrom(key.getClass()))
+//			return null;
 		
 		@SuppressWarnings("unchecked")
 		K keyK = (K) key;
