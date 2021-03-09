@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 /**
  * Stores the probabilities of observing discrete events (such as dice rolls or darts scores).
- * Events and their probabilities are stored as key-value pairs,
+ * <p>Events and their probabilities are stored as key-value pairs,
  * with {@link java.util.HashMap#HashMap} as the underlying implementation.
  * Event probabilities are stored as <code>Double</code>s,
  * which are permitted to take values greater than 1 or less than 0, but never <code>null</code>.
