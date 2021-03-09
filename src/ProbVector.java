@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
@@ -15,57 +12,13 @@ import java.util.function.BiFunction;
  * 
  * @author kieran
  */
-public class ProbVector extends HashMap<Integer, Double>
+public class ProbVector extends ProbMap<Integer>
 {
 	private static final long serialVersionUID = 1L;
 	
-	@Override
-	public Double put(Integer key, Double value)
+	public ProbVector()
 	{
-		if (key == null || value == null)
-			return null;
-		
-		return super.put(key, value);
-	}
-	
-	@Override
-	public void putAll(Map<? extends Integer, ? extends Double> map)
-	{
-		map.forEach(putter);
-	}
-	
-	@Override
-	public Double putIfAbsent(Integer key, Double value)
-	{
-		if (key == null || value == null)
-			return null;
-		
-		return super.putIfAbsent(key, value);
-	}
-	
-	@Override
-	public Double replace(Integer key, Double value)
-	{
-		if (key == null || value == null)
-			return null;
-		
-		return super.replace(key, value);
-	}
-	
-	@Override
-	public boolean replace(Integer key, Double oldValue, Double newValue)
-	{
-		if (key == null || newValue == null)
-			return false;
-		
-		return super.replace(key, oldValue, newValue);
-	}
-	
-	@Override
-	public void replaceAll(BiFunction<? super Integer, ? super Double, ? extends Double> function)
-	{
-		super.replaceAll(function);
-		super.forEach(removeNullValues);
+		super(new Integer(0));
 	}
 	
 	@Override
@@ -74,19 +27,31 @@ public class ProbVector extends HashMap<Integer, Double>
 		StringBuffer s = new StringBuffer();
 		s.append('{');
 		
-		for (Integer myInt : this.keySet())
+		for (Entry<Integer, Double> entry : this.entrySet())
 		{
 			if (s.length() != 1)
 				s.append(", ");
-				
-			s.append(myInt);
+			
+			s.append(entry.getKey());
 			s.append(": ");
-			s.append(String.format("%5.3f", this.get(myInt)));
+			s.append(String.format("%5.3f", entry.getValue()));
 		}
 		
 		s.append('}');
 		
 		return s.toString();
+	}
+	
+	@Override
+	public boolean keyIsValid(Integer key) throws InvalidKeyException
+	{
+		return key != null;
+	}
+	
+	@Override
+	public Integer sanitizeKey(Integer key)
+	{
+		return key;
 	}
 	
 	/**
@@ -143,37 +108,6 @@ public class ProbVector extends HashMap<Integer, Double>
 		
 		return pvNew;
 	}
-	
-	/**
-	 * Get whether the stored probabilities sum to 1.0
-	 * @return true if the stored probabilities sum to 1.0, false otherwise
-	 */
-	public boolean hasValidProb()
-	{
-		double total = 0;
-		for (Double prob : this.values())
-			total += prob;
-		return total == 1.0;
-	}
-	
-	private BiConsumer<Integer, Double> putter = new BiConsumer<Integer, Double>()
-			{
-				@Override
-				public void accept(Integer key, Double value)
-				{
-					put(key, value);
-				}
-			};
-	
-	private BiConsumer<Integer, Double> removeNullValues = new BiConsumer<Integer, Double>()
-			{
-				@Override
-				public void accept(Integer key, Double value)
-				{
-					if (value == null)
-						remove(key);
-				}
-			};
 			
 	private static final BiFunction<Integer, Integer, Integer> sumCombine = new BiFunction<Integer, Integer, Integer>()
 			{

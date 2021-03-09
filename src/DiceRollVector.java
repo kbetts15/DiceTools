@@ -1,8 +1,5 @@
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -19,98 +16,16 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiceRollVector extends HashMap<Integer[], Double>
+public class DiceRollVector extends ProbMap<Integer[]>
 {
+	//TODO: do not change Integer[] inputs by sorting them! Call .clone then sort
+	//TODO: do not call Function.apply etc on Integer[] keys - clone them first
+	
 	private static final long serialVersionUID = 1L;
 	
-	@Override
-	public Double put(Integer[] key, Double value)
+	public DiceRollVector()
 	{
-		if (key == null || value == null)
-			return null;
-		
-		for (Integer keyInt : key)
-			if (keyInt == null)
-				return null;
-		
-		Arrays.sort(key);
-		
-		return super.put(key, value);
-	}
-	
-	@Override
-	public Double get(Object key)
-	{
-		if (key == null || !(key instanceof Integer[]))
-			return null;
-		
-		Integer[] keyArr = (Integer[]) key;
-		
-		for (Integer keyInt : keyArr)
-			if (keyInt == null)
-				return null;
-		
-		Arrays.sort(keyArr);
-
-		return super.get(keyArr);
-	}
-	
-	@Override
-	public void putAll(Map<? extends Integer[], ? extends Double> map)
-	{
-		map.forEach(putter);
-	}
-	
-	@Override
-	public Double putIfAbsent(Integer[] key, Double value)
-	{
-		if (key == null || value == null)
-			return null;
-		
-		for (Integer keyInt : key)
-			if (keyInt == null)
-				return null;
-		
-		Arrays.sort(key);
-		
-		return super.putIfAbsent(key, value);
-	}
-	
-	@Override
-	public Double replace(Integer[] key, Double value)
-	{
-		if (key == null || value == null)
-			return null;
-		
-		for (Integer keyInt : key)
-			if (keyInt == null)
-				return null;
-		
-		Arrays.sort(key);
-		
-		return super.replace(key, value);
-	}
-	
-	@Override
-	public boolean replace(Integer[] key, Double oldValue, Double newValue)
-	{
-		if (key == null || newValue == null)
-			return false;
-		
-		for (Integer keyInt : key)
-			if (keyInt == null)
-				return false;
-		
-		Arrays.sort(key);
-		
-		return super.replace(key, oldValue, newValue);
-	}
-	
-	@Override
-	public void replaceAll(BiFunction<? super Integer[], ? super Double, ? extends Double> function)
-	{
-		super.replaceAll(function);
-		super.forEach(removeNullValues);
+		super(new Integer[0]);
 	}
 	
 	@Override
@@ -119,14 +34,14 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 		StringBuffer s = new StringBuffer();
 		s.append('{');
 		
-		for (Integer[] myArr : this.keySet())
+		for (Entry<Integer[], Double> entry : this.entrySet())
 		{
 			if (s.length() != 1)
 				s.append("; ");
-				
+			
 			StringBuffer ss = new StringBuffer();
 			
-			for (Integer myInt : myArr)
+			for (Integer myInt : entry.getKey())
 			{
 				if (ss.length() != 0)
 					ss.append(", ");
@@ -137,12 +52,33 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 			s.append(ss);
 			
 			s.append(": ");
-			s.append(String.format("%5.3f", this.get(myArr)));
+			s.append(String.format("%5.3f", entry.getValue()));
 		}
 		
 		s.append('}');
 		
 		return s.toString();
+	}
+	
+	@Override
+	public boolean keyIsValid(Integer[] key)
+	{
+		if (key == null)
+			return false;
+		
+		for (Integer keyInt : key)
+			if (keyInt == null)
+				return false;
+		
+		return true;
+	}
+	
+	@Override
+	public Integer[] sanitizeKey(Integer[] key)
+	{
+		Integer[] sanitizedKey = key.clone();
+		Arrays.sort(sanitizedKey);
+		return sanitizedKey;
 	}
 	
 	/**
@@ -175,6 +111,7 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 		
 		if (this.isEmpty())
 		{
+			
 			for (Integer pvInt : pv.keySet())
 			{
 				Integer[] arrNew = {pvInt};
@@ -184,6 +121,11 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 			return drvNew;
 		}
 		
+//		System.out.println("Combining:");
+//		System.out.printf("\t%s\n", this.toString());
+//		System.out.printf("\t%s\n", pv.toString());
+//		System.out.println("Results:");
+		
 		for (Integer[] myArr : this.keySet())
 		{
 			for (Integer pvInt : pv.keySet())
@@ -191,14 +133,23 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 				Integer[] newArr = Arrays.copyOf(myArr, myArr.length + 1);
 				newArr[myArr.length] = pvInt;
 				
-				Double newProb = drvNew.get(newArr);
-				if (newProb == null)
-					newProb = 0.0;
-				
-				newProb += this.get(myArr) * pv.get(pvInt);
-				
-				drvNew.put(newArr, newProb);
+				drvNew.merge(newArr, drvNew.get(newArr), sumMerger);
+				System.out.printf("\t%s\n", drvNew.toString());
 			}
+		}
+		
+		return drvNew;
+	}
+	
+	public DiceRollVector morph(Function<Integer[], Integer[]> function)
+	{
+		DiceRollVector drvNew = new DiceRollVector();
+		
+		for (Integer[] keyArr : this.keySet())
+		{
+			Integer[] newArr = function.apply(keyArr);
+			
+			drvNew.merge(newArr, this.get(keyArr), ProbVector.sumMerger);
 		}
 		
 		return drvNew;
@@ -237,37 +188,6 @@ public class DiceRollVector extends HashMap<Integer[], Double>
 	{
 		return flatten(sumFlatten);
 	}
-	
-	/**
-	 * Get whether the stored probabilities sum to 1.0
-	 * @return true if the stored probabilities sum to 1.0, false otherwise
-	 */
-	public boolean hasValidProb()
-	{
-		double total = 0;
-		for (Double prob : this.values())
-			total += prob;
-		return total == 1.0;
-	}
-	
-	private final BiConsumer<Integer[], Double> putter = new BiConsumer<Integer[], Double>()
-			{
-				@Override
-				public void accept(Integer[] key, Double value)
-				{
-					put(key, value);
-				}
-			};
-			
-	private final BiConsumer<Integer[], Double> removeNullValues = new BiConsumer<Integer[], Double>()
-			{
-				@Override
-				public void accept(Integer[] key, Double value)
-				{
-					if (value == null)
-						remove(key);
-				}
-			};
 			
 	private static final Function<Integer[], Integer> sumFlatten = new Function<Integer[], Integer>()
 			{
