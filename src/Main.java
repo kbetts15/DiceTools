@@ -10,9 +10,9 @@ public class Main
 	public static void main(String[] args)
 	{
 		testPutting();
-//		testPVrolls();
-//		testDRVrolls();
-//		testDRVflatten();
+		testPVrolls();
+		testDRVrolls();
+		testDRVflatten();
 	}
 
 	private static void testPVrolls()
@@ -21,8 +21,9 @@ public class Main
 		
 		for (int numDice = 0; numDice < 4; numDice++)
 		{
+			System.out.printf("%dd6: ", numDice);
 			ProbVector pv = ProbVector.diceRoll(numDice, 6);
-			System.out.printf("%dd6: %s\n", numDice, pv.toString());
+			System.out.println(pv.toString());
 		}
 	}
 	

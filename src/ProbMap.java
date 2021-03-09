@@ -4,13 +4,34 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * Stores the probabilities of observing discrete events (such as dice rolls or darts scores).
+ * Events and their probabilities are stored as key-value pairs,
+ * with {@link java.util.HashMap#HashMap} as the underlying implementation.
+ * Event probabilities are stored as <code>Double</code>s,
+ * which are permitted to take values greater than 1 or less than 0, but never <code>null</code>.
+ * 
+ * @author kieran
+ *
+ * @param <K>	Type of the events
+ */
 public abstract class ProbMap<K> extends HashMap<K, Double>
 {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Sums together <code>Double</code> pairs
+	 */
 	protected static final BiFunction<Double, Double, Double> sumMerger;
 	
+	/**
+	 * <code>put</code>s key-value pairs into the ProbMap
+	 */
 	protected final BiConsumer<K, Double> putter;
+	
+	/**
+	 * <code>remove</code>s key-value pairs from the ProbMap
+	 */
 	protected final BiConsumer<K, Double> invalidRemover;
 	
 	static
@@ -20,12 +41,17 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 			@Override
 			public Double apply(Double a, Double b)
 			{
+				if (a == null || b == null)
+					throw new NullPointerException(String.format("%s%s",
+							a == null ? "a == null" : "",
+							b == null ? "b == null" : ""));
+				
 				return a + b;
 			}
 		};
 	}
 	
-	public ProbMap(K keyInstance)
+	public ProbMap()
 	{
 		putter = new BiConsumer<K, Double>()
 				{
@@ -56,8 +82,6 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 			throw new NullPointerException();
 		
 		K sanitizedKey = sanitizeKey(key);
-		
-		System.out.printf("hashcode: %d->%d\n", key.hashCode(), sanitizedKey.hashCode());
 		
 		return super.put(sanitizedKey, value);
 	}
@@ -220,6 +244,10 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 		return s.toString();
 	}
 	
+	/**
+	 * Throw an exception if the provided key is invalid
+	 * @param key	the key to validate
+	 */
 	private void validateKey(K key)
 	{
 		if (!keyIsValid(key))
@@ -232,15 +260,38 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	 */
 	public boolean hasValidProb()
 	{
+		//TODO: This doesn't really work due to binary fractions - replace it with something to sum the probability
+		
 		double total = 0;
 		for (Double prob : this.values())
 			total += prob;
+		System.out.printf("{prob = %f}", total);
 		return total == 1.0;
 	}
 	
+	/**
+	 * Check whether a key is valid for use in the ProbMap.
+	 * Note that all keys are sanitized with {@link sanitizeKey} after validation,
+	 * before they are presented to the underlying HashMap implementation.
+	 * @param key	key to check validity
+	 * @return		true is the key is valid, false otherwise
+	 */
 	public abstract boolean keyIsValid(K key);
+	
+	/**
+	 * Sanitize a key.
+	 * Called on all keys after they are verified with {@link validateKey},
+	 * before they are presented to the underlying HashMap implementation.
+	 * @param key	key to sanitize
+	 * @return		the sanitized key
+	 */
 	public abstract K sanitizeKey(K key);
 	
+	/**
+	 * Exception to be thrown upon receiving an invalid key
+	 * 
+	 * @author kieran
+	 */
 	public static class InvalidKeyException extends RuntimeException
 	{
 		private static final long serialVersionUID = 1L;

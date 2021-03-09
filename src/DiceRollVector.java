@@ -1,21 +1,16 @@
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
 /**
- * Stores the probabilities of sets of numerical outcomes.
- * The data is stored as key-value pairs.
- * Keys take the form of ordered <code>Integer</code> arrays, representing the sets of numerical outcomes.
- * Values are <code>Double</code>s, representing the probability of each result.
+ * Implementation of {@link ProbMap} with <code>List&ltInteger&gt</code> values used for event keys.
  * 
- * <p>Note that unlike a normal {@link HashMap}, no key is ever <code>null</code>,
- * nor does a key array ever contain <code>null</code>,
- * nor is a value ever <code>null</code>.
- * 
- * <p><code>DiceRollVector</code> can be used to store, eg: The results of rolling several dice.
+ * <p>Event keys are never permitted to be <code>null</code>,
+ * nor are they permitted to contain <code>null</code> values.
+ * The ordering of <code>List</code> keys is not preserved,
+ * as they are sorted before accessing the underlying <code>HashMap</code>.
  * 
  * @author kieran
  */
@@ -23,9 +18,26 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 {
 	private static final long serialVersionUID = 1L;
 	
-	public DiceRollVector()
+	/**
+	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
+	 */
+	private static final Function<List<Integer>, Integer> sumFlatten;
+	
+	static
 	{
-		super(new LinkedList<Integer>());
+		sumFlatten = new Function<List<Integer>, Integer>()
+		{
+			@Override
+			public Integer apply(List<Integer> key)
+			{
+				int total = 0;
+				
+				for (Integer myInt : key)
+					total += myInt;
+				
+				return total;
+			}
+		};
 	}
 	
 	@Override
@@ -44,13 +56,13 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 	@Override
 	public List<Integer> sanitizeKey(List<Integer> key)
 	{
-		List<Integer> sanitizedKey = new LinkedList<Integer>(key);
+		List<Integer> sanitizedKey = new LinkedList<Integer>(key); //TODO: use an immutable list
 		Collections.sort(sanitizedKey);
 		return sanitizedKey;
 	}
 	
 	@Override
-	public Double get(Object key)
+	public Double get(Object key) //TODO: do this for other methods? (eg remove)
 	{
 		if ((key instanceof Integer[]) || (key instanceof int[]))
 		{
@@ -91,49 +103,52 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 		
 		if (this.isEmpty())
 		{
-			
-			for (Integer pvInt : pv.keySet())
+			for (Entry<Integer, Double> entry : pv.entrySet())
 			{
 				List<Integer> listNew = new LinkedList<Integer>();
-				listNew.add(pvInt);
-				drvNew.put(listNew, pv.get(pvInt));
+				listNew.add(entry.getKey());
+				drvNew.put(listNew, entry.getValue());
 			}
 			
 			return drvNew;
 		}
 		
-//		System.out.println("Combining:");
-//		System.out.printf("\t%s\n", this.toString());
-//		System.out.printf("\t%s\n", pv.toString());
-//		System.out.println("Results:");
-		
-		for (List<Integer> myList : this.keySet())
+		for (Entry<List<Integer>, Double> myEntry : this.entrySet())
 		{
-			for (Integer pvInt : pv.keySet())
+			final List<Integer> myList = myEntry.getKey();
+			final Double myProb = myEntry.getValue();
+			
+			for (Entry<Integer, Double> pvEntry : pv.entrySet())
 			{
+				final Integer pvInt = pvEntry.getKey();
+				final Double pvProb = pvEntry.getValue();
+				
 				List<Integer> newList = new LinkedList<Integer>(myList);
 				newList.add(pvInt);
 				
-				drvNew.merge(newList, drvNew.get(newList), sumMerger);
-				System.out.printf("\t%s\n", drvNew.toString());
+				Double newProb = myProb * pvProb;
+				
+				drvNew.merge(newList, newProb, sumMerger);
 			}
 		}
 		
 		return drvNew;
 	}
 	
+	/**
+	 * Generate a new DiceRollVector by transforming each key into another
+	 * @param function	specifies the rule for transforming keys
+	 * @return			DiceRollVector with resulting transformed keys
+	 */
 	public DiceRollVector morph(Function<List<Integer>, List<Integer>> function)
 	{
 		DiceRollVector drvNew = new DiceRollVector();
 		
-		for (List<Integer> keyList : this.keySet())
+		for (Entry<List<Integer>, Double> entry : this.entrySet())
 		{
-			List<Integer> newList = function.apply(keyList);
+			List<Integer> newList = function.apply(entry.getKey());
 			
-			if (!keyIsValid(newList))
-				continue;
-			
-			drvNew.merge(newList, this.get(keyList), ProbVector.sumMerger);
+			drvNew.merge(newList, entry.getValue(), sumMerger);
 		}
 		
 		return drvNew;
@@ -172,19 +187,4 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 	{
 		return flatten(sumFlatten);
 	}
-	
-	//TODO: instantiate sumFlatten in a static block
-	private static final Function<List<Integer>, Integer> sumFlatten = new Function<List<Integer>, Integer>()
-			{
-				@Override
-				public Integer apply(List<Integer> key)
-				{
-					int total = 0;
-					
-					for (Integer myInt : key)
-						total += myInt;
-					
-					return total;
-				}
-			};
 }

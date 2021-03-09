@@ -1,14 +1,10 @@
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
- * Stores the probabilities of numerical outcomes.
- * The data is stored as key-pair values.
- * Keys represent the numerical outcome, as an <code>Integer</code>.
- * Values represent probabilities of those outcomes, as a <code>Double</code>.
+ * Implementation of {@link ProbMap} with <code>Integer</code> values used for event keys.
  * 
- * <p><code>ProbVector</code> can be used to store, eg:<ul>
- * <li>The result of rolling an unbiased die</li>
- * <li>The result of summing the rolls of two unbiased dice</li></ul>
+ * <p>Event keys are never permitted to be <code>null</code>.
  * 
  * @author kieran
  */
@@ -16,9 +12,18 @@ public class ProbVector extends ProbMap<Integer>
 {
 	private static final long serialVersionUID = 1L;
 	
-	public ProbVector()
+	private static final BiFunction<Integer, Integer, Integer> sumCombiner;
+	
+	static
 	{
-		super(new Integer(0));
+		sumCombiner = new BiFunction<Integer, Integer, Integer>()
+		{
+			@Override
+			public Integer apply(Integer a, Integer b)
+			{
+				return a + b;
+			}
+		};
 	}
 	
 	@Override
@@ -55,7 +60,7 @@ public class ProbVector extends ProbMap<Integer>
 			return die;
 		
 		for (int i = 0; i < numDice; i++)
-			result = result.combine(die, sumCombine);
+			result = result.combine(die);
 		
 		return result;
 	}
@@ -71,31 +76,53 @@ public class ProbVector extends ProbMap<Integer>
 	{
 		ProbVector pvNew = new ProbVector();
 		
-		for (Integer myInt : this.keySet())
-			for (Integer pvInt : pv.keySet())
+		for (Entry<Integer, Double> myEntry : this.entrySet())
+		{
+			final Integer myInt = myEntry.getKey();
+			final Double myProb = myEntry.getValue();
+			
+			for (Entry<Integer, Double> pvEntry : pv.entrySet())
 			{
+				final Integer pvInt = pvEntry.getKey();
+				final Double pvProb = pvEntry.getValue();
+				
 				Integer newKey = function.apply(myInt, pvInt);
+				Double newProb = myProb * pvProb;
 				
-				Double newProb = pvNew.get(newKey);
-				if (newProb == null)
-					newProb = 0.0;
-				
-				newProb += this.get(myInt) * pv.get(pvInt);
-				
-				pvNew.put(newKey, newProb);
+				pvNew.merge(newKey, newProb, sumMerger);
 			}
+		}
 		
 		return pvNew;
 	}
 	
+	/**
+	 * Generate all the possible results of summing the roll outcomes
+	 * of the calling {@link ProbVector} with the given <code>ProbVector</code>.
+	 * @param pv	<code>ProbVector</code> to combine
+	 * @return		resulting <code>ProbVector</code>
+	 */
+	public ProbVector combine(ProbVector pv)
+	{
+		return combine(pv, sumCombiner);
+	}
 	
-	//TODO: instantiate sumCombine in the static block
-	private static final BiFunction<Integer, Integer, Integer> sumCombine = new BiFunction<Integer, Integer, Integer>()
-			{
-				@Override
-				public Integer apply(Integer a, Integer b)
-				{
-					return a + b;
-				}
-			};
+	/**
+	 * Generate a new ProbVector by transforming each key into another
+	 * @param function	specifies the rule for transforming keys
+	 * @return			ProbVector with resulting transformed keys
+	 */
+	public ProbVector morph(Function<Integer, Integer> function)
+	{
+		ProbVector pvNew = new ProbVector();
+		
+		for (Entry<Integer, Double> entry : this.entrySet())
+		{
+			Integer newInt = function.apply(entry.getKey());
+			
+			pvNew.merge(newInt, entry.getValue(), sumMerger);
+		}
+		
+		return pvNew;
+	}
 }
