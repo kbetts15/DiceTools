@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -78,6 +79,18 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		List<Integer> sanitizedKey = new LinkedList<Integer>(key);
 		Collections.sort(sanitizedKey);
 		return sanitizedKey;
+	}
+	
+	@Override
+	public Double get(Object key)
+	{
+		if ((key instanceof Integer[]) || (key instanceof int[]))
+		{
+			Integer[] keyArr = (Integer[]) key;
+			return super.get(Arrays.asList(keyArr));
+		}
+
+		return super.get(key);
 	}
 	
 	/**
