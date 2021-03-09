@@ -94,4 +94,5 @@ public class ImmutableList<T> implements List<T>
 	@Override public List<T> subList(int fromIndex, int toIndex) {return myList.subList(fromIndex, toIndex);}
 	@Override public Object[] toArray() {return myList.toArray();}
 	@Override public <X> X[] toArray(X[] arr) {return myList.toArray(arr);}
+	@Override public String toString() {return myList.toString();}
 }

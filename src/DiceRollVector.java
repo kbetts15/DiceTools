@@ -164,17 +164,14 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 	{
 		ProbVector pvNew = new ProbVector();
 		
-		for (List<Integer> myArr : this.keySet())
+		for (Entry<List<Integer>, Double> entry : this.entrySet())
 		{
-			Integer newInt = function.apply(myArr); //TODO: use entrySet and merge
+			final List<Integer> myList = entry.getKey();
+			final Double myProb = entry.getValue();
 			
-			Double newProb = pvNew.get(newInt);
-			if (newProb == null)
-				newProb = 0.0;
+			Integer flatInt = function.apply(myList);
 			
-			newProb += this.get(myArr);
-			
-			pvNew.put(newInt, newProb);
+			pvNew.merge(flatInt, myProb, sumMerger);
 		}
 		
 		return pvNew;

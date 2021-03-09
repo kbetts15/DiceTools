@@ -90,10 +90,6 @@ public class Main
 		
 		System.out.println(drv.toString());
 		
-		System.out.println("drv values:");
-		for (Double d : drv.values())
-			System.out.printf("\t%.3f\n", d);
-		
 		Integer[] keyXarr = {1, 3};
 		List<Integer> keyX = new ArrayList<Integer>(Arrays.asList(keyXarr));
 		
