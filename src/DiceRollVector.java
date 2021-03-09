@@ -56,8 +56,9 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 	@Override
 	public List<Integer> sanitizeKey(List<Integer> key)
 	{
-		List<Integer> sanitizedKey = new LinkedList<Integer>(key); //TODO: use an immutable list
+		List<Integer> sanitizedKey = new LinkedList<Integer>(key);
 		Collections.sort(sanitizedKey);
+		sanitizedKey = new ImmutableList<Integer>(sanitizedKey);
 		return sanitizedKey;
 	}
 	
@@ -165,7 +166,7 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 		
 		for (List<Integer> myArr : this.keySet())
 		{
-			Integer newInt = function.apply(myArr);
+			Integer newInt = function.apply(myArr); //TODO: use entrySet and merge
 			
 			Double newProb = pvNew.get(newInt);
 			if (newProb == null)
