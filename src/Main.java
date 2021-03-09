@@ -64,7 +64,7 @@ public class Main
 	
 	private static void testPutting()
 	{
-		System.out.println("##### Testing DiceRollVector putting #####");
+		System.out.println("##### Testing DiceRollVector and ProbVector putting #####");
 		
 		ProbVector pv = new ProbVector();
 		
@@ -95,6 +95,10 @@ public class Main
 		
 		Integer[] keyXarr = {1, 3};
 		List<Integer> keyX = new ArrayList<Integer>(Arrays.asList(keyXarr));
+		
 		System.out.printf("get(keyX) = %.3f\n", drv.get(keyX));
+		System.out.printf("get(keyX) = %.3f\n", drv.get(keyXarr));
+		
+		System.out.printf("keyX: %s\n", keyX.toString());
 	}
 }

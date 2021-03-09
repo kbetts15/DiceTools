@@ -129,6 +129,26 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 		super.forEach(invalidRemover);
 	}
 	
+	@Override
+	public String toString()
+	{
+		StringBuffer s = new StringBuffer();
+		s.append("{");
+		
+		for (Entry<K, Double> entry : this.entrySet())
+		{
+			if (s.length() != 1)
+				s.append(", ");
+			
+			s.append(entry.getKey().toString());
+			s.append(": ");
+			s.append(String.format("%5.3f", entry.getValue()));
+		}
+		
+		s.append("}");
+		return s.toString();
+	}
+	
 	private void validateKey(K key)
 	{
 		if (!keyIsValid(key))

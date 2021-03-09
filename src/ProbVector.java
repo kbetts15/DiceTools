@@ -22,27 +22,6 @@ public class ProbVector extends ProbMap<Integer>
 	}
 	
 	@Override
-	public String toString()
-	{
-		StringBuffer s = new StringBuffer();
-		s.append('{');
-		
-		for (Entry<Integer, Double> entry : this.entrySet())
-		{
-			if (s.length() != 1)
-				s.append(", ");
-			
-			s.append(entry.getKey());
-			s.append(": ");
-			s.append(String.format("%5.3f", entry.getValue()));
-		}
-		
-		s.append('}');
-		
-		return s.toString();
-	}
-	
-	@Override
 	public boolean keyIsValid(Integer key) throws InvalidKeyException
 	{
 		return key != null;

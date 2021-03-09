@@ -29,38 +29,6 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	}
 	
 	@Override
-	public String toString()
-	{
-		StringBuffer s = new StringBuffer();
-		s.append('{');
-		
-		for (Entry<List<Integer>, Double> entry : this.entrySet())
-		{
-			if (s.length() != 1)
-				s.append("; ");
-			
-			StringBuffer ss = new StringBuffer();
-			
-			for (Integer myInt : entry.getKey())
-			{
-				if (ss.length() != 0)
-					ss.append(", ");
-				
-				ss.append(myInt);
-			}
-			
-			s.append(ss);
-			
-			s.append(": ");
-			s.append(String.format("%5.3f", entry.getValue()));
-		}
-		
-		s.append('}');
-		
-		return s.toString();
-	}
-	
-	@Override
 	public boolean keyIsValid(List<Integer> key)
 	{
 		if (key == null)
