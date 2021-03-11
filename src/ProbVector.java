@@ -1,5 +1,4 @@
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Implementation of {@link ProbMap} with <code>Integer</code> values used for event keys.
@@ -36,6 +35,12 @@ public class ProbVector extends ProbMap<Integer>
 	public Integer sanitizeKey(Integer key)
 	{
 		return key;
+	}
+	
+	@Override
+	public ProbVector get()
+	{
+		return new ProbVector();
 	}
 	
 	/**
@@ -105,24 +110,5 @@ public class ProbVector extends ProbMap<Integer>
 	public ProbVector combine(ProbVector pv)
 	{
 		return combine(pv, sumCombiner);
-	}
-	
-	/**
-	 * Generate a new ProbVector by transforming each key into another
-	 * @param function	specifies the rule for transforming keys
-	 * @return			ProbVector with resulting transformed keys
-	 */
-	public ProbVector morph(Function<Integer, Integer> function)
-	{
-		ProbVector pvNew = new ProbVector();
-		
-		for (Entry<Integer, Double> entry : this.entrySet())
-		{
-			Integer newInt = function.apply(entry.getKey());
-			
-			pvNew.merge(newInt, entry.getValue(), sumMerger);
-		}
-		
-		return pvNew;
 	}
 }

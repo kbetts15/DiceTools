@@ -14,7 +14,7 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable lists for storage!
+public class DiceRollVector extends ProbMap<List<Integer>>
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -74,6 +74,12 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 		return super.get(key);
 	}
 	
+	@Override
+	public DiceRollVector get()
+	{
+		return new DiceRollVector();
+	}
+	
 	/**
 	 * Generate the {@link DiceRollVector} which results from rolling a set of identical unbiased dice 
 	 * @param numDice	number of dice to be rolled
@@ -131,25 +137,6 @@ public class DiceRollVector extends ProbMap<List<Integer>> //TODO: use immutable
 				
 				drvNew.merge(newList, newProb, sumMerger);
 			}
-		}
-		
-		return drvNew;
-	}
-	
-	/**
-	 * Generate a new DiceRollVector by transforming each key into another
-	 * @param function	specifies the rule for transforming keys
-	 * @return			DiceRollVector with resulting transformed keys
-	 */
-	public DiceRollVector morph(Function<List<Integer>, List<Integer>> function)
-	{
-		DiceRollVector drvNew = new DiceRollVector();
-		
-		for (Entry<List<Integer>, Double> entry : this.entrySet())
-		{
-			List<Integer> newList = function.apply(entry.getKey());
-			
-			drvNew.merge(newList, entry.getValue(), sumMerger);
 		}
 		
 		return drvNew;

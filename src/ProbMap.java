@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Stores the probabilities of observing discrete events (such as dice rolls or darts scores).
@@ -15,7 +16,7 @@ import java.util.function.Function;
  *
  * @param <K>	Type of the events
  */
-public abstract class ProbMap<K> extends HashMap<K, Double>
+public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<ProbMap<K>>
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -245,6 +246,56 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	}
 	
 	/**
+	 * Morphs each key in the <code>ProbMap</code> to a key in a new <code>ProbMap</code>.
+	 * @param f		rule for morphing keys
+	 * @return		<code>ProbMap</code> containing the morphed data.
+	 * 				The <code>ProbMap</code> returned is created using
+	 * 				{@link java.util.function.Supplier#get},
+	 * 				which is implemented by the subclass.
+	 */
+	public ProbMap<K> morphSingle(Function<K, K> f)
+	{
+		ProbMap<K> newMap = get();
+		
+		for (Entry<K, Double> entry : this.entrySet())
+		{
+			final K key = entry.getKey();
+			final Double prob = entry.getValue();
+			
+			newMap.merge(f.apply(key), prob, sumMerger);
+		}
+		
+		return newMap;
+	}
+
+	/**
+	 * Morphs each key-value pair in the <code>ProbMap</code>
+	 * to one or several key-value pairs in a new <code>ProbMap</code>.
+	 * @param f		rule for morphing key-value pairs
+	 * @return		<code>ProbMap</code> containing the morphed data.
+	 * 				The <code>ProbMap</code> returned is created using
+	 * 				{@link java.util.function.Supplier#get},
+	 * 				which is implemented by the subclass.
+	 */
+	public ProbMap<K> morphPlural(BiFunction<K, Double, ProbMap<K>> f)
+	{
+		ProbMap<K> newMap = get();
+		
+		for (Entry<K, Double> oldEntry : this.entrySet())
+		{
+			final K key = oldEntry.getKey();
+			final Double prob = oldEntry.getValue();
+			
+			ProbMap<K> keyMap = f.apply(key, prob);
+			
+			for (Entry<K, Double> newEntry : keyMap.entrySet())
+				newMap.merge(newEntry.getKey(), newEntry.getValue(), sumMerger);
+		}
+		
+		return newMap;
+	}
+	
+	/**
 	 * Throw an exception if the provided key is invalid
 	 * @param key	the key to validate
 	 */
@@ -286,6 +337,12 @@ public abstract class ProbMap<K> extends HashMap<K, Double>
 	 * @return		the sanitized key
 	 */
 	public abstract K sanitizeKey(K key);
+	
+	/**
+	 * Get a new, empty <code>ProbMap</code>.
+	 * Concrete implementations should return instances of the implementing class.
+	 */
+	public abstract ProbMap<K> get();
 	
 	/**
 	 * Exception to be thrown upon receiving an invalid key
