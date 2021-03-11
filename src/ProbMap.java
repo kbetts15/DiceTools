@@ -246,7 +246,8 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * Morphs each key in the <code>ProbMap</code> to a key in a new <code>ProbMap</code>.
+	 * Morph each key in the <code>ProbMap</code> to a key in a new <code>ProbMap</code>,
+	 * where the key type remains the same.
 	 * @param f		rule for morphing keys
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 * 				The <code>ProbMap</code> returned is created using
@@ -269,8 +270,9 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 
 	/**
-	 * Morphs each key-value pair in the <code>ProbMap</code>
-	 * to one or several key-value pairs in a new <code>ProbMap</code>.
+	 * Morph each key-value pair in the <code>ProbMap</code>
+	 * to one or several key-value pairs in a new <code>ProbMap</code>,
+	 * where the key type remains the same.
 	 * @param f		rule for morphing key-value pairs
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 * 				The <code>ProbMap</code> returned is created using
@@ -293,6 +295,48 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		}
 		
 		return newMap;
+	}
+	
+	/**
+	 * Morph each key in the <code>ProbMap</code> to a key of a different type
+	 * in a new <code>ProbMap</code>.
+	 * @param f		rule for morphing keys
+	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
+	 * 				which can {@link java.util.function.Supplier#get get}()
+	 * 				an empty <code>ProbMap</code> with keys of the new type.
+	 * 				Note that all concrete <code>ProbMap</code> subclasses
+	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
+	 * @return		<code>ProbMap</code> containing the morphed data.
+	 */
+	public <T> ProbMap<T> morphSingle(Function<K, T> f, Supplier<ProbMap<T>> s)
+	{
+		return null; //TODO
+	}
+	
+	/**
+	 * Morph each key-value pair in the <code>ProbMap</code> to a pair with a different
+	 * key type in a new <code>ProbMap</code>.
+	 * @param f		rule for morphing key-value pairs
+	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
+	 * 				which can {@link java.util.function.Supplier#get get}()
+	 * 				an empty <code>ProbMap</code> with keys of the new type.
+	 * 				Note that all concrete <code>ProbMap</code> subclasses
+	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
+	 * @return		<code>ProbMap</code> containing the morphed data.
+	 */
+	public <T> ProbMap<T> morphPlural(BiFunction<K, Double, ProbMap<T>> f, Supplier<ProbMap<T>> s)
+	{
+		return null; //TODO
+	}
+	
+	public <T> ProbMap<T> combine(BiFunction<K, T, T> f, ProbMap<T> p)
+	{
+		return null; //TODO
+	}
+	
+	public <X, Y> ProbMap<Y> combine(BiFunction<K, X, Y> f, ProbMap<X> p, Supplier<ProbMap<Y>> s)
+	{
+		return null; //TODO
 	}
 	
 	/**
