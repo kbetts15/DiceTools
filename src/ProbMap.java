@@ -90,8 +90,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	@Override
 	public Double get(Object key)
 	{
-		@SuppressWarnings("unchecked")
-		K keyK = (K) key;
+		K keyK = makeKey(key);
 		
 		validateKey(keyK);
 		
@@ -103,8 +102,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	@Override
 	public boolean containsKey(Object key)
 	{
-		@SuppressWarnings("unchecked")
-		K keyK = (K) key;
+		K keyK = makeKey(key);
 		
 		validateKey(keyK);
 		
@@ -116,8 +114,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	@Override
 	public Double remove(Object key)
 	{
-		@SuppressWarnings("unchecked")
-		K keyK = (K) key;
+		K keyK = makeKey(key);
 		
 		validateKey(keyK);
 		K sanitizedKey = sanitizeKey(keyK);
@@ -128,8 +125,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	@Override
 	public boolean remove(Object key, Object value)
 	{
-		@SuppressWarnings("unchecked")
-		K keyK = (K) key;
+		K keyK = makeKey(key);
 		
 		validateKey(keyK);
 		K sanitizedKey = sanitizeKey(keyK);
@@ -427,6 +423,20 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 			}
 			
 		};
+	}
+	
+	/**
+	 * Make a key from an <code>Object</code>.
+	 * If more complex behaviour than casting is required,
+	 * subclasses should override this method.
+	 * @param oKey	<code>Object
+	 * @return
+	 */
+	public K makeKey(Object oKey)
+	{
+		@SuppressWarnings("unchecked")
+		K key = (K) oKey;
+		return key;
 	}
 	
 	/**

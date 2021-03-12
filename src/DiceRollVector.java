@@ -99,15 +99,17 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	}
 	
 	@Override
-	public Double get(Object key) //TODO: do this for other methods? (eg remove)
+	public List<Integer> makeKey(Object oKey)
 	{
-		if ((key instanceof Integer[]) || (key instanceof int[]))
+		if ((oKey instanceof Integer[]) || (oKey instanceof int[]))
 		{
-			Integer[] keyArr = (Integer[]) key;
-			return super.get(Arrays.asList(keyArr));
+			Integer[] keyArr = (Integer[]) oKey;
+			return Arrays.asList(keyArr);
 		}
-
-		return super.get(key);
+		
+		@SuppressWarnings("unchecked")
+		List<Integer> key = (List<Integer>) oKey;
+		return key;
 	}
 	
 	@Override
