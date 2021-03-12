@@ -144,8 +144,6 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		return drvNew;
 	}
 	
-	//TODO: reimplement flatten methods using ProbMap.morph
-	
 	/**
 	 * Combine the rolls in each roll array to a single Integer
 	 * @param function	function which combines the rolls
@@ -153,19 +151,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 */
 	public ProbVector flatten(Function<List<Integer>, Integer> function)
 	{
-		ProbVector pvNew = new ProbVector();
-		
-		for (Entry<List<Integer>, Double> entry : this.entrySet())
-		{
-			final List<Integer> myList = entry.getKey();
-			final Double myProb = entry.getValue();
-			
-			Integer flatInt = function.apply(myList);
-			
-			pvNew.merge(flatInt, myProb, sumMerger);
-		}
-		
-		return pvNew;
+		return (ProbVector) super.morphSingle(function, new ProbVector().supplyMe());
 	}
 	
 	/**
