@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -22,6 +23,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
 	 */
 	private static final Function<List<Integer>, Integer> sumFlatten;
+	private static final BiFunction<List<Integer>, Integer, List<Integer>> listAdd;
 	
 	static
 	{
@@ -36,6 +38,17 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 					total += myInt;
 				
 				return total;
+			}
+		};
+		
+		listAdd = new BiFunction<List<Integer>, Integer, List<Integer>>()
+		{
+			@Override
+			public List<Integer> apply(List<Integer> t, Integer u)
+			{
+				List<Integer> newList = new LinkedList<Integer>(t);
+				newList.add(u);
+				return newList;
 			}
 		};
 	}
@@ -108,10 +121,10 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 */
 	public DiceRollVector combine(ProbVector pv)
 	{
-		DiceRollVector drvNew = new DiceRollVector();
-		
 		if (this.isEmpty())
 		{
+			DiceRollVector drvNew = new DiceRollVector();
+			
 			for (Entry<Integer, Double> entry : pv.entrySet())
 			{
 				List<Integer> listNew = new LinkedList<Integer>();
@@ -122,26 +135,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 			return drvNew;
 		}
 		
-		for (Entry<List<Integer>, Double> myEntry : this.entrySet())
-		{
-			final List<Integer> myList = myEntry.getKey();
-			final Double myProb = myEntry.getValue();
-			
-			for (Entry<Integer, Double> pvEntry : pv.entrySet())
-			{
-				final Integer pvInt = pvEntry.getKey();
-				final Double pvProb = pvEntry.getValue();
-				
-				List<Integer> newList = new LinkedList<Integer>(myList);
-				newList.add(pvInt);
-				
-				Double newProb = myProb * pvProb;
-				
-				drvNew.merge(newList, newProb, sumMerger);
-			}
-		}
-		
-		return drvNew;
+		return (DiceRollVector) combine(listAdd, pv, this);
 	}
 	
 	/**
