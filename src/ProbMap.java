@@ -411,6 +411,25 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 	
 	/**
+	 * Get a {@link java.util.function.Supplier#Supplier Supplier}
+	 * which {@link java.util.function.Supplier#Supplier.get get}s
+	 * this <code>ProbMap</code>.
+	 * @return		<code>Supplier</code> which supplies this <code>ProbMap</code>
+	 */
+	public Supplier<ProbMap<K>> supplyMe()
+	{
+		return new Supplier<ProbMap<K>>() {
+
+			@Override
+			public ProbMap<K> get()
+			{
+				return ProbMap.this;
+			}
+			
+		};
+	}
+	
+	/**
 	 * Check whether a key is valid for use in the ProbMap.
 	 * Note that all keys are sanitized with {@link sanitizeKey} after validation,
 	 * before they are presented to the underlying HashMap implementation.
