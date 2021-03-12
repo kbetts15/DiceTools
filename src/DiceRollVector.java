@@ -24,6 +24,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 */
 	private static final Function<List<Integer>, Integer> sumFlatten;
 	private static final BiFunction<List<Integer>, Integer, List<Integer>> listAdd;
+	private static final BiFunction<List<Integer>, List<Integer>, List<Integer>> listAddAll;
 	
 	static
 	{
@@ -48,6 +49,17 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 			{
 				List<Integer> newList = new LinkedList<Integer>(t);
 				newList.add(u);
+				return newList;
+			}
+		};
+		
+		listAddAll = new BiFunction<List<Integer>, List<Integer>, List<Integer>>()
+		{
+			@Override
+			public List<Integer> apply(List<Integer> t, List<Integer> u)
+			{
+				List<Integer> newList = new LinkedList<Integer>(t);
+				newList.addAll(u);
 				return newList;
 			}
 		};
@@ -93,6 +105,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		return new DiceRollVector();
 	}
 	
+	//TODO: generate diceRoll using binomial maths
 	/**
 	 * Generate the {@link DiceRollVector} which results from rolling a set of identical unbiased dice 
 	 * @param numDice	number of dice to be rolled
@@ -111,11 +124,11 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		return result;
 	}
 	
-	//TODO: reimplement combine using ProbMap.combine
+	//TODO: write combine(DiceRollVector drv)
 	
 	/**
-	 * Generate all the possible results of combining the roll arrays from the calling
-	 * {@link DiceRollVector} with each possible roll from the given {@link ProbVector}
+	 * Generate all the possible results of combining each roll array from the calling
+	 * {@link DiceRollVector} with each possible roll from the given {@link ProbVector}.
 	 * @param pv	<code>ProbVector</code> to be combined
 	 * @return		resulting <code>DiceRollVector</code>
 	 */
@@ -136,6 +149,24 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		}
 		
 		return (DiceRollVector) combine(listAdd, pv, this);
+	}
+	
+	/**
+	 * Generate all the possible results of combining each roll array from the calling
+	 * {@link DiceRollVector} with each roll array from the given <code>DiceRollVector</code>.
+	 * @param drv	<code>DiceRollVector</code> to be combined
+	 * @return		resulting <code>DiceRollVector</code>
+	 */
+	public DiceRollVector combine(DiceRollVector drv)
+	{
+		if (this.isEmpty())
+		{
+			DiceRollVector drvNew = new DiceRollVector();
+			drvNew.putAll(drv);
+			return drvNew;
+		}
+		
+		return (DiceRollVector) combine(listAddAll, drv, this);
 	}
 	
 	/**
