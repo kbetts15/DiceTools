@@ -242,46 +242,32 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * Morph each key in the <code>ProbMap</code> to a key in a new <code>ProbMap</code>,
+	 * Map each key in the <code>ProbMap</code> to a key in a new <code>ProbMap</code>,
 	 * where the key type remains the same.
-	 * @param f		rule for morphing keys
+	 * @param f		rule for mapping keys
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 * 				The <code>ProbMap</code> returned is created using
 	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
 	 * 				which is implemented by the subclass.
 	 */
-	public ProbMap<K> morphSingle(Function<K, K> f)
+	public ProbMap<K> morph(Function<K, K> f)
 	{
-		return morphSingle(f, this);
-	}
-
-	/**
-	 * Morph each key-value pair in the <code>ProbMap</code>
-	 * to one or several key-value pairs in a new <code>ProbMap</code>,
-	 * where the key type remains the same.
-	 * @param f		rule for morphing key-value pairs
-	 * @return		<code>ProbMap</code> containing the morphed data.
-	 * 				The <code>ProbMap</code> returned is created using
-	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
-	 * 				which is implemented by the subclass.
-	 */
-	public ProbMap<K> morphPlural(Function<K, ProbMap<K>> f)
-	{
-		return morphPlural(f, this);
+		return morph(f, this);
 	}
 	
 	/**
-	 * Morph each key in the <code>ProbMap</code> to a key of a different type
+	 * Map each key in the <code>ProbMap</code> to a key of a different type
 	 * in a new <code>ProbMap</code>.
-	 * @param f		rule for morphing keys
+	 * @param f		rule for mapping keys
 	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
 	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
 	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
-	 * @return		<code>ProbMap</code> containing the morphed data.
+	 * @return		<code>ProbMap</code> containing the morphed data,
+	 * 				created using <code>s.get()</code>
 	 */
-	public <T> ProbMap<T> morphSingle(Function<K, T> f, Supplier<ProbMap<T>> s)
+	public <T> ProbMap<T> morph(Function<K, T> f, Supplier<ProbMap<T>> s)
 	{
 		ProbMap<T> newMap = s.get();
 		
@@ -297,19 +283,35 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		
 		return newMap;
 	}
+
+	/**
+	 * Map each key-value pair in the <code>ProbMap</code>
+	 * to one or several key-value pairs in a new <code>ProbMap</code>,
+	 * where the key type remains the same.
+	 * @param f		rule for mapping key-value pairs
+	 * @return		<code>ProbMap</code> containing the forked data.
+	 * 				The <code>ProbMap</code> returned is created using
+	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
+	 * 				which is implemented by the subclass.
+	 */
+	public ProbMap<K> fork(Function<K, ProbMap<K>> f)
+	{
+		return fork(f, this);
+	}
 	
 	/**
-	 * Morph each key-value pair in the <code>ProbMap</code> to a pair with a different
+	 * Map each key-value pair in the <code>ProbMap</code> to a pair with a different
 	 * key type in a new <code>ProbMap</code>.
-	 * @param f		rule for morphing key-value pairs
+	 * @param f		rule for mapping key-value pairs
 	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
 	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
 	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
-	 * @return		<code>ProbMap</code> containing the morphed data.
+	 * @return		<code>ProbMap</code> containing the forked data,
+	 * 				created using <code>s.get()</code>
 	 */
-	public <T> ProbMap<T> morphPlural(Function<K, ProbMap<T>> f, Supplier<ProbMap<T>> s)
+	public <T> ProbMap<T> fork(Function<K, ProbMap<T>> f, Supplier<ProbMap<T>> s)
 	{
 		ProbMap<T> newMap = s.get();
 		
