@@ -69,6 +69,8 @@ public class ProbVector extends ProbMap<Integer>
 		
 		return result;
 	}
+	
+	//TODO: reimplement combine methods using ProbMap.combine
 
 	/**
 	 * Generate all the possible results of combining the roll outcomes of the calling {@link ProbVector}

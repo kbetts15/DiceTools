@@ -251,22 +251,12 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @param f		rule for morphing keys
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 * 				The <code>ProbMap</code> returned is created using
-	 * 				{@link java.util.function.Supplier#get},
+	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
 	 * 				which is implemented by the subclass.
 	 */
 	public ProbMap<K> morphSingle(Function<K, K> f)
 	{
-		ProbMap<K> newMap = get();
-		
-		for (Entry<K, Double> entry : this.entrySet())
-		{
-			final K key = entry.getKey();
-			final Double prob = entry.getValue();
-			
-			newMap.merge(f.apply(key), prob, sumMerger);
-		}
-		
-		return newMap;
+		return morphSingle(f, this);
 	}
 
 	/**
@@ -276,25 +266,12 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @param f		rule for morphing key-value pairs
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 * 				The <code>ProbMap</code> returned is created using
-	 * 				{@link java.util.function.Supplier#get},
+	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
 	 * 				which is implemented by the subclass.
 	 */
-	public ProbMap<K> morphPlural(BiFunction<K, Double, ProbMap<K>> f)
+	public ProbMap<K> morphPlural(Function<K, ProbMap<K>> f)
 	{
-		ProbMap<K> newMap = get();
-		
-		for (Entry<K, Double> oldEntry : this.entrySet())
-		{
-			final K key = oldEntry.getKey();
-			final Double prob = oldEntry.getValue();
-			
-			ProbMap<K> keyMap = f.apply(key, prob);
-			
-			for (Entry<K, Double> newEntry : keyMap.entrySet())
-				newMap.merge(newEntry.getKey(), newEntry.getValue(), sumMerger);
-		}
-		
-		return newMap;
+		return morphPlural(f, this);
 	}
 	
 	/**
@@ -304,13 +281,25 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
-	 * 				Note that all concrete <code>ProbMap</code> subclasses
+	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
 	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 */
 	public <T> ProbMap<T> morphSingle(Function<K, T> f, Supplier<ProbMap<T>> s)
 	{
-		return null; //TODO
+		ProbMap<T> newMap = s.get();
+		
+		for (Entry<K, Double> entry : this.entrySet())
+		{
+			final K key = entry.getKey();
+			final Double prob = entry.getValue();
+			
+			T newKey = f.apply(key);
+			
+			newMap.merge(newKey, prob, sumMerger);
+		}
+		
+		return newMap;
 	}
 	
 	/**
@@ -320,23 +309,95 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
-	 * 				Note that all concrete <code>ProbMap</code> subclasses
+	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
 	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
 	 * @return		<code>ProbMap</code> containing the morphed data.
 	 */
-	public <T> ProbMap<T> morphPlural(BiFunction<K, Double, ProbMap<T>> f, Supplier<ProbMap<T>> s)
+	public <T> ProbMap<T> morphPlural(Function<K, ProbMap<T>> f, Supplier<ProbMap<T>> s)
 	{
-		return null; //TODO
+		ProbMap<T> newMap = s.get();
+		
+		for (Entry<K, Double> myEntry : this.entrySet())
+		{
+			final K myKey = myEntry.getKey();
+			final Double myProb = myEntry.getValue();
+			
+			ProbMap<T> tempMap = f.apply(myKey);
+			
+			for (Entry<T, Double> tEntry : tempMap.entrySet())
+			{
+				final T tKey = tEntry.getKey();
+				final Double tProb = tEntry.getValue();
+				
+				Double newProb = myProb * tProb;
+				
+				newMap.merge(tKey, newProb, sumMerger);
+			}
+		}
+		
+		return newMap;
 	}
 	
+	/**
+	 * Combine each key in the <code>ProbMap</code>
+	 * with each key in a <code>ProbMap</code>.
+	 * The probability of for each newly generated key is
+	 * the product of the probabilities of the keys combined to create it.
+	 * @param <T>	key type of the <code>ProbMap</code> argument
+	 * 				and the resulting <code>ProbMap</code>
+	 * @param f		rule for combining keys
+	 * @param p		<code>ProbMap</code> to combine
+	 * @return		<code>ProbMap</code> containing the combined data.
+	 * 				The <code>ProbMap</code> returned is created using
+	 * 				p.{@link java.util.function.Supplier#get get},
+	 * 				which is implemented by the subclass.
+	 */
 	public <T> ProbMap<T> combine(BiFunction<K, T, T> f, ProbMap<T> p)
 	{
-		return null; //TODO
+		return combine(f, p, p);
 	}
 	
+	/**
+	 * Combine each key in the <code>ProbMap</code>
+	 * with each key in a <code>ProbMap</code>.
+	 * The probability of for each newly generated key is
+	 * the product of the probabilities of the keys combined to create it.
+	 * @param <X>	key type of the <code>ProbMap</code> argument
+	 * @param <Y>	key type of the resulting <code>ProbMap</code>
+	 * @param f		rule for combining keys
+	 * @param p		<code>ProbMap</code> to combine
+	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
+	 * 				which can {@link java.util.function.Supplier#get get}()
+	 * 				an empty <code>ProbMap</code> with keys of the new type.
+	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
+	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
+	 * @return		<code>ProbMap</code> containing the combined data.
+	 * 				The <code>ProbMap</code> returned is created using
+	 * 				s.{@link java.util.function.Supplier#get get},
+	 * 				which is implemented by the subclass.
+	 */
 	public <X, Y> ProbMap<Y> combine(BiFunction<K, X, Y> f, ProbMap<X> p, Supplier<ProbMap<Y>> s)
 	{
-		return null; //TODO
+		ProbMap<Y> newMap = s.get();
+		
+		for (Entry<K, Double> myEntry : this.entrySet())
+		{
+			final K myKey = myEntry.getKey();
+			final Double myProb = myEntry.getValue();
+			
+			for (Entry<X, Double> pEntry : p.entrySet())
+			{
+				final X pKey = pEntry.getKey();
+				final Double pProb = pEntry.getValue();
+				
+				Y newKey = f.apply(myKey, pKey);
+				Double newProb = myProb * pProb;
+				
+				newMap.merge(newKey, newProb, sumMerger);
+			}
+		}
+		
+		return newMap;
 	}
 	
 	/**
@@ -347,21 +408,6 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	{
 		if (!keyIsValid(key))
 			throw new InvalidKeyException();
-	}
-	
-	/**
-	 * Get whether the stored probabilities sum to 1.0
-	 * @return true if the stored probabilities sum to 1.0, false otherwise
-	 */
-	public boolean hasValidProb()
-	{
-		//TODO: This doesn't really work due to binary fractions - replace it with something to sum the probability
-		
-		double total = 0;
-		for (Double prob : this.values())
-			total += prob;
-		System.out.printf("{prob = %f}", total);
-		return total == 1.0;
 	}
 	
 	/**

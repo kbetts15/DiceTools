@@ -98,6 +98,8 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		return result;
 	}
 	
+	//TODO: reimplement combine using ProbMap.combine
+	
 	/**
 	 * Generate all the possible results of combining the roll arrays from the calling
 	 * {@link DiceRollVector} with each possible roll from the given {@link ProbVector}
@@ -141,6 +143,8 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		
 		return drvNew;
 	}
+	
+	//TODO: reimplement flatten methods using ProbMap.morph
 	
 	/**
 	 * Combine the rolls in each roll array to a single Integer
