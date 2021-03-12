@@ -187,7 +187,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 */
 	public ProbVector flatten(Function<List<Integer>, Integer> function)
 	{
-		return (ProbVector) super.morphSingle(function, new ProbVector().supplyMe());
+		return (ProbVector) super.morph(function, new ProbVector().supplyMe());
 	}
 	
 	/**
