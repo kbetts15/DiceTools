@@ -135,8 +135,6 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		return result;
 	}
 	
-	//TODO: write combine(DiceRollVector drv)
-	
 	/**
 	 * Generate all the possible results of combining each roll array from the calling
 	 * {@link DiceRollVector} with each possible roll from the given {@link ProbVector}.
