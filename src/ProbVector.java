@@ -11,6 +11,9 @@ public class ProbVector extends ProbMap<Integer>
 {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Sums together two <code>Integer</code>s
+	 */
 	private static final BiFunction<Integer, Integer, Integer> sumCombiner;
 	
 	static

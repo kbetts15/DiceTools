@@ -23,7 +23,18 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
 	 */
 	private static final Function<List<Integer>, Integer> sumFlatten;
+	
+	/**
+	 * Copies a <code>List</code> of <code>Integer</code>s
+	 * and <code>add</code>s an <code>Integer</code> to the copy
+	 */
 	private static final BiFunction<List<Integer>, Integer, List<Integer>> listAdd;
+	
+	/**
+	 * Copies a <code>List</code> of <code>Integer</code>s
+	 * and <code>add</code>s all <code>Integer</code>s
+	 * from another <code>List</code> to the copy.
+	 */
 	private static final BiFunction<List<Integer>, List<Integer>, List<Integer>> listAddAll;
 	
 	static
