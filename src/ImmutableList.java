@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,6 +16,11 @@ public class ImmutableList<T> implements List<T>
 	public ImmutableList(Collection<? extends T> c)
 	{
 		myList = new LinkedList<T>(c);
+	}
+	
+	public ImmutableList(@SuppressWarnings("unchecked") T...t)
+	{
+		myList = new LinkedList<T>(Arrays.asList(t));
 	}
 	
 	@Override
@@ -42,27 +48,34 @@ public class ImmutableList<T> implements List<T>
 		return new ListIteratorWrapper<T>(myList.listIterator(index));
 	}
 	
-	private static class ListIteratorWrapper<T> implements ListIterator<T>
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object o)
 	{
-		private final ListIterator<T> li;
+		List<T> oList;
 		
-		public ListIteratorWrapper(ListIterator<T> li)
+		try
 		{
-			this.li = li;
+			oList = (List<T>) o;
+		}
+		catch (ClassCastException e)
+		{
+			return false;
 		}
 		
-		//Unsupported
-		@Override public void add(T arg0) {throw new UnsupportedOperationException();}
-		@Override public void remove() {throw new UnsupportedOperationException();}
-		@Override public void set(T arg0) {throw new UnsupportedOperationException();}
-
-		//Referred to li
-		@Override public boolean hasNext() {return li.hasNext();}
-		@Override public boolean hasPrevious() {return li.hasPrevious();}
-		@Override public T next() {return li.next();}
-		@Override public int nextIndex() {return li.nextIndex();}
-		@Override public T previous() {return li.previous();}
-		@Override public int previousIndex() {return li.previousIndex();}
+		Iterator<T> myIter = this.iterator();
+		Iterator<T> immIter = oList.iterator();
+		
+		while (myIter.hasNext())
+		{
+			if (!immIter.hasNext())
+				return false;
+			
+			if (!immIter.next().equals(myIter.next()))
+				return false;
+		}
+		
+		return !immIter.hasNext();
 	}
 
 	//Unsupported abstract
@@ -87,6 +100,7 @@ public class ImmutableList<T> implements List<T>
 	@Override public boolean contains(Object o) {return myList.contains(o);}
 	@Override public boolean containsAll(Collection<?> c){return myList.containsAll(c);}
 	@Override public T get(int index) {return myList.get(index);}
+	@Override public int hashCode() {return myList.hashCode();}
 	@Override public int indexOf(Object o) {return myList.indexOf(o);}
 	@Override public boolean isEmpty() {return myList.isEmpty();}
 	@Override public int lastIndexOf(Object o) {return myList.lastIndexOf(o);}
@@ -95,4 +109,27 @@ public class ImmutableList<T> implements List<T>
 	@Override public Object[] toArray() {return myList.toArray();}
 	@Override public <X> X[] toArray(X[] arr) {return myList.toArray(arr);}
 	@Override public String toString() {return myList.toString();}
+	
+	private static class ListIteratorWrapper<T> implements ListIterator<T>
+	{
+		private final ListIterator<T> li;
+		
+		public ListIteratorWrapper(ListIterator<T> li)
+		{
+			this.li = li;
+		}
+		
+		//Unsupported
+		@Override public void add(T arg0) {throw new UnsupportedOperationException();}
+		@Override public void remove() {throw new UnsupportedOperationException();}
+		@Override public void set(T arg0) {throw new UnsupportedOperationException();}
+
+		//Referred to li
+		@Override public boolean hasNext() {return li.hasNext();}
+		@Override public boolean hasPrevious() {return li.hasPrevious();}
+		@Override public T next() {return li.next();}
+		@Override public int nextIndex() {return li.nextIndex();}
+		@Override public T previous() {return li.previous();}
+		@Override public int previousIndex() {return li.previousIndex();}
+	}
 }

@@ -55,23 +55,9 @@ public class ProbVector extends ProbMap<Integer>
 	 */
 	public static ProbVector diceRoll(int numDice, int sides)
 	{
-		ProbVector result = new ProbVector();
-		result.put(0, 1.0);
+		//TODO: do this withour involving DiceRollVector
 		
-		if (numDice <= 0)
-			return result;
-		
-		ProbVector die = new ProbVector();
-		for (int i = 1; i <= sides; i++)
-			die.put(i, 1.0 / sides);
-		
-		if (numDice == 1)
-			return die;
-		
-		for (int i = 0; i < numDice; i++)
-			result = result.combine(die);
-		
-		return result;
+		return DiceRollVector.diceRoll(numDice, sides).flatten();
 	}
 	
 	/**

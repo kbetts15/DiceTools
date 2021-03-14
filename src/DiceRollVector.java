@@ -101,6 +101,8 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	@Override
 	public List<Integer> makeKey(Object oKey)
 	{
+		System.out.printf("oKey: %s\n", oKey.toString());
+		
 		if ((oKey instanceof Integer[]) || (oKey instanceof int[]))
 		{
 			Integer[] keyArr = (Integer[]) oKey;
@@ -118,7 +120,6 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		return new DiceRollVector();
 	}
 	
-	//TODO: generate diceRoll using binomial maths
 	/**
 	 * Generate the {@link DiceRollVector} which results from rolling a set of identical unbiased dice 
 	 * @param numDice	number of dice to be rolled
@@ -127,14 +128,13 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 */
 	public static DiceRollVector diceRoll(int numDice, int sides)
 	{
-		DiceRollVector result = new DiceRollVector();
+		DiceRollVector drv = new DiceRollVector();
 		
-		ProbVector die = ProbVector.diceRoll(1, sides);
-		
-		for (int i = 0; i < numDice; i++)
-			result = result.combine(die);
-		
-		return result;
+		DiceRollIterable dri = new DiceRollIterable(numDice, sides);
+		for (Entry<List<Integer>, Double> entry : dri)
+			drv.put(entry.getKey(), entry.getValue());
+
+		return drv;
 	}
 	
 	/**

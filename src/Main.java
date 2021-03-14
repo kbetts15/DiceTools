@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 public class Main
@@ -10,9 +11,11 @@ public class Main
 	public static void main(String[] args)
 	{
 		testPutting();
-		testPVrolls();
-		testDRVrolls();
-		testDRVflatten();
+//		testPVrolls();
+//		testDRVrolls();
+//		testDRVflatten();
+//		diceRollIterTest();
+//		immListEqualsTest();
 	}
 
 	private static void testPVrolls()
@@ -94,8 +97,42 @@ public class Main
 		List<Integer> keyX = new ArrayList<Integer>(Arrays.asList(keyXarr));
 		
 		System.out.printf("get(keyX) = %.3f\n", drv.get(keyX));
-		System.out.printf("get(keyX) = %.3f\n", drv.get(keyXarr));
+		System.out.printf("get(keyXarr) = %.3f\n", drv.get(keyXarr));
 		
 		System.out.printf("keyX: %s\n", keyX.toString());
+		
+		for (List<Integer> li : drv.keySet())
+		{
+			System.out.printf("(keyX) %s %c= %s (li) | Hash codes %smatch\n",
+					keyX.toString(),
+					li.equals(keyX) ? '=' : '!',
+					li.toString(),
+					keyX.hashCode() == li.hashCode() ? "" : "do not ");
+		}
+	}
+	
+	private static void diceRollIterTest()
+	{
+		System.out.println("##### Testing DiceRollIterable #####");
+		
+		DiceRollIterable iter = new DiceRollIterable(3, 4);
+		
+		for (Entry<List<Integer>, Double> entry : iter)
+			System.out.println(entry.getKey().toString());
+	}
+	
+	private static void immListEqualsTest()
+	{
+		System.out.println("##### Testing ImmutableList .equals() #####");
+		
+		ImmutableList<Integer> immListA = new ImmutableList<Integer>(1, 2, 5);
+		ImmutableList<Integer> immListB = new ImmutableList<Integer>(1, 2, 5);
+		ImmutableList<Integer> immListC = new ImmutableList<Integer>(1, 2, 4);
+		LinkedList<Integer> immListD = new LinkedList<Integer>(immListA);
+		
+		System.out.printf("immListA %c= immListB\n", immListA.equals(immListB) ? '=' : '!');
+		System.out.printf("immListA %c= immListC\n", immListA.equals(immListC) ? '=' : '!');
+		System.out.printf("immListB %c= immListC\n", immListB.equals(immListC) ? '=' : '!');
+		System.out.printf("immListA %c= immListD\n", immListA.equals(immListD) ? '=' : '!');
 	}
 }
