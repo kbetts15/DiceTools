@@ -1,62 +1,69 @@
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Spliterator;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.NoSuchElementException;
 
 public class ImmutableList<T> implements List<T>
 {
-	private final List<T> myList;
+	private final T[] myArray;
 	
-	public ImmutableList(Collection<? extends T> c)
+	public ImmutableList(T[] ts)
 	{
-		myList = new LinkedList<T>(c);
-	}
-	
-	public ImmutableList(@SuppressWarnings("unchecked") T...t)
-	{
-		myList = new LinkedList<T>(Arrays.asList(t));
+		myArray = Arrays.copyOf(ts, ts.length);
 	}
 	
-	@Override
-	public Iterator<T> iterator()
+	@SuppressWarnings("unchecked")
+	public ImmutableList(Collection<T> ts)
 	{
-		return new Iterator<T>() {
+		myArray = (T[]) ts.toArray();
+	}
 
-			Iterator<T> iter = myList.iterator();
-			
-			@Override public boolean hasNext() {return iter.hasNext();}
-			@Override public T next() {return iter.next();}
-			
-		};
+	@Override public boolean add(T e) {throw new UnsupportedOperationException();}
+	@Override public void add(int index, T element) {throw new UnsupportedOperationException();}
+	@Override public boolean addAll(Collection<? extends T> c) {throw new UnsupportedOperationException();}
+	@Override public boolean addAll(int index, Collection<? extends T> c) {throw new UnsupportedOperationException();}
+	@Override public void clear() {throw new UnsupportedOperationException();}
+
+	@Override
+	public boolean contains(Object o)
+	{
+		if (o == null)
+		{
+			for (T t : myArray)
+				if (t == null)
+					return true;
+		}
+		else
+		{
+			for (T t : myArray)
+				if (t.equals(o))
+					return true;
+		}
+		
+		return false;
 	}
 
 	@Override
-	public ListIterator<T> listIterator()
+	public boolean containsAll(Collection<?> c)
 	{
-		return new ListIteratorWrapper<T>(myList.listIterator());
-	}
-
-	@Override
-	public ListIterator<T> listIterator(int index)
-	{
-		return new ListIteratorWrapper<T>(myList.listIterator(index));
+		for (Object o : c)
+			if (this.contains(o))
+				return true;
+		
+		return false;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o)
 	{
-		List<T> oList;
+		List<T> comp;
 		
 		try
 		{
-			oList = (List<T>) o;
+			comp = (List<T>) o;
 		}
 		catch (ClassCastException e)
 		{
@@ -64,72 +71,240 @@ public class ImmutableList<T> implements List<T>
 		}
 		
 		Iterator<T> myIter = this.iterator();
-		Iterator<T> immIter = oList.iterator();
+		Iterator<T> compIter = comp.iterator();
 		
 		while (myIter.hasNext())
 		{
-			if (!immIter.hasNext())
+			if (!compIter.hasNext())
 				return false;
 			
-			if (!immIter.next().equals(myIter.next()))
+			T myNext = myIter.next();
+			
+			if (myNext == null && compIter.next() != null)
+				return false;
+			
+			if (!myNext.equals(compIter.next()))
 				return false;
 		}
 		
-		return !immIter.hasNext();
+		return !compIter.hasNext();
 	}
 
-	//Unsupported abstract
-	@Override public boolean add(T arg0) {throw new UnsupportedOperationException();}
-	@Override public void add(int arg0, T arg1) {throw new UnsupportedOperationException();}
-	@Override public boolean addAll(Collection<? extends T> arg0) {throw new UnsupportedOperationException();}
-	@Override public boolean addAll(int arg0, Collection<? extends T> arg1) {throw new UnsupportedOperationException();}
-	@Override public void clear() {throw new UnsupportedOperationException();}
-	@Override public boolean remove(Object arg0) {throw new UnsupportedOperationException();}
-	@Override public T remove(int arg0) {throw new UnsupportedOperationException();}
-	@Override public boolean removeAll(Collection<?> arg0) {throw new UnsupportedOperationException();}
-	@Override public boolean retainAll(Collection<?> arg0) {throw new UnsupportedOperationException();}
-	@Override public T set(int arg0, T arg1) {throw new UnsupportedOperationException();}
-	
-	//Unsupported inherited
-	@Override public boolean removeIf(Predicate<? super T> filter) {throw new UnsupportedOperationException();}
-	@Override public void replaceAll(UnaryOperator<T> operator) {throw new UnsupportedOperationException();}
-	@Override public void sort(Comparator<? super T> c) {throw new UnsupportedOperationException();}
-	@Override public Spliterator<T> spliterator() {throw new UnsupportedOperationException();}
-
-	//Referred to myList
-	@Override public boolean contains(Object o) {return myList.contains(o);}
-	@Override public boolean containsAll(Collection<?> c){return myList.containsAll(c);}
-	@Override public T get(int index) {return myList.get(index);}
-	@Override public int hashCode() {return myList.hashCode();}
-	@Override public int indexOf(Object o) {return myList.indexOf(o);}
-	@Override public boolean isEmpty() {return myList.isEmpty();}
-	@Override public int lastIndexOf(Object o) {return myList.lastIndexOf(o);}
-	@Override public int size() {return myList.size();}
-	@Override public List<T> subList(int fromIndex, int toIndex) {return myList.subList(fromIndex, toIndex);}
-	@Override public Object[] toArray() {return myList.toArray();}
-	@Override public <X> X[] toArray(X[] arr) {return myList.toArray(arr);}
-	@Override public String toString() {return myList.toString();}
-	
-	private static class ListIteratorWrapper<T> implements ListIterator<T>
+	@Override
+	public T get(int index)
 	{
-		private final ListIterator<T> li;
-		
-		public ListIteratorWrapper(ListIterator<T> li)
+		return myArray[index];
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		for (T t : myArray)
+			hash = 31 * hash + (t == null ? 0 : t.hashCode());
+		return hash;
+	}
+
+	@Override
+	public int indexOf(Object o)
+	{
+		if (o == null)
 		{
-			this.li = li;
+			for (int i = 0; i < myArray.length; i++)
+				if (myArray[i] == null)
+					return i;
+		}
+		else
+		{
+			for (int i = 0; i < myArray.length; i++)
+				if (myArray[i].equals(o))
+					return i;
 		}
 		
-		//Unsupported
+		return -1;
+	}
+
+	@Override
+	public boolean isEmpty()
+	{
+		return myArray.length == 0;
+	}
+
+	@Override
+	public Iterator<T> iterator()
+	{
+		return new ImmutIterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o)
+	{
+		if (o == null)
+		{
+			for (int i = myArray.length - 1; i >= 0; i--)
+				if (myArray[i] == null)
+					return i;
+		}
+		else
+		{
+			for (int i = myArray.length - 1; i >= 0; i--)
+				if (myArray[i].equals(o))
+					return i;
+		}
+		
+		return -1;
+	}
+
+	@Override
+	public ListIterator<T> listIterator()
+	{
+		return new ImmutListIterator(0);
+	}
+
+	@Override
+	public ListIterator<T> listIterator(int index)
+	{
+		return new ImmutListIterator(index);
+	}
+
+	@Override public boolean remove(Object o) {throw new UnsupportedOperationException();}
+	@Override public T remove(int index) {throw new UnsupportedOperationException();}
+	@Override public boolean removeAll(Collection<?> c) {throw new UnsupportedOperationException();}
+	@Override public boolean retainAll(Collection<?> c) {throw new UnsupportedOperationException();}
+	@Override public T set(int index, T element) {throw new UnsupportedOperationException();}
+
+	@Override
+	public int size()
+	{
+		return myArray.length;
+	}
+
+	@Override
+	public List<T> subList(int fromIndex, int toIndex)
+	{
+		T[] newArr = Arrays.copyOfRange(myArray, fromIndex, toIndex);
+		return new ImmutableList<T>(newArr);
+	}
+
+	@Override
+	public Object[] toArray()
+	{
+		return Arrays.copyOf(myArray, myArray.length);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <X> X[] toArray(X[] a)
+	{
+		X[] newArr;
+		
+		if (a.length >= myArray.length)
+			newArr = a;
+		else
+			newArr = Arrays.copyOf(a, myArray.length);
+		
+		for (int i = 0; i < myArray.length; i++)
+			newArr[i] = (X) myArray[i];
+		
+		if (newArr.length > myArray.length)
+			newArr[myArray.length] = null;
+		
+		return newArr;
+	}
+	
+	@Override
+	public String toString()
+	{
+		StringBuffer s = new StringBuffer("[");
+		
+		ImmutIterator iter = new ImmutIterator();
+		
+		while (iter.hasNext())
+		{
+			s.append(iter.next().toString());
+			
+			if (iter.hasNext())
+				s.append(", ");
+		}
+		
+		s.append("]");
+		
+		return s.toString();
+	}
+	
+	private class ImmutIterator implements Iterator<T>
+	{
+		private int nextPos = 0;
+		
+		@Override
+		public boolean hasNext()
+		{
+			return nextPos < myArray.length;
+		}
+
+		@Override
+		public T next()
+		{
+			if (!hasNext())
+				throw new NoSuchElementException();
+			
+			return myArray[nextPos++];
+		}
+	}
+	
+	private class ImmutListIterator implements ListIterator<T>
+	{
+		private int currPos;
+		
+		public ImmutListIterator(int index)
+		{
+			currPos = index;
+		}
+
 		@Override public void add(T arg0) {throw new UnsupportedOperationException();}
 		@Override public void remove() {throw new UnsupportedOperationException();}
 		@Override public void set(T arg0) {throw new UnsupportedOperationException();}
 
-		//Referred to li
-		@Override public boolean hasNext() {return li.hasNext();}
-		@Override public boolean hasPrevious() {return li.hasPrevious();}
-		@Override public T next() {return li.next();}
-		@Override public int nextIndex() {return li.nextIndex();}
-		@Override public T previous() {return li.previous();}
-		@Override public int previousIndex() {return li.previousIndex();}
+		@Override
+		public boolean hasNext()
+		{
+			return currPos < myArray.length;
+		}
+
+		@Override
+		public boolean hasPrevious()
+		{
+			return currPos > 0;
+		}
+
+		@Override
+		public T next()
+		{
+			if (!hasNext())
+				throw new NoSuchElementException();
+			
+			return myArray[currPos++];
+		}
+
+		@Override
+		public int nextIndex()
+		{
+			return currPos;
+		}
+
+		@Override
+		public T previous()
+		{
+			if (!hasPrevious())
+				throw new NoSuchElementException();
+			
+			return myArray[--currPos];
+		}
+
+		@Override
+		public int previousIndex()
+		{
+			return currPos - 1;
+		}
 	}
 }

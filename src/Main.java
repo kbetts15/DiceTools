@@ -125,9 +125,12 @@ public class Main
 	{
 		System.out.println("##### Testing ImmutableList .equals() #####");
 		
-		ImmutableList<Integer> immListA = new ImmutableList<Integer>(1, 2, 5);
-		ImmutableList<Integer> immListB = new ImmutableList<Integer>(1, 2, 5);
-		ImmutableList<Integer> immListC = new ImmutableList<Integer>(1, 2, 4);
+		Integer[] arrA = {1, 2, 5};
+		Integer[] arrB = {1, 2, 4};
+		
+		ImmutableList<Integer> immListA = new ImmutableList<Integer>(arrA);
+		ImmutableList<Integer> immListB = new ImmutableList<Integer>(arrA);
+		ImmutableList<Integer> immListC = new ImmutableList<Integer>(arrB);
 		LinkedList<Integer> immListD = new LinkedList<Integer>(immListA);
 		
 		System.out.printf("immListA %c= immListB\n", immListA.equals(immListB) ? '=' : '!');
