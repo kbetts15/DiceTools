@@ -189,8 +189,15 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	@Override
 	public void replaceAll(BiFunction<? super K, ? super Double, ? extends Double> function)
 	{
-		super.replaceAll(function);
-		super.forEach(invalidRemover); //TODO: this is inelegant - find a better way
+		for (Entry<K, Double> entry : this.entrySet())
+		{
+			final K key = entry.getKey();
+			final Double prob = entry.getValue();
+			
+			Double newProb = function.apply(key, prob);
+			
+			this.put(key, newProb);
+		}
 	}
 	
 	@Override
