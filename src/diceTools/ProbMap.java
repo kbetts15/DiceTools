@@ -13,13 +13,13 @@ import java.util.function.Supplier;
 /**
  * Stores the probabilities of observing discrete events (such as dice rolls or darts scores).
  * <p>Events and their probabilities are stored as key-value pairs,
- * with {@link java.util.HashMap#HashMap} as the underlying implementation.
+ * with {@link java.util.HashMap#HashMap HashMap} as the underlying implementation.
  * Event probabilities are stored as <code>Double</code>s,
  * which are permitted to take values greater than 1 or less than 0, but never <code>null</code>.
  * 
  * @author kieran
  *
- * @param <K>	Type of the events
+ * @param <K>	Type of the keys
  */
 public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<ProbMap<K>>
 {
@@ -488,7 +488,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 */
 	public static <T extends Doubleable> Double getMean(ProbMap<T> pm)
 	{
-		Function<T, Double> function = new Function<T, Double>() {
+		Function<T, Double> function = new Function<T, Double>() { //TODO: make this static
 			@Override
 			public Double apply(T key)
 			{
@@ -513,7 +513,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		
 		List<Entry<K, Double>> entryList = new ArrayList<Entry<K, Double>>(this.entrySet());
 		
-		Comparator<Entry<K, Double>> entryComp = new Comparator<Entry<K, Double>>() {
+		Comparator<Entry<K, Double>> entryComp = new Comparator<Entry<K, Double>>() { //TODO: make this static
 			@Override
 			public int compare(Entry<K, Double> a, Entry<K, Double> b)
 			{
@@ -553,7 +553,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		Comparator<T> comp = new Comparator<T>() {
 
 			@Override
-			public int compare(T a, T b)
+			public int compare(T a, T b) //TODO: make this static
 			{
 				return a.compareTo(b);
 			}
@@ -620,7 +620,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		}
 	}
 	
-	public static interface Doubleable
+	public static interface Doubleable //TODO: move this to its own class?
 	{
 		public Double toDouble();
 	}
