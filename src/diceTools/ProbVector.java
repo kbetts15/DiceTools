@@ -69,7 +69,11 @@ public class ProbVector extends ProbMap<Integer>
 		return new ProbVector();
 	}
 	
-	//TODO: generate diceRoll using binomial maths
+	public Double getMean()
+	{
+		return null; //TODO
+	}
+	
 	/**
 	 * Generate the {@link ProbVector} which results from rolling a set of identical unbiased dice
 	 * @param numDice	number of dice to be rolled

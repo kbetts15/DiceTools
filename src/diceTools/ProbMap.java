@@ -1,6 +1,9 @@
 package diceTools;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -443,11 +446,128 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 	
 	/**
+	 * Find the mode average, and return it as an {@link java.util.HashMap#Entry Entry}.
+	 * @return		<code>Entry</code> with the highest probability in the <code>ProbMap</code>
+	 */
+	public Entry<K, Double> getMode()
+	{
+		Entry<K, Double> mode = null;
+		
+		for (Entry<K, Double> entry : entrySet())
+			if (mode == null || mode.getValue() < entry.getValue())
+				mode = entry;
+		
+		return mode;
+	}
+	
+	/**
+	 * Find the mean average by converting keys into <code>Double</code>s.
+	 * @param function	rule for converting keys into <code>Double</code>s
+	 * @return			the sum of key <code>Double</code>s multiplied by their probabilities
+	 */
+	public Double getMean(Function<K, Double> function)
+	{
+		Double mean = null;
+
+		for (Entry<K, Double> entry : this.entrySet())
+		{
+			if (mean == null)
+				mean = 0.0;
+			
+			mean = function.apply(entry.getKey()) * entry.getValue();
+		}
+		
+		return mean;
+	}
+	
+	/**
+	 * Find the mean average of a <code>ProbMap</code>
+	 * by converting keys into <code>Double</code>s.
+	 * @param pm	<code>ProbMap</code> for which the mean average is to be found
+	 * @return		the sum of key <code>Double</code>s multiplied by their probabilities
+	 */
+	public static <T extends Doubleable> Double getMean(ProbMap<T> pm)
+	{
+		Function<T, Double> function = new Function<T, Double>() {
+			@Override
+			public Double apply(T key)
+			{
+				return key.toDouble();
+			}
+		};
+		
+		return pm.getMean(function);
+	}
+	
+	/**
+	 * Find the median average when keys are ordered.
+	 * @param comp	rule for ordering keys
+	 * @return		the first key which, when its probability is summed with the
+	 * 				probabilities of all preceding keys, results in a probability
+	 * 				greater than or equal to the sum of all the probabilities
+	 */
+	public Entry<K, Double> getMedian(Comparator<K> comp)
+	{
+		if (this.isEmpty())
+			return null;
+		
+		List<Entry<K, Double>> entryList = new ArrayList<Entry<K, Double>>(this.entrySet());
+		
+		Comparator<Entry<K, Double>> entryComp = new Comparator<Entry<K, Double>>() {
+			@Override
+			public int compare(Entry<K, Double> a, Entry<K, Double> b)
+			{
+				return comp.compare(a.getKey(), b.getKey());
+			}
+		};
+		
+		entryList.sort(entryComp);
+		Double probTarget = 0.0;
+		
+		for (Entry<K, Double> entry : entryList)
+			probTarget += entry.getValue();
+		
+		probTarget /= 2;
+		
+		Double probSoFar = 0.0;
+		
+		for (Entry<K, Double> entry : entryList)
+		{
+			probSoFar += entry.getValue();
+			if (probSoFar >= probTarget)
+				return entry;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Find the median average of a <code>ProbMap</code> when keys are ordered.
+	 * @param pm	<code>ProbMap</code> for which the median is to be found
+	 * @return		the first key which, when its probability is summed with the
+	 * 				probabilities of all preceding keys, results in a probability
+	 * 				greater than or equal to the sum of all the probabilities
+	 */
+	public static <T extends Comparable<T>> Entry<T, Double> getMedian(ProbMap<T> pm)
+	{
+		Comparator<T> comp = new Comparator<T>() {
+
+			@Override
+			public int compare(T a, T b)
+			{
+				return a.compareTo(b);
+			}
+		};
+		
+		return pm.getMedian(comp);
+	}
+	
+	/**
 	 * Make a key from an <code>Object</code>.
 	 * If more complex behaviour than casting is required,
 	 * subclasses should override this method.
-	 * @param oKey	<code>Object
-	 * @return
+	 * @param oKey	<code>Object</code> to be made into a key
+	 * @return		key with correct type
 	 */
 	public K makeKey(Object oKey)
 	{
@@ -498,5 +618,10 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		{
 			super(message);
 		}
+	}
+	
+	public static interface Doubleable
+	{
+		public Double toDouble();
 	}
 }
