@@ -1,3 +1,5 @@
+package diceTools;
+
 /**
  * Concrete class implementing {@link ProbMap} without adding any functionality.
  * All keys are valid, sanitizing keys returns the same key.

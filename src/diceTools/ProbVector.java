@@ -1,3 +1,5 @@
+package diceTools;
+
 import java.util.function.BiFunction;
 
 /**
