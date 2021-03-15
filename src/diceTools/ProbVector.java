@@ -1,6 +1,8 @@
 package diceTools;
 
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Implementation of {@link ProbMap} with <code>Integer</code> values used for event keys.
@@ -18,6 +20,11 @@ public class ProbVector extends ProbMap<Integer>
 	 */
 	private static final BiFunction<Integer, Integer, Integer> sumCombiner;
 	
+	/**
+	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
+	 */
+	private static final Function<List<Integer>, Integer> sumFlattener;
+	
 	static
 	{
 		sumCombiner = new BiFunction<Integer, Integer, Integer>()
@@ -26,6 +33,20 @@ public class ProbVector extends ProbMap<Integer>
 			public Integer apply(Integer a, Integer b)
 			{
 				return a + b;
+			}
+		};
+		
+		sumFlattener = new Function<List<Integer>, Integer>()
+		{
+			@Override
+			public Integer apply(List<Integer> key)
+			{
+				int total = 0;
+				
+				for (Integer myInt : key)
+					total += myInt;
+				
+				return total;
 			}
 		};
 	}
@@ -57,9 +78,16 @@ public class ProbVector extends ProbMap<Integer>
 	 */
 	public static ProbVector diceRoll(int numDice, int sides)
 	{
-		//TODO: do this withour involving DiceRollVector
+		ProbVector pv = new ProbVector();
 		
-		return DiceRollVector.diceRoll(numDice, sides).flatten();
+		DiceRollIterable dri = new DiceRollIterable(numDice, sides);
+		for (Entry<List<Integer>, Double> entry : dri)
+		{
+			Integer key = sumFlattener.apply(entry.getKey());
+			pv.merge(key, entry.getValue(), sumMerger);
+		}
+		
+		return pv;
 	}
 	
 	/**

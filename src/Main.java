@@ -5,17 +5,22 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
+import diceTools.DiceRollIterable;
+import diceTools.DiceRollVector;
+import diceTools.ImmutableList;
+import diceTools.ProbVector;
+
 public class Main
 {
 
 	public static void main(String[] args)
 	{
 		testPutting();
-//		testPVrolls();
-//		testDRVrolls();
-//		testDRVflatten();
-//		diceRollIterTest();
-//		immListEqualsTest();
+		testPVrolls();
+		testDRVrolls();
+		testDRVflatten();
+		diceRollIterTest();
+		immListEqualsTest();
 	}
 
 	private static void testPVrolls()

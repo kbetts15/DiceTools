@@ -130,11 +130,10 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 */
 	public static DiceRollVector diceRoll(int numDice, int sides)
 	{
-		DiceRollVector drv = new DiceRollVector();
-		
 		DiceRollIterable dri = new DiceRollIterable(numDice, sides);
-		for (Entry<List<Integer>, Double> entry : dri)
-			drv.put(entry.getKey(), entry.getValue());
+		
+		DiceRollVector drv = new DiceRollVector();
+		drv.putAll(dri);
 
 		return drv;
 	}

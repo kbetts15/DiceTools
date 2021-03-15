@@ -141,6 +141,12 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		map.forEach(putter);
 	}
 	
+	public <T extends K> void putAll(Iterable<Entry<T, Double>> it)
+	{
+		for (Entry<T, Double> entry : it)
+			put(entry.getKey(), entry.getValue());
+	}
+	
 	@Override
 	public Double putIfAbsent(K key, Double value)
 	{
@@ -184,7 +190,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	public void replaceAll(BiFunction<? super K, ? super Double, ? extends Double> function)
 	{
 		super.replaceAll(function);
-		super.forEach(invalidRemover);
+		super.forEach(invalidRemover); //TODO: this is inelegant - find a better way
 	}
 	
 	@Override

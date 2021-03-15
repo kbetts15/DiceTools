@@ -7,9 +7,25 @@ import java.util.NoSuchElementException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
+/**
+ * Generates iterators to iterate all possible combinations of dice rolls.
+ * Each combination is returned as a {@link java.util.Map.Entry Map.Entry},
+ * where the key is a <code>List</code> with all the contained rolls in
+ * descending order. The value of the <code>Entry</code> is the probability
+ * of rolling that combination of dice. Each combination is iterated exactly once.
+ * 
+ * @author kieran
+ */
 public class DiceRollIterable implements Iterable<Entry<List<Integer>, Double>>
 {
+	/**
+	 * Number of dice to roll
+	 */
 	private final int numDice;
+	
+	/**
+	 * Number of sides on rolled dice
+	 */
 	private final int numSides;
 	
 	public DiceRollIterable(int numDice, int numSides)
@@ -24,58 +40,116 @@ public class DiceRollIterable implements Iterable<Entry<List<Integer>, Double>>
 		return new DiceRollIterator();
 	}
 	
+	/**
+	 * Iterates all possible combinations of dice rolls for a
+	 * {@link diceTools.DiceRollIterable DiceRollIterable instance}.
+	 * 
+	 * @author kieran
+	 */
 	private class DiceRollIterator implements Iterator<Entry<List<Integer>, Double>>
 	{
-		private final Integer[] rolls;
+		/**
+		 * Last generated roll combination
+		 */
+		private final Integer[] lastRoll;
+		
+		/**
+		 * The maximum number of possible distinct orderings of any
+		 * given roll combination.
+		 */
+		private final int maxOrderings;
+		
+		/**
+		 * The total possible distinct roll permutations.
+		 */
+		private final int possibleRolls;
 		
 		public DiceRollIterator()
 		{
-			rolls = new Integer[numDice];
+			lastRoll = new Integer[numDice];
 			
 			if (numDice > 0)
 			{
-				Arrays.fill(rolls, 1);
-				rolls[0] = 0;
+				Arrays.fill(lastRoll, 1);
+				lastRoll[0] = 0;
 			}
+			
+			maxOrderings = factorial(numDice);
+			possibleRolls = (int) Math.pow(numSides, numDice);
 		}
 
 		@Override
 		public boolean hasNext()
 		{
-			return (numDice > 0) && (rolls[numDice - 1] != numSides);
+			return (numDice > 0) && (lastRoll[numDice - 1] != numSides);
 		}
 
 		@Override
 		public Entry<List<Integer>, Double> next()
 		{
-			goToNextRoll();
+			nextRoll(lastRoll);
 			
-			List<Integer> key = Arrays.asList(rolls);
-			double prob = getProb(rolls);
+			List<Integer> key = Arrays.asList(lastRoll);
+			double prob = getProb(lastRoll);
 
 			return new SimpleEntry<List<Integer>, Double>(key, prob);
 		}
 		
-		private void goToNextRoll()
+		/**
+		 * Generate the next roll combination
+		 * @param roll		previous roll combination - must be in descending order
+		 */
+		private void nextRoll(Integer roll[])
 		{
 			if (!hasNext())
 				throw new NoSuchElementException();
 			
 			int incPos = 0;
 			
-			while (rolls[incPos] == numSides)
+			while (roll[incPos] == numSides)
 				incPos++;
 			
-			rolls[incPos]++;
+			roll[incPos]++;
 			
 			if (incPos > 0)
 				for (int i = incPos; i >= 0; i--)
-					rolls[i] = rolls[incPos];
+					roll[i] = roll[incPos];
 		}
 		
-		private double getProb(Integer[] rolls)
+		/**
+		 * Calculate the probability of getting a given roll combination
+		 * on rolling <code>numDice</code> identical unbiased dice with
+		 * <code>numSides</code> sides.
+		 * @param roll		roll combination - must be in descending order
+		 * @return			the probability of rolling the given roll combination
+		 */
+		private double getProb(Integer[] roll)
 		{
-			return 0.0; //TODO: write getProb
+			int divOrderings = 1;
+			int count = 0;
+			int lastRoll = 0;
+			
+			for (Integer r : roll)
+			{
+				count = (r == lastRoll) ? (count + 1) : 1;
+				lastRoll = r;
+				divOrderings *= count;
+			}
+			
+			return ((double) maxOrderings) / (divOrderings * possibleRolls);
+		}
+		
+		/**
+		 * Calculate the mathematical factorial of an <code>int</code>
+		 * @param in	x
+		 * @return		x!
+		 */
+		private int factorial(int in)
+		{
+			int out = in;
+			for (int i = in - 1; i > 1; i--)
+				out *= i;
+			return out;
 		}
 	}
 }
