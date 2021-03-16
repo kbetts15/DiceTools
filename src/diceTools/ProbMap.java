@@ -23,8 +23,6 @@ import java.util.function.Supplier;
  */
 public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<ProbMap<K>>
 {
-	//TODO: rework Function and BiFunctions to use specific types (eg ToDoubleFunction) where possible and appropriate
-	
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -32,6 +30,9 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 */
 	private static final BiFunction<Double, Double, Double> sumMerger;
 	
+	/**
+	 * Gets the <code>Double</code> value of a <code>Number</code>
+	 */
 	private static final Function<Number, Double> toDouble;
 	
 	/**
@@ -495,7 +496,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		Double mean = 0.0;
 		
 		for (Entry<X, Double> entry : pm.entrySet())
-			mean = function.apply(entry.getKey()) * entry.getValue();
+			mean += function.apply(entry.getKey()) * entry.getValue();
 		
 		return mean;
 	}
@@ -537,7 +538,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		
 		Double probSoFar = 0.0;
 		
-		for (Entry<T, Double> entry : pm.entrySet())
+		for (Entry<T, Double> entry : entryList)
 		{
 			probSoFar += entry.getValue();
 			if (probSoFar >= probTarget)
