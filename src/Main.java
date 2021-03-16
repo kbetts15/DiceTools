@@ -17,12 +17,12 @@ public class Main
 
 	public static void main(String[] args)
 	{
-//		testPutting();
-//		testPVrolls();
-//		testDRVrolls();
-//		testDRVflatten();
-//		diceRollIterTest();
-//		immListEqualsTest();
+		testPutting();
+		testPVrolls();
+		testDRVrolls();
+		testDRVflatten();
+		diceRollIterTest();
+		immListEqualsTest();
 		averageTest();
 	}
 
@@ -174,8 +174,6 @@ public class Main
 				}
 			
 			liNew.set(minPos, 6);
-			
-//			System.out.printf("\t\t%15s->%s\n", li.toString(), liNew.toString());
 			
 			return liNew;
 		};
