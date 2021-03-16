@@ -480,7 +480,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	
 	/**
 	 * Find the mean average of a <code>ProbMap</code>
-	 * by converting {@link Doubleable} keys into <code>Double</code>s.
+	 * by converting keys into <code>Double</code>s.
 	 * @param <X>		type of the <code>ProbMap</code> keys
 	 * @param <Y>		type which the <code>Function</code> accepts,
 	 * 					which includes <code>X</code>
@@ -502,8 +502,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * Find the mean average of a <code>ProbMap</code>
-	 * by converting {@link Doubleable} keys into <code>Double</code>s.
+	 * Find the mean average of a <code>ProbMap</code> of <code>Number</code>s
 	 * @param pm	<code>ProbMap</code> for which the mean average is to be found
 	 * @return		the sum of key <code>Double</code>s multiplied by their probabilities
 	 */
