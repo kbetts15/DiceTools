@@ -83,7 +83,7 @@ public class ProbVector extends ProbMap<Integer>
 		for (Entry<List<Integer>, Double> entry : dri)
 		{
 			Integer key = sumFlattener.apply(entry.getKey());
-			pv.merge(key, entry.getValue(), sumMerger);
+			pv.merge(key, entry.getValue());
 		}
 		
 		return pv;

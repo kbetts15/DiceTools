@@ -23,22 +23,21 @@ import java.util.function.Supplier;
  */
 public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<ProbMap<K>>
 {
+	//TODO: rework Function and BiFunctions to use specific types (eg ToDoubleFunction) where possible and appropriate
+	
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Sums together <code>Double</code> pairs
 	 */
-	protected static final BiFunction<Double, Double, Double> sumMerger;
+	private static final BiFunction<Double, Double, Double> sumMerger;
+	
+	private static final Function<Number, Double> toDouble;
 	
 	/**
 	 * <code>put</code>s key-value pairs into the ProbMap
 	 */
-	protected final BiConsumer<K, Double> putter;
-	
-	/**
-	 * <code>remove</code>s key-value pairs from the ProbMap
-	 */
-	protected final BiConsumer<K, Double> invalidRemover;
+	private final BiConsumer<K, Double> putter;
 	
 	static
 	{
@@ -55,6 +54,15 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 				return a + b;
 			}
 		};
+		
+		toDouble = new Function<Number, Double>()
+		{
+			@Override
+			public Double apply(Number num)
+			{
+				return num.doubleValue();
+			}
+		};
 	}
 	
 	public ProbMap()
@@ -65,16 +73,6 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 					public void accept(K key, Double value)
 					{
 						ProbMap.this.put(key, value);
-					}
-				};
-				
-		invalidRemover = new BiConsumer<K, Double>()
-				{
-					@Override
-					public void accept(K key, Double value)
-					{
-						if (!keyIsValid(key) || value == null)
-							ProbMap.this.remove(key);
 					}
 				};
 	}
@@ -210,6 +208,22 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		K sanitizedKey = sanitizeKey(key);
 		
 		return super.merge(sanitizedKey, value, remappingFunction);
+	}
+	
+	/**
+	 * Perform {@link java.util.HashMap#merge HashMap.merge} using
+	 * {@link diceTools.ProbMap#sumMerger sumMerger} for the <code>BiFunction</code>
+	 * @param key		key with which the resulting value is to be associated
+	 * @param value		the non-null value to be merged with the existing value
+	 * 					associated with the key or, if no existing value or a
+	 * 					null value is associated with the key, to be associated
+	 * 					with the key
+	 * @return			the new value associated with the specified key, or null
+	 * 					if no value is associated with the key
+	 */
+	public Double merge(K key, Double value)
+	{
+		return merge(key, value, sumMerger);
 	}
 	
 	@Override
@@ -446,101 +460,94 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * Find the mode average, and return it as an {@link java.util.HashMap#Entry Entry}.
+	 * Find the mode average of a <code>ProbMap</code>,
+	 * and return it as a {@link java.util.HashMap#Entry HashMap.Entry}.
+	 * @param <T>	type of the <code>ProbMap</code> keys
+	 * @param pm	<code>ProbMap</code> to find the mode average of
 	 * @return		<code>Entry</code> with the highest probability in the <code>ProbMap</code>
 	 */
-	public Entry<K, Double> getMode()
+	public static <T> Entry<T, Double> getMode(ProbMap<T> pm)
 	{
-		Entry<K, Double> mode = null;
+		Entry<T, Double> mode = null;
 		
-		for (Entry<K, Double> entry : entrySet())
-			if (mode == null || mode.getValue() < entry.getValue())
+		for (Entry<T, Double> entry : pm.entrySet())
+			if (mode == null || entry.getValue() > mode.getValue())
 				mode = entry;
 		
 		return mode;
 	}
 	
 	/**
-	 * Find the mean average by converting keys into <code>Double</code>s.
+	 * Find the mean average of a <code>ProbMap</code>
+	 * by converting {@link Doubleable} keys into <code>Double</code>s.
+	 * @param <X>		type of the <code>ProbMap</code> keys
+	 * @param <Y>		type which the <code>Function</code> accepts,
+	 * 					which includes <code>X</code>
+	 * @param pm		<code>ProbMap</code> for which the mean average is to be found
 	 * @param function	rule for converting keys into <code>Double</code>s
 	 * @return			the sum of key <code>Double</code>s multiplied by their probabilities
-	 */
-	public Double getMean(Function<K, Double> function)
+	 **/
+	public static <X extends Y, Y> Double getMean(ProbMap<X> pm, Function<Y, Double> function)
 	{
-		Double mean = null;
-
-		for (Entry<K, Double> entry : this.entrySet())
-		{
-			if (mean == null)
-				mean = 0.0;
-			
+		if (pm.isEmpty())
+			return null;
+		
+		Double mean = 0.0;
+		
+		for (Entry<X, Double> entry : pm.entrySet())
 			mean = function.apply(entry.getKey()) * entry.getValue();
-		}
 		
 		return mean;
 	}
 	
 	/**
 	 * Find the mean average of a <code>ProbMap</code>
-	 * by converting keys into <code>Double</code>s.
+	 * by converting {@link Doubleable} keys into <code>Double</code>s.
 	 * @param pm	<code>ProbMap</code> for which the mean average is to be found
 	 * @return		the sum of key <code>Double</code>s multiplied by their probabilities
 	 */
-	public static <T extends Doubleable> Double getMean(ProbMap<T> pm)
+	public static <T extends Number> Double getMean(ProbMap<T> pm)
 	{
-		Function<T, Double> function = new Function<T, Double>() { //TODO: make this static
-			@Override
-			public Double apply(T key)
-			{
-				return key.toDouble();
-			}
-		};
-		
-		return pm.getMean(function);
+		return ProbMap.getMean(pm, toDouble);
 	}
 	
 	/**
-	 * Find the median average when keys are ordered.
+	 * Find the median average of a <code>ProbMap</code> when keys are ordered.
 	 * @param comp	rule for ordering keys
 	 * @return		the first key which, when its probability is summed with the
 	 * 				probabilities of all preceding keys, results in a probability
 	 * 				greater than or equal to the sum of all the probabilities
 	 */
-	public Entry<K, Double> getMedian(Comparator<K> comp)
+	public static <T> Entry<T, Double> getMedian(ProbMap<T> pm, Comparator<T> comp)
 	{
-		if (this.isEmpty())
+		if (pm.isEmpty())
 			return null;
 		
-		List<Entry<K, Double>> entryList = new ArrayList<Entry<K, Double>>(this.entrySet());
+		List<Entry<T, Double>> entryList = new ArrayList<Entry<T, Double>>(pm.entrySet());
 		
-		Comparator<Entry<K, Double>> entryComp = new Comparator<Entry<K, Double>>() { //TODO: make this static
-			@Override
-			public int compare(Entry<K, Double> a, Entry<K, Double> b)
-			{
-				return comp.compare(a.getKey(), b.getKey());
-			}
-		};
+		Comparator<Entry<T, Double>> entryComp = Comparator.comparing((e)->{return e.getKey();}, comp);
 		
 		entryList.sort(entryComp);
 		Double probTarget = 0.0;
 		
-		for (Entry<K, Double> entry : entryList)
-			probTarget += entry.getValue();
+		for (Double prob : pm.values())
+			probTarget += prob;
 		
 		probTarget /= 2;
 		
 		Double probSoFar = 0.0;
 		
-		for (Entry<K, Double> entry : entryList)
+		for (Entry<T, Double> entry : pm.entrySet())
 		{
 			probSoFar += entry.getValue();
 			if (probSoFar >= probTarget)
 				return entry;
 		}
 		
+		//This should never be reached
 		return null;
 	}
-	
+		
 	/**
 	 * Find the median average of a <code>ProbMap</code> when keys are ordered.
 	 * @param pm	<code>ProbMap</code> for which the median is to be found
@@ -550,16 +557,9 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 */
 	public static <T extends Comparable<T>> Entry<T, Double> getMedian(ProbMap<T> pm)
 	{
-		Comparator<T> comp = new Comparator<T>() {
-
-			@Override
-			public int compare(T a, T b) //TODO: make this static
-			{
-				return a.compareTo(b);
-			}
-		};
+		Comparator<T> comp = Comparator.naturalOrder();
 		
-		return pm.getMedian(comp);
+		return getMedian(pm, comp);
 	}
 	
 	/**
@@ -618,10 +618,5 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		{
 			super(message);
 		}
-	}
-	
-	public static interface Doubleable //TODO: move this to its own class?
-	{
-		public Double toDouble();
 	}
 }
