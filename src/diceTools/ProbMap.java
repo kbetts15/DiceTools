@@ -488,7 +488,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @param function	rule for converting keys into <code>Double</code>s
 	 * @return			the sum of key <code>Double</code>s multiplied by their probabilities
 	 **/
-	public static <X extends Y, Y> Double getMean(ProbMap<X> pm, Function<Y, Double> function)
+	public static <X> Double getMean(ProbMap<X> pm, Function<? super X, Double> function)
 	{
 		if (pm.isEmpty())
 			return null;
@@ -518,7 +518,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * 				probabilities of all preceding keys, results in a probability
 	 * 				greater than or equal to the sum of all the probabilities
 	 */
-	public static <T> Entry<T, Double> getMedian(ProbMap<T> pm, Comparator<T> comp)
+	public static <T> Entry<T, Double> getMedian(ProbMap<T> pm, Comparator<? super T> comp)
 	{
 		if (pm.isEmpty())
 			return null;
