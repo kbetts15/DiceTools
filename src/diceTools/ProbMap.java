@@ -38,7 +38,14 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	/**
 	 * <code>put</code>s key-value pairs into the ProbMap
 	 */
-	private final BiConsumer<K, Double> putter;
+	private final BiConsumer<K, Double> putter = new BiConsumer<K, Double>()
+	{
+		@Override
+		public void accept(K key, Double value)
+		{
+			ProbMap.this.put(key, value);
+		}
+	};
 	
 	static
 	{
@@ -68,14 +75,22 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	
 	public ProbMap()
 	{
-		putter = new BiConsumer<K, Double>()
-				{
-					@Override
-					public void accept(K key, Double value)
-					{
-						ProbMap.this.put(key, value);
-					}
-				};
+		super();
+	}
+	
+	public ProbMap(ProbMap<K> pm)
+	{
+		super(pm);
+	}
+	
+	public ProbMap(int initialCapacity)
+	{
+		super(initialCapacity);
+	}
+	
+	public ProbMap(int initialCapacity, float loadFactor)
+	{
+		super(initialCapacity, loadFactor);
 	}
 	
 	@Override
@@ -143,9 +158,9 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		map.forEach(putter);
 	}
 	
-	public <T extends K> void putAll(Iterable<Entry<T, Double>> it)
+	public <T extends K> void putAll(Iterable<? extends Entry<? extends T, Double>> it)
 	{
-		for (Entry<T, Double> entry : it)
+		for (Entry<? extends T, Double> entry : it)
 			put(entry.getKey(), entry.getValue());
 	}
 	
@@ -283,7 +298,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
 	 * 				which is implemented by the subclass.
 	 */
-	public ProbMap<K> morph(Function<K, K> f)
+	public ProbMap<K> morph(Function<? super K, ? extends K> f)
 	{
 		return morph(f, this);
 	}
@@ -300,7 +315,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @return		<code>ProbMap</code> containing the morphed data,
 	 * 				created using <code>s.get()</code>
 	 */
-	public <T> ProbMap<T> morph(Function<? super K, ? extends T> f, Supplier<ProbMap<T>> s)
+	public <T> ProbMap<T> morph(Function<? super K, ? extends T> f, Supplier<? extends ProbMap<T>> s)
 	{
 		ProbMap<T> newMap = s.get();
 		
@@ -327,7 +342,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
 	 * 				which is implemented by the subclass.
 	 */
-	public ProbMap<K> fork(Function<? super K, ? extends ProbMap<K>> f)
+	public <T>ProbMap<K> fork(Function<? super K, ? extends ProbMap<? extends K>> f)
 	{
 		return fork(f, this);
 	}
@@ -344,7 +359,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @return		<code>ProbMap</code> containing the forked data,
 	 * 				created using <code>s.get()</code>
 	 */
-	public <T> ProbMap<T> fork(Function<? super K, ? extends ProbMap<T>> f, Supplier<? extends ProbMap<T>> s)
+	public <T> ProbMap<T> fork(Function<? super K, ? extends ProbMap<? extends T>> f, Supplier<? extends ProbMap<T>> s)
 	{
 		ProbMap<T> newMap = s.get();
 		
@@ -353,9 +368,9 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 			final K myKey = myEntry.getKey();
 			final Double myProb = myEntry.getValue();
 			
-			ProbMap<T> tempMap = f.apply(myKey);
+			ProbMap<? extends T> tempMap = f.apply(myKey);
 			
-			for (Entry<T, Double> tEntry : tempMap.entrySet())
+			for (Entry<? extends T, Double> tEntry : tempMap.entrySet())
 			{
 				final T tKey = tEntry.getKey();
 				final Double tProb = tEntry.getValue();
@@ -407,7 +422,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * 				s.{@link java.util.function.Supplier#get get},
 	 * 				which is implemented by the subclass.
 	 */
-	public <X, Y> ProbMap<Y> combine(BiFunction<? super K, ? super X, ? extends Y> f, ProbMap<X> p, Supplier<? extends ProbMap<Y>> s)
+	public <X, Y> ProbMap<Y> combine(BiFunction<? super K, ? super X, ? extends Y> f, ProbMap<? extends X> p, Supplier<? extends ProbMap<Y>> s)
 	{
 		ProbMap<Y> newMap = s.get();
 		
@@ -416,7 +431,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 			final K myKey = myEntry.getKey();
 			final Double myProb = myEntry.getValue();
 			
-			for (Entry<X, Double> pEntry : p.entrySet())
+			for (Entry<? extends X, Double> pEntry : p.entrySet())
 			{
 				final X pKey = pEntry.getKey();
 				final Double pProb = pEntry.getValue();
@@ -447,7 +462,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * this <code>ProbMap</code>.
 	 * @return		<code>Supplier</code> which supplies this <code>ProbMap</code>
 	 */
-	public Supplier<ProbMap<K>> supplyMe()
+	public Supplier<? extends ProbMap<K>> supplyMe()
 	{
 		return new Supplier<ProbMap<K>>() {
 
@@ -488,7 +503,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * @param function	rule for converting keys into <code>Double</code>s
 	 * @return			the sum of key <code>Double</code>s multiplied by their probabilities
 	 **/
-	public static <T> Double getMean(ProbMap<T> pm, Function<? super T, Double> function)
+	public static <T> Double getMean(ProbMap<T> pm, Function<? super T, ? extends Double> function)
 	{
 		if (pm.isEmpty())
 			return null;

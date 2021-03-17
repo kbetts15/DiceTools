@@ -51,6 +51,26 @@ public class ProbVector extends ProbMap<Integer>
 		};
 	}
 	
+	public ProbVector()
+	{
+		super();
+	}
+	
+	public ProbVector(ProbVector pv)
+	{
+		super(pv);
+	}
+	
+	public ProbVector(int initialCapacity)
+	{
+		super(initialCapacity);
+	}
+	
+	public ProbVector(int initialCapacity, float loadFactor)
+	{
+		super(initialCapacity, loadFactor);
+	}
+	
 	@Override
 	public boolean keyIsValid(Integer key) throws InvalidKeyException
 	{

@@ -17,7 +17,7 @@ public class ImmutableList<T> implements List<T>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ImmutableList(Collection<T> ts)
+	public ImmutableList(Collection<? extends T> ts)
 	{
 		myArray = (T[]) ts.toArray();
 	}

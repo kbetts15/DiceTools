@@ -1,5 +1,6 @@
 package diceTools;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -76,6 +77,37 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 				return newList;
 			}
 		};
+	}
+	
+	public DiceRollVector()
+	{
+		super();
+	}
+	
+	public DiceRollVector(DiceRollVector drv)
+	{
+		super(drv);
+	}
+	
+	public DiceRollVector(ProbVector pv)
+	{
+		super();
+		List<Integer> pvInt = new ArrayList<Integer>(1);
+		for (Entry<Integer, Double> pvEntry : pv.entrySet())
+		{
+			pvInt.set(0, pvEntry.getKey());
+			this.put(pvInt, pvEntry.getValue());
+		}
+	}
+	
+	public DiceRollVector(int initialCapacity)
+	{
+		super(initialCapacity);
+	}
+	
+	public DiceRollVector(int initialCapacity, float loadFactor)
+	{
+		super(initialCapacity, loadFactor);
 	}
 	
 	@Override
@@ -186,7 +218,7 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	 * @param function	function which combines the rolls
 	 * @return			{@link ProbVector} storing the combined rolls and their probabilities
 	 */
-	public ProbVector flatten(Function<List<Integer>, Integer> function)
+	public ProbVector flatten(Function<? super List<Integer>, ? extends Integer> function)
 	{
 		return (ProbVector) super.morph(function, new ProbVector().supplyMe());
 	}

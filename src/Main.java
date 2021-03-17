@@ -11,19 +11,25 @@ import diceTools.DiceRollVector;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
 import diceTools.ProbVector;
+import diceTools.function.KeepN;
 
 public class Main
 {
 
 	public static void main(String[] args)
 	{
-		testPutting();
-		testPVrolls();
-		testDRVrolls();
-		testDRVflatten();
-		diceRollIterTest();
-		immListEqualsTest();
-		averageTest();
+		DiceRollVector drv = DiceRollVector.diceRoll(3, 4);
+		System.out.printf("%10s: %s\n", "3d4", drv.toString());
+		drv = (DiceRollVector) drv.morph(KeepN.keepHighestN(1));
+		System.out.printf("%10s: %s\n", "3d4kh1", drv.toString());
+		
+//		testPutting();
+//		testPVrolls();
+//		testDRVrolls();
+//		testDRVflatten();
+//		diceRollIterTest();
+//		immListEqualsTest();
+//		averageTest();
 	}
 
 	private static void testPVrolls()
