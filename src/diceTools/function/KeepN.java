@@ -13,7 +13,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	private final int nKeep;
 	private final Comparator<? super T> comp;
 	
-	public KeepN(int nKeep, Comparator<T> comp)
+	public KeepN(int nKeep, Comparator<? super T> comp)
 	{
 		this.nKeep = nKeep;
 		this.comp = comp;
@@ -22,6 +22,9 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	@Override
 	public List<T> apply(List<T> li)
 	{
+		if (li == null)
+			throw new NullPointerException();
+		
 		if (li.size() <= nKeep)
 			return new ImmutableList<T>(li);
 		
@@ -48,7 +51,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 			liCopy.remove(pickPos);
 		}
 		
-		return new ImmutableList<T>(liKeep);
+		return liKeep;
 	}
 
 	public static <C extends Comparable<C>> Function<List<C>, List<C>> keepNaturalN(int nKeep)
