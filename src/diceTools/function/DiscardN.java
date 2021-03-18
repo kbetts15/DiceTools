@@ -53,7 +53,9 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 		if (li == null)
 			throw new NullPointerException();
 		
-		if (li.size() - nDiscard <= 0)
+		final int size = li.size();
+		
+		if (size - nDiscard <= 0)
 			return new ArrayList<T>(0);
 		
 		List<T> liRemain = new ArrayList<T>(li);

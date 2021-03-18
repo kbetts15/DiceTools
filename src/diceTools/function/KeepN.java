@@ -54,7 +54,9 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 		if (li == null)
 			throw new NullPointerException();
 		
-		if (li.size() <= nKeep)
+		final int size = li.size();
+		
+		if (size <= nKeep)
 			return new ImmutableList<T>(li);
 		
 		List<T> liCopy = new ArrayList<T>(li);
