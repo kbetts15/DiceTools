@@ -86,7 +86,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	/**
 	 * Creates a <code>KeepN</code> which orders elements by their natural ordering
 	 * @param nKeep		number of elements to keep
-	 * @return			<code>KeepN<code> which keeps the first <code>nKeep</code> elements of
+	 * @return			<code>KeepN</code> which keeps the first <code>nKeep</code> elements of
 	 * 					a <code>List</code> according to the elements' natural ordering
 	 */
 	public static <C extends Comparable<C>> Function<List<C>, List<C>> keepNaturalN(int nKeep)

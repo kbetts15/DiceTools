@@ -23,6 +23,8 @@ import diceTools.ImmutableList;
  **/
 public class Append <T> implements Function<List<T>, List<T>>
 {
+	//TODO: store the elements to append as an Iterable?
+	
 	/**
 	 * Elements to append to each <code>List</code>
 	 **/
