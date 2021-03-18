@@ -69,10 +69,27 @@ public class Append <T> implements Function<List<T>, List<T>>
 		return liNew;
 	}
 	
+	/**
+	 * <code>Iterable</code> for single elements.
+	 * Iterators produced by <code>IterSingle</code> produce a single
+	 * element, exactly once if that element is non-null,
+	 * zero times otherwise
+	 *
+	 * @param <X>	type of the element which is iterated
+	 * 
+	 * @author kieran
+	 */
 	private static class IterSingle<X> implements Iterable<X>
 	{
+		/**
+		 * Element produced upon iteration
+		 */
 		private final X x;
 		
+		/**
+		 * Constructs an <code>IterSingle<code> for an element
+		 * @param x		element which the <code>IterSingle</code> produces
+		 */
 		public IterSingle(X x)
 		{
 			this.x = x;
@@ -84,10 +101,24 @@ public class Append <T> implements Function<List<T>, List<T>>
 			return new It();
 		}
 		
+		/**
+		 * <code>Iterator</code> which produces the element stored by the
+		 * <code>IterSingle</code> exactly once if the element is non-null,
+		 * zero times otherwise.
+		 * 
+		 * @author kieran
+		 */
 		private class It implements Iterator<X>
 		{
+			/**
+			 * Stores whether <code>next</code> has been called yet
+			 */
 			boolean unused;
 			
+			/**
+			 * Constructs an <code>It</code> which produces the element
+			 * stored by the <code>IterSingle</code>
+			 */
 			public It()
 			{
 				unused = (x != null);
