@@ -11,7 +11,8 @@ import diceTools.ImmutableList;
 /**
  * {@link java.util.function.Function#Function Function} to append values
  * to a <code>List</code>. This process is performed by copying the
- * <code>List</code>, then appending the new values.
+ * <code>List</code>, then appending the new values to the copy,
+ * which is returned.
  *
  * <p><code>Append&ltInteger&gt</code> is a valid argument for
  * {@link diceTools.DiceRollVector#morph(Function) DiceRollVector(Function)}
