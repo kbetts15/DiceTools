@@ -27,6 +27,11 @@ public class ImmutableList<T> implements List<T>
 	@Override public boolean addAll(Collection<? extends T> c) {throw new UnsupportedOperationException();}
 	@Override public boolean addAll(int index, Collection<? extends T> c) {throw new UnsupportedOperationException();}
 	@Override public void clear() {throw new UnsupportedOperationException();}
+	@Override public boolean remove(Object o) {throw new UnsupportedOperationException();}
+	@Override public T remove(int index) {throw new UnsupportedOperationException();}
+	@Override public boolean removeAll(Collection<?> c) {throw new UnsupportedOperationException();}
+	@Override public boolean retainAll(Collection<?> c) {throw new UnsupportedOperationException();}
+	@Override public T set(int index, T element) {throw new UnsupportedOperationException();}
 
 	@Override
 	public boolean contains(Object o)
@@ -168,12 +173,6 @@ public class ImmutableList<T> implements List<T>
 	{
 		return new ImmutListIterator(index);
 	}
-
-	@Override public boolean remove(Object o) {throw new UnsupportedOperationException();}
-	@Override public T remove(int index) {throw new UnsupportedOperationException();}
-	@Override public boolean removeAll(Collection<?> c) {throw new UnsupportedOperationException();}
-	@Override public boolean retainAll(Collection<?> c) {throw new UnsupportedOperationException();}
-	@Override public T set(int index, T element) {throw new UnsupportedOperationException();}
 
 	@Override
 	public int size()
