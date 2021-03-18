@@ -87,10 +87,7 @@ public class ImmutableList<T> implements List<T>
 			
 			T myNext = myIter.next();
 			
-			if (myNext == null && compIter.next() != null)
-				return false;
-			
-			if (!myNext.equals(compIter.next()))
+			if (myNext == null ? compIter.next() != null : !myNext.equals(compIter.next()))
 				return false;
 		}
 		
