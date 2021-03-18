@@ -1,6 +1,5 @@
 package diceTools.function;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +20,11 @@ import java.util.function.Function;
  **/
 public class Replace <T> implements Function<List<T>, List<T>>
 {
-	//TODO: do this with Function<? super T, ? extends T> instead of a HashMap
-	
 	/**
-	 * Mapping of each element to be considered (key)
-	 * to the element which replaces it (value)
-	 **/
-	private final Map<T, T> replaceMap;
+	 * <code>Function</code> defining the mapping between elements
+	 * to be replaced, and their replacements 
+	 */
+	private final Function<T, T> replaceFunc;
 	
 	/**
 	 * Constructs a <code>Replace</code> which replaces elements in a
@@ -38,8 +35,7 @@ public class Replace <T> implements Function<List<T>, List<T>>
 	 **/
 	public Replace(T oldVal, T newVal)
 	{
-		replaceMap = new HashMap<T, T>(2);
-		replaceMap.put(oldVal, newVal);
+		replaceFunc = (x) -> {return x.equals(oldVal) ? newVal : null;};
 	}
 	
 	/**
@@ -52,9 +48,22 @@ public class Replace <T> implements Function<List<T>, List<T>>
 							from keys to be replaced, to the values
 							which replace them
 	 **/
-	public Replace(Map<? extends T, ? extends T> replaceMap)
+	public Replace(Map<? super T, ? extends T> replaceMap)
 	{
-		this.replaceMap = new HashMap<T, T>(replaceMap);
+		replaceFunc = (x) -> {return replaceMap.get(x);};
+	}
+	
+	/**
+	 * Constructs a <code>Replace</code> which replaces elements in a
+	 * <code>List</code> according to the mapping defined by a
+	 * {@link java.util.function.Function#Function Function}.
+	 * When <code>Function.apply</code> returns null, the element is not replaced.
+	 * @param replaceFunc	<code>Function</code> defining the mappings from
+	 * 						elements to be replaced, to what they are replaced with
+	 */
+	public Replace(Function<T, T> replaceFunc)
+	{
+		this.replaceFunc = replaceFunc;
 	}
 	
 	@Override
@@ -64,10 +73,12 @@ public class Replace <T> implements Function<List<T>, List<T>>
 		
 		for (T t : li)
 		{
-			if (replaceMap.containsKey(t))
-				newList.add(replaceMap.get(t));
-			else
+			T newItem = replaceFunc.apply(t);
+			
+			if (newItem == null)
 				newList.add(t);
+			else
+				newList.add(newItem);
 		}
 		
 		return newList;
