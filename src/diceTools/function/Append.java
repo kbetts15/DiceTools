@@ -1,7 +1,7 @@
 package diceTools.function;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -23,12 +23,10 @@ import diceTools.ImmutableList;
  **/
 public class Append <T> implements Function<List<T>, List<T>>
 {
-	//TODO: store the elements to append as an Iterable?
-	
 	/**
 	 * Elements to append to each <code>List</code>
-	 **/
-	private final Collection<T> app;
+	 */
+	private final Iterable<T> it;
 	
 	/**
 	 * Constructs an <code>Append</code> which appends the element
@@ -37,9 +35,7 @@ public class Append <T> implements Function<List<T>, List<T>>
 	 **/
 	public Append(T t)
 	{
-		ArrayList<T> arrL = new ArrayList<T>(1);
-		arrL.add(t);
-		app = new ImmutableList<T>(arrL);
+		it = new IterSingle<T>(t);
 	}
 	
 	/**
@@ -50,14 +46,65 @@ public class Append <T> implements Function<List<T>, List<T>>
 	 **/
 	public Append(Collection<? extends T> c)
 	{
-		app = new ImmutableList<T>(c);
+		it = new ImmutableList<T>(c);
+	}
+	
+	/**
+	 * Constructs an <code>Append<code> which appends all elements generated
+	 * by an <code>Iterable</code> (in order) to a <code>List</code>
+	 * @param it	<code>Iterable</code> which generates the elements
+	 * 				to be appended
+	 */
+	public Append(Iterable<T> it)
+	{
+		this.it = it;
 	}
 
 	@Override
 	public List<T> apply(List<T> li)
 	{
 		List<T> liNew = new LinkedList<T>(li);
-		liNew.addAll(app);
+		for (T t : it)
+			liNew.add(t);
 		return liNew;
+	}
+	
+	private static class IterSingle<X> implements Iterable<X>
+	{
+		private final X x;
+		
+		public IterSingle(X x)
+		{
+			this.x = x;
+		}
+		
+		@Override
+		public Iterator<X> iterator()
+		{
+			return new It();
+		}
+		
+		private class It implements Iterator<X>
+		{
+			boolean unused;
+			
+			public It()
+			{
+				unused = (x != null);
+			}
+
+			@Override
+			public boolean hasNext()
+			{
+				return unused;
+			}
+
+			@Override
+			public X next()
+			{
+				unused = false;
+				return x;
+			}
+		}
 	}
 }
