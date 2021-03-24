@@ -1,10 +1,13 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import diceTools.DiceRollIterable;
 import diceTools.DiceRollVector;
@@ -18,11 +21,7 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		DiceRollVector drv = DiceRollVector.diceRoll(3, 4);
-		System.out.printf("%10s: %s\n", "3d4", drv.toString());
-		drv = (DiceRollVector) drv.morph(KeepN.keepHighestN(1));
-		System.out.printf("%10s: %s\n", "3d4kh1", drv.toString());
-		
+		iterSortTest();
 //		testPutting();
 //		testPVrolls();
 //		testDRVrolls();
@@ -205,5 +204,26 @@ public class Main
 		entry = ProbMap.getMedian(pv);
 		System.out.printf("\t%15s: %2d, %.3f\n", "median", entry.getKey(), entry.getValue());
 		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(pv));
+	}
+	
+	private static void iterSortTest()
+	{
+		System.out.println("##### Testing DiceFileTools.iterableToSortedList #####");
+		
+		Integer[] intArr = {1, 3, 2, 7, 6, 5, 8, 4, 8, 2, 3};
+		Iterable<Integer> intIter = new Iterable<Integer>() {
+			@Override
+			public Iterator<Integer> iterator()
+			{
+				return Arrays.stream(intArr).iterator();
+			}
+		};
+		
+		System.out.printf("%20s: %s\n", "Initial array", Arrays.asList(intArr).toString());
+		
+		Comparator<Integer> intComp = Comparator.naturalOrder();
+		List<Integer> intList = diceTools.DiceFileTools.iterableToSortedList(intIter, intComp);
+		
+		System.out.printf("%20s: %s\n", "Sorted list", intList.toString());
 	}
 }
