@@ -6,22 +6,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import diceTools.DiceRollIterable;
 import diceTools.DiceRollVector;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
 import diceTools.ProbVector;
-import diceTools.function.KeepN;
+import textInterpret.TextInterpret;
 
 public class Main
 {
 
 	public static void main(String[] args)
 	{
-		iterSortTest();
+//		lexTest();
+//		iterSortTest();
 //		testPutting();
 //		testPVrolls();
 //		testDRVrolls();
@@ -225,5 +226,18 @@ public class Main
 		List<Integer> intList = diceTools.DiceFileTools.iterableToSortedList(intIter, intComp);
 		
 		System.out.printf("%20s: %s\n", "Sorted list", intList.toString());
+	}
+	
+	private static void lexTest()
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		while (true)
+		{
+			System.out.print(">> ");
+			String s = sc.nextLine();
+			List<String> parseList = TextInterpret.group(s);
+			System.out.println(parseList.toString());
+		}
 	}
 }
