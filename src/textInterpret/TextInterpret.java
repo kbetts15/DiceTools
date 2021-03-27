@@ -4,23 +4,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import textInterpret.infix.AddInfix;
+
 public class TextInterpret
 {
-	private static final List<Map.Entry<String, TokenUnary>> unaryOperators;
-	private static final List<Map.Entry<String, TokenInfix>> infixOperators;
-	private static final List<Map.Entry<String, TokenFunc>> funcOperators;
+	private static final List<TokenUnary> unaryOperators;
+	private static final List<TokenInfix> infixOperators;
+	private static final List<TokenFunc> funcOperators;
 	
 	static
 	{
-		unaryOperators = new LinkedList<Map.Entry<String, TokenUnary>>();
+		unaryOperators = new LinkedList<TokenUnary>();
 		
 		
 		
-		infixOperators = new LinkedList<Map.Entry<String, TokenInfix>>();
+		infixOperators = new LinkedList<TokenInfix>();
 		
+		infixOperators.add(new AddInfix());
 		
-		
-		funcOperators = new LinkedList<Map.Entry<String, TokenFunc>>();
+		funcOperators = new LinkedList<TokenFunc>();
 		
 		
 	}
