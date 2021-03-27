@@ -7,5 +7,6 @@ public enum TokenType
 	FUNC_INFIX,
 	FUNC_ARGS,
 	BRACKET_OPEN,
-	BRACKET_CLOSE
+	BRACKET_CLOSE,
+	END
 }
