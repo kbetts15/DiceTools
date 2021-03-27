@@ -3,27 +3,27 @@ package textInterpret;
 @SuppressWarnings("serial")
 public class TokenTypeMismatchException extends RuntimeException
 {
-	TokenTypeMismatchException()
+	public TokenTypeMismatchException()
 	{
 		super();
 	}
 	
-	TokenTypeMismatchException(String message)
+	public TokenTypeMismatchException(String message)
 	{
 		super(message);
 	}
 	
-	TokenTypeMismatchException(String message, Throwable cause)
+	public TokenTypeMismatchException(String message, Throwable cause)
 	{
 		super(message, cause);
 	}
 	
-	TokenTypeMismatchException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+	public TokenTypeMismatchException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
 	{
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 	
-	TokenTypeMismatchException(Throwable cause)
+	public TokenTypeMismatchException(Throwable cause)
 	{
 		super(cause);
 	}
