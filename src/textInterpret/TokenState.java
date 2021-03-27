@@ -1,6 +1,6 @@
 package textInterpret;
 
-enum TokenState
+public enum TokenState
 {
 	READY,
 	NUMBER,
