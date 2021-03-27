@@ -15,8 +15,6 @@ public abstract class TokenInfix implements BinaryOperator<Token>
 		
 		Object varNew = operate(varA, varB);
 		
-		System.out.printf("\t\tvarNew: %s\n", varNew.toString());
-		
 		Token newToken = new Token(TokenType.VAR, varNew.toString());
 		newToken.setVariable(varNew);
 		return newToken;

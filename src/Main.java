@@ -245,18 +245,18 @@ public class Main
 			String s = sc.nextLine();
 			
 			Queue<String> groupedQueue = TextInterpret.group(s);
-			System.out.println(groupedQueue.toString());
+			System.out.printf("%18s: %s\n", "Group characters", groupedQueue.toString());
 			
 			if (groupedQueue.size() > 0 && groupedQueue.peek().equals("exit"))
 				break;
 			
 			Queue<Token> tokenQueue = TextInterpret.tokenize(groupedQueue);
-			System.out.println(tokenQueue.toString());
+			System.out.printf("%18s: %s\n", "Make tokens", tokenQueue.toString());
 			
 			Queue<Token> shuntedQueue = TextInterpret.shunt(tokenQueue);
-			System.out.println(shuntedQueue.toString());
+			System.out.printf("%18s: %s\n", "Shunt to postfix", shuntedQueue.toString());
 			
-			System.out.printf("Evaluated: %s\n", TextInterpret.evaluate(shuntedQueue));
+			System.out.printf("%18s: %s\n", "Evaluate results", TextInterpret.evaluate(shuntedQueue));
 		}
 		
 		sc.close();

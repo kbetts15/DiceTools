@@ -6,6 +6,8 @@ import java.util.Queue;
 import java.util.Stack;
 
 import textInterpret.infix.AddInfix;
+import textInterpret.infix.DicePoolInfix;
+import textInterpret.infix.DiceRollInfix;
 import textInterpret.infix.DivideInfix;
 import textInterpret.infix.ModuloInfix;
 import textInterpret.infix.MultiplyInfix;
@@ -32,6 +34,8 @@ public class TextInterpret
 		infixOperators.add(new PriorityEntry<TokenInfix>(new MultiplyInfix(),	1));
 		infixOperators.add(new PriorityEntry<TokenInfix>(new ModuloInfix(),		2));
 		infixOperators.add(new PriorityEntry<TokenInfix>(new PowerInfix(),		3));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	4));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	4));
 		
 		funcOperators = new LinkedList<PriorityEntry<? extends TokenFunc>>();
 		
@@ -212,13 +216,7 @@ public class TextInterpret
 		
 		while (!queue.isEmpty())
 		{
-			System.out.println("Token");
-			System.out.printf("\tQueue: %s\n", queue.toString());
-			System.out.printf("\tStack: %s\n", stack.toString());
-			
 			Token t = queue.poll();
-			
-			System.out.printf("\tGot: %s\n", t.toString());
 			
 			if (t.type == TokenType.VAR)
 				stack.push(t);
@@ -231,13 +229,10 @@ public class TextInterpret
 				
 				stack.push(t.getFuncInfix().apply(a, b));
 			}
-			
-			System.out.printf("\tQueue: %s\n", queue.toString());
-			System.out.printf("\tStack: %s\n", stack.toString());
 		}
 		
 		//TODO: make sure there's only one Token left in the stack
-		return stack.pop(); //TODO
+		return stack.pop().getVariable(); //TODO
 	}
 	
 	private static boolean isNumeric(char c)
