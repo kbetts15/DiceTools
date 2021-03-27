@@ -3,6 +3,7 @@ package textInterpret;
 public final class Token
 {
 	public final TokenType type;
+	private final String name;
 	
 	//VAR
 	private Object var = null;
@@ -17,15 +18,48 @@ public final class Token
 	private TokenFunc funcArgs = null;
 	private int numArgs = 0;
 	
-	//BRACKET_xxxx
-	private char openSymbol = '\0';
-	
 	//BRACKET_OPEN
 	private Token funcOwner = null;
 	
-	public Token(TokenType type)
+	//BRACKET_CLOSE
+	private char openSymbol = '\0';
+	
+	public Token(TokenType type, String name)
 	{
 		this.type = type;
+		this.name = name;
+	}
+	
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder(name);
+		sb.append('<');
+		
+		switch (type)
+		{
+			case VAR:
+				sb.append('V');
+				break;
+			case BRACKET_OPEN:
+				sb.append('O');
+				break;
+			case BRACKET_CLOSE:
+				sb.append('C');
+				break;
+			case FUNC_UNARY:
+				sb.append('U');
+				break;
+			case FUNC_INFIX:
+				sb.append('I');
+				break;
+			case FUNC_ARGS:
+				sb.append('A');
+				sb.append(numArgs);
+				break;
+		}
+		
+		sb.append('>');
+		return sb.toString();
 	}
 	
 	public Object getVariable()
@@ -91,6 +125,22 @@ public final class Token
 		
 		this.funcArgs = funcArgs;
 	}
+	
+	public char getOpenSymbol()
+	{
+		if (type != TokenType.BRACKET_CLOSE)
+			throw new TokenTypeMismatchException();
+		
+		return openSymbol;
+	}
+
+	public void setOpenSymbol(char openSymbol)
+	{
+		if (type != TokenType.BRACKET_CLOSE)
+			throw new TokenTypeMismatchException();
+		
+		this.openSymbol = openSymbol;
+	}
 
 	public int getNumArgs()
 	{
@@ -114,22 +164,6 @@ public final class Token
 			throw new TokenTypeMismatchException();
 		
 		this.numArgs++;
-	}
-
-	public char getOpenSymbol()
-	{
-		if (type != TokenType.BRACKET_OPEN && type != TokenType.BRACKET_CLOSE)
-			throw new TokenTypeMismatchException();
-		
-		return openSymbol;
-	}
-
-	public void setOpenSymbol(char openSymbol)
-	{
-		if (type != TokenType.BRACKET_OPEN && type != TokenType.BRACKET_CLOSE)
-			throw new TokenTypeMismatchException();
-		
-		this.openSymbol = openSymbol;
 	}
 
 	public Token getFuncOwner()

@@ -11,10 +11,11 @@ public abstract class TokenUnary implements UnaryOperator<Token>
 		
 		variable = operate(variable);
 		
-		Token newToken = new Token(TokenType.VAR);
+		Token newToken = new Token(TokenType.VAR, getName());
 		newToken.setVariable(variable);
 		return newToken;
 	}
 	
 	public abstract Object operate(Object obj);
+	public abstract String getName();
 }

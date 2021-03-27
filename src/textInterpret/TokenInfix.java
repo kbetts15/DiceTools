@@ -12,10 +12,11 @@ public abstract class TokenInfix implements BinaryOperator<Token>
 		
 		Object varNew = operate(varA, varB);
 		
-		Token newToken = new Token(TokenType.VAR);
+		Token newToken = new Token(TokenType.VAR, getName());
 		newToken.setVariable(varNew);
 		return newToken;
 	}
 	
 	public abstract Object operate(Object objA, Object objB);
+	public abstract String getName();
 }
