@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -15,13 +16,16 @@ import diceTools.ImmutableList;
 import diceTools.ProbMap;
 import diceTools.ProbVector;
 import textInterpret.TextInterpret;
+import textInterpret.Token;
 
 public class Main
 {
 
 	public static void main(String[] args)
 	{
-//		lexTest();
+		parseTest();
+//		tokenizeTest();
+//		groupTest();
 //		iterSortTest();
 //		testPutting();
 //		testPVrolls();
@@ -32,7 +36,7 @@ public class Main
 //		averageTest();
 	}
 
-	private static void testPVrolls()
+	public static void testPVrolls()
 	{
 		System.out.println("##### Testing ProbVector rolls #####");
 		
@@ -44,7 +48,7 @@ public class Main
 		}
 	}
 	
-	private static void testDRVrolls()
+	public static void testDRVrolls()
 	{
 		System.out.println("##### Testing DiceRollVector rolls #####");
 		
@@ -56,7 +60,7 @@ public class Main
 		}
 	}
 	
-	private static void testDRVflatten()
+	public static void testDRVflatten()
 	{
 		System.out.println("##### Testing DiceRollVector flattening #####");
 		
@@ -80,7 +84,7 @@ public class Main
 		System.out.println(flattened.toString());
 	}
 	
-	private static void testPutting()
+	public static void testPutting()
 	{
 		System.out.println("##### Testing DiceRollVector and ProbVector putting #####");
 		
@@ -125,7 +129,7 @@ public class Main
 		}
 	}
 	
-	private static void diceRollIterTest()
+	public static void diceRollIterTest()
 	{
 		System.out.println("##### Testing DiceRollIterable #####");
 		
@@ -135,7 +139,7 @@ public class Main
 			System.out.println(entry.getKey().toString());
 	}
 	
-	private static void immListEqualsTest()
+	public static void immListEqualsTest()
 	{
 		System.out.println("##### Testing ImmutableList .equals() #####");
 		
@@ -153,7 +157,7 @@ public class Main
 		System.out.printf("immListA %c= immListD\n", immListA.equals(immListD) ? '=' : '!');
 	}
 	
-	private static void averageTest()
+	public static void averageTest()
 	{
 		System.out.println("##### Testing averaging #####");
 		
@@ -207,7 +211,7 @@ public class Main
 		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(pv));
 	}
 	
-	private static void iterSortTest()
+	public static void iterSortTest()
 	{
 		System.out.println("##### Testing DiceFileTools.iterableToSortedList #####");
 		
@@ -228,16 +232,33 @@ public class Main
 		System.out.printf("%20s: %s\n", "Sorted list", intList.toString());
 	}
 	
-	private static void lexTest()
+	
+	public static void parseTest()
 	{
+		System.out.println("##### Testing parsing #####");
+		
 		Scanner sc = new Scanner(System.in);
 		
 		while (true)
 		{
 			System.out.print(">> ");
 			String s = sc.nextLine();
-			List<String> parseList = TextInterpret.group(s);
-			System.out.println(parseList.toString());
+			
+			Queue<String> groupedQueue = TextInterpret.group(s);
+			System.out.println(groupedQueue.toString());
+			
+			if (groupedQueue.size() > 0 && groupedQueue.peek().equals("exit"))
+				break;
+			
+			Queue<Token> tokenQueue = TextInterpret.tokenize(groupedQueue);
+			System.out.println(tokenQueue.toString());
+			
+			Queue<Token> shuntedQueue = TextInterpret.shunt(tokenQueue);
+			System.out.println(shuntedQueue.toString());
+			
+			System.out.printf("Evaluated: %s\n", TextInterpret.evaluate(shuntedQueue));
 		}
+		
+		sc.close();
 	}
 }
