@@ -16,10 +16,10 @@ public abstract class ArgSortedInfix extends TokenInfix
 			
 			if (objB instanceof DiceRollVector) {
 				DiceRollVector b = (DiceRollVector) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else if (objB instanceof ProbVector) {
 				ProbVector b = (ProbVector) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else if (objB instanceof Integer) {
 				Integer b = (Integer) objB;
 				return operateCase(a, b);}
@@ -32,13 +32,13 @@ public abstract class ArgSortedInfix extends TokenInfix
 			
 			if (objB instanceof DiceRollVector) {
 				DiceRollVector b = (DiceRollVector) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else if (objB instanceof ProbVector) {
 				ProbVector b = (ProbVector) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else if (objB instanceof Integer) {
 				Integer b = (Integer) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else
 				throw new TokenFuncInputTypeException();
 		}
@@ -48,13 +48,13 @@ public abstract class ArgSortedInfix extends TokenInfix
 			
 			if (objB instanceof DiceRollVector) {
 				DiceRollVector b = (DiceRollVector) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else if (objB instanceof ProbVector) {
 				ProbVector b = (ProbVector) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else if (objB instanceof Integer) {
 				Integer b = (Integer) objB;
-				return operate(a, b);}
+				return operateCase(a, b);}
 			else
 				throw new TokenFuncInputTypeException();
 		}

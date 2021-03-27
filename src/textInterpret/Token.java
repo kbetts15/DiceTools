@@ -8,6 +8,9 @@ public final class Token
 	//VAR
 	private Object var = null;
 	
+	//FUNC_xxxx
+	private int priority = -1;
+	
 	//FUNC_UNARY
 	private TokenUnary funcUnary = null;
 	
@@ -32,7 +35,7 @@ public final class Token
 	
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder(name);
+		StringBuilder sb = new StringBuilder(type == TokenType.END ? "END" : name);
 		sb.append('<');
 		
 		switch (type)
@@ -56,6 +59,20 @@ public final class Token
 				sb.append('A');
 				sb.append(numArgs);
 				break;
+			case END:
+				sb.append('E');
+				break;
+		}
+		
+		switch (type)
+		{
+			case FUNC_UNARY:
+			case FUNC_INFIX:
+			case FUNC_ARGS:
+				sb.append('|');
+				sb.append(getPriority());
+			default:
+				break;
 		}
 		
 		sb.append('>');
@@ -76,6 +93,41 @@ public final class Token
 			throw new TokenTypeMismatchException();
 		
 		this.var = var;
+	}
+
+	public int getPriority()
+	{
+		switch (type)
+		{
+			case FUNC_UNARY:
+			case FUNC_INFIX:
+			case FUNC_ARGS:
+				return priority;
+			case VAR:
+			case BRACKET_OPEN:
+			case BRACKET_CLOSE:
+			case END:
+			default:
+				throw new TokenTypeMismatchException();
+		}
+	}
+
+	public void setPriority(int priority)
+	{
+		switch (type)
+		{
+			case FUNC_UNARY:
+			case FUNC_INFIX:
+			case FUNC_ARGS:
+				this.priority = priority;
+				break;
+			case VAR:
+			case BRACKET_OPEN:
+			case BRACKET_CLOSE:
+			case END:
+			default:
+				throw new TokenTypeMismatchException();
+		}
 	}
 
 	public TokenUnary getFuncUnary()
