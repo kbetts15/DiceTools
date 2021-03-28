@@ -1,10 +1,14 @@
 package textInterpret;
 
+import java.util.Deque;
+import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import diceTools.ImmutableList;
 import textInterpret.infix.AddInfix;
 import textInterpret.infix.DicePoolInfix;
 import textInterpret.infix.DiceRollInfix;
@@ -13,6 +17,7 @@ import textInterpret.infix.ModuloInfix;
 import textInterpret.infix.MultiplyInfix;
 import textInterpret.infix.PowerInfix;
 import textInterpret.infix.SubtractInfix;
+import textInterpret.unary.NegativeUnary;
 
 public class TextInterpret
 {
@@ -20,11 +25,13 @@ public class TextInterpret
 	private static final List<PriorityEntry<? extends TokenInfix>> infixOperators;
 	private static final List<PriorityEntry<? extends TokenFunc>> funcOperators;
 	
+	private static final EnumMap<TokenType, ImmutableList<TokenType>> tokenTypeOrder;
+	
 	static
 	{
 		unaryOperators = new LinkedList<PriorityEntry<? extends TokenUnary>>();
 		
-		
+		unaryOperators.add(new PriorityEntry<TokenUnary>(new NegativeUnary(),		0));
 		
 		infixOperators = new LinkedList<PriorityEntry<? extends TokenInfix>>();
 		
@@ -39,10 +46,19 @@ public class TextInterpret
 		
 		funcOperators = new LinkedList<PriorityEntry<? extends TokenFunc>>();
 		
+		tokenTypeOrder = new EnumMap<TokenType, ImmutableList<TokenType>>(TokenType.class);
 		
+		tokenTypeOrder.put(TokenType.VAR,			new ImmutableList<TokenType>(new TokenType[]{TokenType.BRACKET_CLOSE, TokenType.COMMA, TokenType.FUNC_INFIX, TokenType.END}));
+		tokenTypeOrder.put(TokenType.FUNC_UNARY,	new ImmutableList<TokenType>(new TokenType[]{TokenType.VAR, TokenType.FUNC_UNARY, TokenType.FUNC_ARGS, TokenType.BRACKET_OPEN}));
+		tokenTypeOrder.put(TokenType.FUNC_INFIX,	new ImmutableList<TokenType>(new TokenType[]{TokenType.VAR, TokenType.FUNC_UNARY, TokenType.FUNC_ARGS, TokenType.BRACKET_OPEN}));
+		tokenTypeOrder.put(TokenType.FUNC_ARGS,		new ImmutableList<TokenType>(new TokenType[]{TokenType.BRACKET_OPEN}));
+		tokenTypeOrder.put(TokenType.BRACKET_OPEN,	new ImmutableList<TokenType>(new TokenType[]{TokenType.VAR, TokenType.FUNC_UNARY, TokenType.FUNC_ARGS, TokenType.BRACKET_OPEN, TokenType.BRACKET_CLOSE}));
+		tokenTypeOrder.put(TokenType.BRACKET_CLOSE,	new ImmutableList<TokenType>(new TokenType[]{TokenType.FUNC_INFIX, TokenType.BRACKET_CLOSE, TokenType.COMMA, TokenType.END}));
+		tokenTypeOrder.put(TokenType.COMMA,			new ImmutableList<TokenType>(new TokenType[]{TokenType.VAR}));
+		tokenTypeOrder.put(TokenType.END,			new ImmutableList<TokenType>(new TokenType[]{}));
 	}
 	
-	public static Queue<String> group(String s)
+	public static Queue<String> group(String s) //TODO: return a list
 	{
 		Queue<String> tokenQueue = new LinkedList<String>();
 		TokenState state = TokenState.READY;
@@ -130,12 +146,49 @@ public class TextInterpret
 		return tokenQueue;
 	}
 	
-	public static Queue<Token> tokenize(Queue<String> q)
+	public static Queue<Token> tokenize(Queue<String> q) //TODO: return a list
 	{
-		Queue<Token> tQueue = new LinkedList<Token>();
+		Deque<Token> tQueue = new LinkedList<Token>();
 		
 		stringLoop: for (String s : q)
 		{
+			
+			if (s.length() == 1)
+			{
+				char c = s.charAt(0);
+				
+				Token t;
+				
+				boolean foundChar = true;
+				
+				if (c == ',')
+					t = new Token(TokenType.COMMA, ",");
+				else if (isOpenBracket(c))
+				{
+					t = new Token(TokenType.BRACKET_OPEN, Character.toString(c));
+					t.setOpenSymbol(c);
+				}
+				else
+				{
+					char openBracket = getOpenBracket(c);
+					if (openBracket == '\0')
+					{
+						t = null;
+						foundChar = false;
+					}
+					else
+					{
+						t = new Token(TokenType.BRACKET_CLOSE, Character.toString(c));
+						t.setOpenSymbol(openBracket);
+					}
+				}
+				
+				if (foundChar)
+				{
+					tQueue.add(t);
+					continue;
+				}
+			}
 			
 			if (isNumeric(s.charAt(0)))
 			{
@@ -153,6 +206,24 @@ public class TextInterpret
 				continue stringLoop;
 			}
 			
+			if (tQueue.peekLast().type != TokenType.BRACKET_CLOSE
+					&& tQueue.peekLast().type != TokenType.VAR)
+				for (PriorityEntry<? extends TokenUnary> pe : unaryOperators)
+				{
+					TokenUnary tu = pe.getElement();
+					int prio = pe.getPriority();
+					
+					if (!tu.getName().equals(s))
+						continue;
+					
+					Token t = new Token(TokenType.FUNC_UNARY, tu.getName());
+					t.setFuncUnary(tu);
+					t.setPriority(prio);
+					
+					tQueue.add(t);
+					continue stringLoop;
+				}
+			
 			for (PriorityEntry<? extends TokenInfix> pe : infixOperators)
 			{
 				TokenInfix ti = pe.getElement();
@@ -164,45 +235,177 @@ public class TextInterpret
 				Token t = new Token(TokenType.FUNC_INFIX, ti.getName());
 				t.setFuncInfix(ti);
 				t.setPriority(prio);
-				tQueue.add(t);
 				
+				tQueue.add(t);
 				continue stringLoop;
 			}
 			
 			Token t = new Token(TokenType.VAR, s);
+			t.setVariable(s); //TODO: Make a variable lookup list
+			
 			tQueue.add(t);
 		}
-		
+			
 		Token end = new Token(TokenType.END, null);
 		tQueue.add(end);
 		
 		return tQueue;
 	}
 	
+	public static void validateTokenQueue(Queue<Token> q)
+	{
+		Iterator<Token> iter = q.iterator();
+		
+		if (!iter.hasNext())
+			return;
+		
+		Token lastToken = iter.next();
+		
+		if (lastToken.type != TokenType.BRACKET_OPEN
+				&& lastToken.type != TokenType.FUNC_UNARY
+				&& lastToken.type != TokenType.FUNC_ARGS
+				&& lastToken.type != TokenType.VAR)
+			throw new RuntimeException(String.format("First token cannot be of type %s", lastToken.type.toString()));
+		
+		while (iter.hasNext())
+		{
+			Token t = iter.next();
+			
+			if (!tokenTypeOrder.get(lastToken.type).contains(t.type))
+				throw new RuntimeException(String.format("Tokens of type %s cannot be followed by tokens of type %s",
+						lastToken.type, t.type));
+			
+			lastToken = t;
+		}
+	}
+	
 	public static Queue<Token> shunt(Queue<Token> q)
 	{
-		Stack<Token> opStack = new Stack<Token>();
+		Queue<Token> inQueue = new LinkedList<Token>(q);
 		Queue<Token> outQueue = new LinkedList<Token>();
 		
-		for (Token t : q)
+		Stack<Token> opStack = new Stack<Token>();
+		Stack<Integer> bracketArgs = new Stack<Integer>();
+		
+		while (!inQueue.isEmpty())
 		{
-			if (t.type == TokenType.VAR)
-				outQueue.add(t);
-			else if (t.type == TokenType.FUNC_INFIX)
+			Token t = inQueue.poll();
+			
+			switch (t.type)
 			{
-				while (!opStack.isEmpty()
-						&& opStack.peek().type != TokenType.BRACKET_OPEN
-						&& opStack.peek().getPriority() >= t.getPriority())
-					outQueue.add(opStack.pop());
+				case VAR:
+					
+					outQueue.add(t);
+					break;
+					
+				case BRACKET_OPEN:
+					
+					bracketArgs.push(t.getFuncOwner() == null ? -1 : 1);
+					//FALL THROUGH
+					
+				case FUNC_UNARY:
+					
+					opStack.push(t);
+					break;
+					
+				case FUNC_INFIX:
+					
+					while (!opStack.isEmpty())
+					{
+						Token opNext = opStack.peek();
+						
+						if (opNext.type == TokenType.FUNC_UNARY
+								|| (opNext.type == TokenType.FUNC_INFIX
+										&& opNext.getPriority() >= t.getPriority()))
+						{
+							outQueue.add(opStack.pop());
+							continue;
+						}
+						
+						break;
+					}
+					
+					opStack.push(t);
+					break;
 				
-				opStack.push(t);
-			}
-			else if (t.type == TokenType.END)
-			{
-				while (!opStack.isEmpty())
-					outQueue.add(opStack.pop());
-				
-				outQueue.add(t);
+				case FUNC_ARGS:
+					
+					if (inQueue.isEmpty())
+						throw new RuntimeException("Functions cannot be the last Token");
+					
+					Token nextToken = inQueue.peek();
+					
+					if (nextToken.type != TokenType.BRACKET_OPEN
+							|| nextToken.getOpenSymbol() != '(')
+						throw new RuntimeException("Functions must be followed by '('");
+					
+					nextToken.setFuncOwner(t);
+					
+					opStack.push(t);
+					break;
+					
+				case BRACKET_CLOSE:
+					
+					boolean foundBracket = false;
+					
+					while (!opStack.isEmpty())
+					{
+						Token topStack = opStack.peek();
+						
+						if (topStack.type != TokenType.BRACKET_OPEN)
+						{
+							outQueue.add(opStack.pop());
+							continue;
+						}
+						
+						if (topStack.getOpenSymbol() != t.getOpenSymbol())
+							throw new RuntimeException(String.format("Brackets do not match: %c, %c",
+									topStack.getOpenSymbol(), t.getOpenSymbol()));
+						
+						foundBracket = true;
+						
+						int numArgs = bracketArgs.pop();
+						
+						if (topStack.getFuncOwner() == null)
+						{
+							if(numArgs > 1)
+								throw new RuntimeException(String.format(
+										"Only one argument is permitted for non-function bracket. %d provided",
+										numArgs));
+						}
+						else
+							topStack.getFuncOwner().setNumArgs(numArgs);
+						
+						opStack.pop();
+					}
+					
+					if (!foundBracket)
+						throw new RuntimeException("Failed to find opening bracket");
+					
+					break;
+					
+				case END:
+					
+					while (!opStack.isEmpty())
+						outQueue.add(opStack.pop());
+					
+					outQueue.add(t);
+					break;
+					
+				case COMMA:
+					
+					if (bracketArgs.isEmpty())
+						throw new RuntimeException("Using ',' outside of brackets is not allowed");
+					
+					int numArgs = bracketArgs.pop();
+					numArgs++;
+					bracketArgs.push(numArgs);
+					
+					break;
+					
+				default:
+					
+					throw new RuntimeException(String.format("Shunting of %s Tokens is not yet implemented", t.type));
 			}
 		}
 		
@@ -218,16 +421,38 @@ public class TextInterpret
 		{
 			Token t = queue.poll();
 			
-			if (t.type == TokenType.VAR)
-				stack.push(t);
-			else if (t.type == TokenType.FUNC_INFIX)
+			switch (t.type)
 			{
-				//TODO: check for empty stack
+				case VAR:
+					
+					stack.push(t);
+					break;
+					
+				case FUNC_UNARY:
+					
+					Token operand = stack.pop();
+					stack.push(t.getFuncUnary().apply(operand));
+					break;
 				
-				Token b = stack.pop();
-				Token a = stack.pop();
-				
-				stack.push(t.getFuncInfix().apply(a, b));
+				case FUNC_INFIX:
+					
+					//TODO: check for empty stack
+					
+					Token b = stack.pop();
+					Token a = stack.pop();
+					
+					stack.push(t.getFuncInfix().apply(a, b));
+					break;
+					
+				case END:
+					
+					//TODO: does this make sense? Is the END token necessary?
+					return stack.pop().getVariable();
+					
+				default:
+					
+					throw new RuntimeException(String.format("Evaluation of %s Tokens is not yet implemented", t.type));
+
 			}
 		}
 		
@@ -248,6 +473,30 @@ public class TextInterpret
 	private static boolean isSpace(char c)
 	{
 		return c == ' ' || c == '\t';
+	}
+	
+	private static boolean isOpenBracket(char c)
+	{
+		switch (c)
+		{
+			case '(':
+//			case '<':
+//			case '{':
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	private static char getOpenBracket(char c)
+	{
+		switch (c)
+		{
+			case ')': return '(';
+//			case '>': return '<';
+//			case '}': return '{';
+			default: return '\0';
+		}
 	}
 	
 	public static class PriorityEntry<T>

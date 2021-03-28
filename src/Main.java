@@ -253,6 +253,8 @@ public class Main
 			Queue<Token> tokenQueue = TextInterpret.tokenize(groupedQueue);
 			System.out.printf("%18s: %s\n", "Make tokens", tokenQueue.toString());
 			
+			TextInterpret.validateTokenQueue(tokenQueue);
+			
 			Queue<Token> shuntedQueue = TextInterpret.shunt(tokenQueue);
 			System.out.printf("%18s: %s\n", "Shunt to postfix", shuntedQueue.toString());
 			

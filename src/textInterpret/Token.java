@@ -24,7 +24,7 @@ public final class Token
 	//BRACKET_OPEN
 	private Token funcOwner = null;
 	
-	//BRACKET_CLOSE
+	//BRACKET_xxxx
 	private char openSymbol = '\0';
 	
 	public Token(TokenType type, String name)
@@ -44,11 +44,13 @@ public final class Token
 				sb.append('V');
 				break;
 			case BRACKET_OPEN:
-				sb.append('O');
+				sb.append('B');
 				break;
 			case BRACKET_CLOSE:
-				sb.append('C');
+				sb.append('b');
 				break;
+			case COMMA:
+				sb.append('C');
 			case FUNC_UNARY:
 				sb.append('U');
 				break;
@@ -180,7 +182,8 @@ public final class Token
 	
 	public char getOpenSymbol()
 	{
-		if (type != TokenType.BRACKET_CLOSE)
+		if (type != TokenType.BRACKET_OPEN
+				&& type != TokenType.BRACKET_CLOSE)
 			throw new TokenTypeMismatchException();
 		
 		return openSymbol;
@@ -188,7 +191,8 @@ public final class Token
 
 	public void setOpenSymbol(char openSymbol)
 	{
-		if (type != TokenType.BRACKET_CLOSE)
+		if (type != TokenType.BRACKET_OPEN
+				&& type != TokenType.BRACKET_CLOSE)
 			throw new TokenTypeMismatchException();
 		
 		this.openSymbol = openSymbol;

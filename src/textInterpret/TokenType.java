@@ -8,5 +8,6 @@ public enum TokenType
 	FUNC_ARGS,
 	BRACKET_OPEN,
 	BRACKET_CLOSE,
+	COMMA,
 	END
 }
