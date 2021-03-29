@@ -8,14 +8,12 @@ public final class Token
 	//VAR
 	private Object var = null;
 	
-	//FUNC_xxxx
-	private int priority = -1;
-	
 	//FUNC_UNARY
 	private TokenUnary funcUnary = null;
 	
 	//FUNC_INFIX
 	private TokenInfix funcInfix = null;
+	private int priority = -1;
 	
 	//FUNC_ARGS
 	private TokenFunc funcArgs = null;
@@ -56,6 +54,7 @@ public final class Token
 				break;
 			case FUNC_INFIX:
 				sb.append('I');
+				sb.append(getPriority());
 				break;
 			case FUNC_ARGS:
 				sb.append('A');
@@ -63,17 +62,6 @@ public final class Token
 				break;
 			case END:
 				sb.append('E');
-				break;
-		}
-		
-		switch (type)
-		{
-			case FUNC_UNARY:
-			case FUNC_INFIX:
-			case FUNC_ARGS:
-				sb.append('|');
-				sb.append(getPriority());
-			default:
 				break;
 		}
 		
@@ -99,37 +87,18 @@ public final class Token
 
 	public int getPriority()
 	{
-		switch (type)
-		{
-			case FUNC_UNARY:
-			case FUNC_INFIX:
-			case FUNC_ARGS:
-				return priority;
-			case VAR:
-			case BRACKET_OPEN:
-			case BRACKET_CLOSE:
-			case END:
-			default:
-				throw new TokenTypeMismatchException();
-		}
+		if (type != TokenType.FUNC_INFIX)
+			throw new TokenTypeMismatchException();
+		
+		return priority;
 	}
 
 	public void setPriority(int priority)
 	{
-		switch (type)
-		{
-			case FUNC_UNARY:
-			case FUNC_INFIX:
-			case FUNC_ARGS:
-				this.priority = priority;
-				break;
-			case VAR:
-			case BRACKET_OPEN:
-			case BRACKET_CLOSE:
-			case END:
-			default:
-				throw new TokenTypeMismatchException();
-		}
+		if (type != TokenType.FUNC_INFIX)
+			throw new TokenTypeMismatchException();
+		
+		this.priority = priority;
 	}
 
 	public TokenUnary getFuncUnary()

@@ -22,17 +22,17 @@ import textInterpret.unary.NegativeUnary;
 
 public class TextInterpret
 {
-	private static final List<PriorityEntry<? extends TokenUnary>> unaryOperators;
+	private static final List<TokenUnary> unaryOperators;
 	private static final List<PriorityEntry<? extends TokenInfix>> infixOperators;
-	private static final List<PriorityEntry<? extends TokenFunc>> funcOperators;
+	private static final List<TokenFunc> funcOperators; //TODO: This doesn't need to be priority based
 	
 	private static final EnumMap<TokenType, ImmutableList<TokenType>> tokenTypeOrder;
 	
 	static
 	{
-		unaryOperators = new LinkedList<PriorityEntry<? extends TokenUnary>>();
+		unaryOperators = new LinkedList<TokenUnary>();
 		
-		unaryOperators.add(new PriorityEntry<TokenUnary>(new NegativeUnary(),		0));
+		unaryOperators.add(new NegativeUnary());
 		
 		infixOperators = new LinkedList<PriorityEntry<? extends TokenInfix>>();
 		
@@ -46,7 +46,7 @@ public class TextInterpret
 		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	5));
 		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	5));
 		
-		funcOperators = new LinkedList<PriorityEntry<? extends TokenFunc>>();
+		funcOperators = new LinkedList<TokenFunc>();
 		
 		tokenTypeOrder = new EnumMap<TokenType, ImmutableList<TokenType>>(TokenType.class);
 		
@@ -208,19 +208,18 @@ public class TextInterpret
 				continue stringLoop;
 			}
 			
-			if (tQueue.peekLast().type != TokenType.BRACKET_CLOSE
-					&& tQueue.peekLast().type != TokenType.VAR)
-				for (PriorityEntry<? extends TokenUnary> pe : unaryOperators)
+			TokenType lastType = tQueue.peekLast() == null
+					? TokenType.BRACKET_OPEN
+					: tQueue.peekLast().type;
+			
+			if (tokenTypeOrder.get(lastType).contains(TokenType.FUNC_UNARY))
+				for (TokenUnary tu : unaryOperators)
 				{
-					TokenUnary tu = pe.getElement();
-					int prio = pe.getPriority();
-					
 					if (!tu.getName().equals(s))
 						continue;
 					
 					Token t = new Token(TokenType.FUNC_UNARY, tu.getName());
 					t.setFuncUnary(tu);
-					t.setPriority(prio);
 					
 					tQueue.add(t);
 					continue stringLoop;
@@ -242,6 +241,18 @@ public class TextInterpret
 				continue stringLoop;
 			}
 			
+			for (TokenFunc tf : funcOperators)
+			{
+				if (!tf.getName().equals(s))
+					continue;
+				
+				Token t = new Token(TokenType.FUNC_ARGS, tf.getName());
+				t.setFuncArgs(tf);
+				
+				tQueue.add(t);
+				continue stringLoop;
+			}
+			
 			Token t = new Token(TokenType.VAR, s);
 			t.setVariable(s); //TODO: Make a variable lookup list
 			
@@ -254,9 +265,12 @@ public class TextInterpret
 		return tQueue;
 	}
 	
-	public static void validateTokenQueue(Queue<Token> q)
+	public static void validateTokenQueue(Queue<Token> q) //TODO: call this in tokenize or shunt?
 	{
 		Iterator<Token> iter = q.iterator();
+		
+		/* First check that each token is makes sense based on the previous token
+		 * (eg throw an error for "(x3)") */
 		
 		if (!iter.hasNext())
 			return;
@@ -279,6 +293,8 @@ public class TextInterpret
 			
 			lastToken = t;
 		}
+		
+		/* Check that brackets are balanced and that commas only appear inside brackets TODO */
 	}
 	
 	public static Queue<Token> shunt(Queue<Token> q)
@@ -348,11 +364,15 @@ public class TextInterpret
 					
 				case BRACKET_CLOSE:
 					
+					System.out.println("Got close bracket");
+					
 					boolean foundBracket = false;
 					
 					while (!opStack.isEmpty())
 					{
 						Token topStack = opStack.peek();
+						
+						System.out.printf("\ttopStack: %s\n", topStack);
 						
 						if (topStack.type != TokenType.BRACKET_OPEN)
 						{
@@ -360,11 +380,11 @@ public class TextInterpret
 							continue;
 						}
 						
+						foundBracket = true;
+						
 						if (topStack.getOpenSymbol() != t.getOpenSymbol())
 							throw new RuntimeException(String.format("Brackets do not match: %c, %c",
 									topStack.getOpenSymbol(), t.getOpenSymbol()));
-						
-						foundBracket = true;
 						
 						int numArgs = bracketArgs.pop();
 						
@@ -379,6 +399,7 @@ public class TextInterpret
 							topStack.getFuncOwner().setNumArgs(numArgs);
 						
 						opStack.pop();
+						break;
 					}
 					
 					if (!foundBracket)
