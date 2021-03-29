@@ -1,10 +1,12 @@
 package textInterpret;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -271,7 +273,7 @@ public class TextInterpret
 	{
 		Iterator<Token> iter = q.iterator();
 		
-		/* First check that each token is makes sense based on the previous token
+		/* First check that each token makes sense based on the previous token
 		 * (eg throw an error for "(x3)") */
 		
 		if (!iter.hasNext())
@@ -321,7 +323,7 @@ public class TextInterpret
 				case BRACKET_OPEN:
 					
 					bracketArgs.push(t.getFuncOwner() == null ? -1 : 1);
-					//FALL THROUGH
+					//FALL THROUGH -> FUNC_UNARY
 					
 				case FUNC_UNARY:
 					
@@ -463,6 +465,23 @@ public class TextInterpret
 					Token a = stack.pop();
 					
 					stack.push(t.getFuncInfix().apply(a, b));
+					break;
+				
+				case FUNC_ARGS:
+					
+					final int numArgs = t.getNumArgs();
+					
+					List<Token> li = new ArrayList<Token>(numArgs);
+					
+					for (int i = 0; i < numArgs; i++)
+					{
+						if (stack.isEmpty())
+							throw new NoSuchElementException();
+						
+						li.add(stack.pop());
+					}
+					
+					stack.push(t.getFuncArgs().apply(li));
 					break;
 					
 				case END:
