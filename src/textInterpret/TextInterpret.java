@@ -364,15 +364,11 @@ public class TextInterpret
 					
 				case BRACKET_CLOSE:
 					
-					System.out.println("Got close bracket");
-					
 					boolean foundBracket = false;
 					
 					while (!opStack.isEmpty())
 					{
 						Token topStack = opStack.peek();
-						
-						System.out.printf("\ttopStack: %s\n", topStack);
 						
 						if (topStack.type != TokenType.BRACKET_OPEN)
 						{
