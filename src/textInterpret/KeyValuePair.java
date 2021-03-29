@@ -1,4 +1,4 @@
-package diceTools;
+package textInterpret;
 
 import java.util.Map;
 
@@ -31,5 +31,11 @@ public class KeyValuePair implements Map.Entry<Object, Object>
 		Object oldVal = this.value;
 		this.value = value;
 		return oldVal;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "[" + key.toString() + ", " + value.toString() + "]";
 	}
 }
