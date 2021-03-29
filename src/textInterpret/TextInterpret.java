@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 import diceTools.ImmutableList;
+import textInterpret.function.DiceRollFunc;
 import textInterpret.infix.AddInfix;
 import textInterpret.infix.CombineInfix;
 import textInterpret.infix.DicePoolInfix;
@@ -54,6 +55,8 @@ public class TextInterpret
 		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	6));
 		
 		funcOperators = new LinkedList<TokenFunc>();
+		
+		funcOperators.add(new DiceRollFunc());
 		
 		tokenTypeOrder = new EnumMap<TokenType, ImmutableList<TokenType>>(TokenType.class);
 		
@@ -466,14 +469,6 @@ public class TextInterpret
 					
 					break;
 					
-				case END:
-					
-					while (!opStack.isEmpty())
-						outQueue.add(opStack.pop());
-					
-					outQueue.add(t);
-					break;
-					
 				case COMMA:
 					
 					if (bracketArgs.isEmpty())
@@ -483,6 +478,17 @@ public class TextInterpret
 					numArgs++;
 					bracketArgs.push(numArgs);
 					
+					while (!opStack.isEmpty() && opStack.peek().type != TokenType.BRACKET_OPEN)
+						outQueue.add(opStack.pop());
+					
+					break;
+					
+				case END:
+					
+					while (!opStack.isEmpty())
+						outQueue.add(opStack.pop());
+					
+					outQueue.add(t);
 					break;
 					
 				default:
