@@ -15,6 +15,7 @@ import textInterpret.infix.CombineInfix;
 import textInterpret.infix.DicePoolInfix;
 import textInterpret.infix.DiceRollInfix;
 import textInterpret.infix.DivideInfix;
+import textInterpret.infix.KeyValueInfix;
 import textInterpret.infix.ModuloInfix;
 import textInterpret.infix.MultiplyInfix;
 import textInterpret.infix.PowerInfix;
@@ -41,15 +42,16 @@ public class TextInterpret
 		
 		infixOperators = new LinkedList<PriorityEntry<? extends TokenInfix>>();
 		
-		infixOperators.add(new PriorityEntry<TokenInfix>(new AddInfix(),		0));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new SubtractInfix(),	0));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DivideInfix(),		1));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new MultiplyInfix(),	1));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new ModuloInfix(),		2));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new PowerInfix(),		3));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new CombineInfix(),	4));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	5));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	5));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new KeyValueInfix(),	0));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new AddInfix(),		1));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new SubtractInfix(),	1));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DivideInfix(),		2));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new MultiplyInfix(),	2));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new ModuloInfix(),		3));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new PowerInfix(),		4));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new CombineInfix(),	5));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	6));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	6));
 		
 		funcOperators = new LinkedList<TokenFunc>();
 		
