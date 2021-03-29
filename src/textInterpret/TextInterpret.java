@@ -10,6 +10,7 @@ import java.util.Stack;
 
 import diceTools.ImmutableList;
 import textInterpret.infix.AddInfix;
+import textInterpret.infix.CombineInfix;
 import textInterpret.infix.DicePoolInfix;
 import textInterpret.infix.DiceRollInfix;
 import textInterpret.infix.DivideInfix;
@@ -41,8 +42,9 @@ public class TextInterpret
 		infixOperators.add(new PriorityEntry<TokenInfix>(new MultiplyInfix(),	1));
 		infixOperators.add(new PriorityEntry<TokenInfix>(new ModuloInfix(),		2));
 		infixOperators.add(new PriorityEntry<TokenInfix>(new PowerInfix(),		3));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	4));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	4));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new CombineInfix(),	4));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	5));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	5));
 		
 		funcOperators = new LinkedList<PriorityEntry<? extends TokenFunc>>();
 		
