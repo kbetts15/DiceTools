@@ -18,6 +18,7 @@ import textInterpret.infix.ModuloInfix;
 import textInterpret.infix.MultiplyInfix;
 import textInterpret.infix.PowerInfix;
 import textInterpret.infix.SubtractInfix;
+import textInterpret.unary.FlattenUnary;
 import textInterpret.unary.NegativeUnary;
 
 public class TextInterpret
@@ -33,6 +34,7 @@ public class TextInterpret
 		unaryOperators = new LinkedList<TokenUnary>();
 		
 		unaryOperators.add(new NegativeUnary());
+		unaryOperators.add(new FlattenUnary());
 		
 		infixOperators = new LinkedList<PriorityEntry<? extends TokenInfix>>();
 		
