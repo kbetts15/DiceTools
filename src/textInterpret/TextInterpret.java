@@ -159,6 +159,7 @@ public class TextInterpret
 		
 		stringLoop: for (String s : q)
 		{
+			//TODO: split the various cases here out into separate functions
 			
 			if (s.length() == 1)
 			{
@@ -235,33 +236,35 @@ public class TextInterpret
 					continue stringLoop;
 				}
 			
-			for (PriorityEntry<? extends TokenInfix> pe : infixOperators)
-			{
-				TokenInfix ti = pe.getElement();
-				int prio = pe.getPriority();
-				
-				if (!ti.getName().equals(s))
-					continue;
-				
-				Token t = new Token(TokenType.FUNC_INFIX, ti.getName());
-				t.setFuncInfix(ti);
-				t.setPriority(prio);
-				
-				tList.add(t);
-				continue stringLoop;
-			}
+			if (tokenTypeOrder.get(lastType).contains(TokenType.FUNC_ARGS))
+				for (TokenFunc tf : funcOperators)
+				{
+					if (!tf.getName().equals(s))
+						continue;
+					
+					Token t = new Token(TokenType.FUNC_ARGS, tf.getName());
+					t.setFuncArgs(tf);
+					
+					tList.add(t);
+					continue stringLoop;
+				}
 			
-			for (TokenFunc tf : funcOperators)
-			{
-				if (!tf.getName().equals(s))
-					continue;
-				
-				Token t = new Token(TokenType.FUNC_ARGS, tf.getName());
-				t.setFuncArgs(tf);
-				
-				tList.add(t);
-				continue stringLoop;
-			}
+			if (tokenTypeOrder.get(lastType).contains(TokenType.FUNC_INFIX))
+				for (PriorityEntry<? extends TokenInfix> pe : infixOperators)
+				{
+					TokenInfix ti = pe.getElement();
+					int prio = pe.getPriority();
+					
+					if (!ti.getName().equals(s))
+						continue;
+					
+					Token t = new Token(TokenType.FUNC_INFIX, ti.getName());
+					t.setFuncInfix(ti);
+					t.setPriority(prio);
+					
+					tList.add(t);
+					continue stringLoop;
+				}
 			
 			Token t = new Token(TokenType.VAR, s);
 			t.setVariable(s); //TODO: Make a variable lookup list
