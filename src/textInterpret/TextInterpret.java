@@ -496,8 +496,12 @@ public class TextInterpret
 			}
 		}
 		
-		//TODO: make sure there's only one Token left in the stack
-		return stack.pop().getVariable(); //TODO
+		Token t = stack.pop();
+		
+		if (!stack.isEmpty())
+			throw new RuntimeException("Evaluation stack not fully depleted");
+			
+		return t.getVariable();
 	}
 	
 	private static boolean isNumeric(char c)
