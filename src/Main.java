@@ -244,21 +244,30 @@ public class Main
 			System.out.print(">> ");
 			String s = sc.nextLine();
 			
-			Queue<String> groupedQueue = TextInterpret.group(s);
-			System.out.printf("%18s: %s\n", "Group characters", groupedQueue.toString());
+			try
+			{
 			
-			if (groupedQueue.size() > 0 && groupedQueue.peek().equals("exit"))
-				break;
-			
-			Queue<Token> tokenQueue = TextInterpret.tokenize(groupedQueue);
-			System.out.printf("%18s: %s\n", "Make tokens", tokenQueue.toString());
-			
-			TextInterpret.validateTokenQueue(tokenQueue);
-			
-			Queue<Token> shuntedQueue = TextInterpret.shunt(tokenQueue);
-			System.out.printf("%18s: %s\n", "Shunt to postfix", shuntedQueue.toString());
-			
-			System.out.printf("%18s: %s\n", "Evaluate results", TextInterpret.evaluate(shuntedQueue));
+				List<String> groupedList = TextInterpret.group(s);
+				System.out.printf("%18s: %s\n", "Group characters", groupedList.toString());
+				
+				if (groupedList.size() > 0 && groupedList.get(0).equals("exit"))
+					break;
+				
+				List<Token> tokenQueue = TextInterpret.tokenize(groupedList);
+				System.out.printf("%18s: %s\n", "Make tokens", tokenQueue.toString());
+				
+				TextInterpret.validateTokenList(tokenQueue);
+				
+				Queue<Token> shuntedQueue = TextInterpret.shunt(tokenQueue);
+				System.out.printf("%18s: %s\n", "Shunt to postfix", shuntedQueue.toString());
+				
+				System.out.printf("%18s: %s\n", "Evaluate results", TextInterpret.evaluate(shuntedQueue));
+				
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		sc.close();

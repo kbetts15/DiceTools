@@ -62,9 +62,9 @@ public class TextInterpret
 		tokenTypeOrder.put(TokenType.END,			new ImmutableList<TokenType>(new TokenType[]{}));
 	}
 	
-	public static Queue<String> group(String s) //TODO: return a list
+	public static List<String> group(String s) //TODO: return a list
 	{
-		Queue<String> tokenQueue = new LinkedList<String>();
+		List<String> tokenList = new LinkedList<String>();
 		TokenState state = TokenState.READY;
 		
 		StringIterable sIter = new StringIterable(s);
@@ -76,7 +76,7 @@ public class TextInterpret
 			{
 				if (sBuild.length() > 0)
 				{
-					tokenQueue.add(sBuild.toString());
+					tokenList.add(sBuild.toString());
 					sBuild = new StringBuilder();
 				}
 				
@@ -99,7 +99,7 @@ public class TextInterpret
 							state = TokenState.STRING;
 						else
 						{
-							tokenQueue.add(Character.toString(c));
+							tokenList.add(Character.toString(c));
 							break;
 						}
 						
@@ -112,7 +112,7 @@ public class TextInterpret
 							sBuild.append(c);
 						else
 						{
-							tokenQueue.add(sBuild.toString());
+							tokenList.add(sBuild.toString());
 							sBuild = new StringBuilder();
 							
 							goToNextChar = false;
@@ -127,7 +127,7 @@ public class TextInterpret
 							sBuild.append(c);
 						else
 						{
-							tokenQueue.add(sBuild.toString());
+							tokenList.add(sBuild.toString());
 							sBuild = new StringBuilder();
 							
 							goToNextChar = false;
@@ -145,14 +145,14 @@ public class TextInterpret
 		}
 		
 		if (sBuild.length() > 0)
-			tokenQueue.add(sBuild.toString());
+			tokenList.add(sBuild.toString());
 		
-		return tokenQueue;
+		return tokenList;
 	}
 	
-	public static Queue<Token> tokenize(Queue<String> q) //TODO: return a list
+	public static List<Token> tokenize(Iterable<String> q) //TODO: return a list
 	{
-		Deque<Token> tQueue = new LinkedList<Token>();
+		LinkedList<Token> tList = new LinkedList<Token>();
 		
 		stringLoop: for (String s : q)
 		{
@@ -189,7 +189,7 @@ public class TextInterpret
 				
 				if (foundChar)
 				{
-					tQueue.add(t);
+					tList.add(t);
 					continue;
 				}
 			}
@@ -205,14 +205,14 @@ public class TextInterpret
 				else
 					t.setVariable(Double.parseDouble(s));
 				
-				tQueue.add(t);
+				tList.add(t);
 				
 				continue stringLoop;
 			}
 			
-			TokenType lastType = tQueue.peekLast() == null
+			TokenType lastType = tList.peekLast() == null
 					? TokenType.BRACKET_OPEN
-					: tQueue.peekLast().type;
+					: tList.peekLast().type;
 			
 			if (tokenTypeOrder.get(lastType).contains(TokenType.FUNC_UNARY))
 				for (TokenUnary tu : unaryOperators)
@@ -223,7 +223,7 @@ public class TextInterpret
 					Token t = new Token(TokenType.FUNC_UNARY, tu.getName());
 					t.setFuncUnary(tu);
 					
-					tQueue.add(t);
+					tList.add(t);
 					continue stringLoop;
 				}
 			
@@ -239,7 +239,7 @@ public class TextInterpret
 				t.setFuncInfix(ti);
 				t.setPriority(prio);
 				
-				tQueue.add(t);
+				tList.add(t);
 				continue stringLoop;
 			}
 			
@@ -251,23 +251,23 @@ public class TextInterpret
 				Token t = new Token(TokenType.FUNC_ARGS, tf.getName());
 				t.setFuncArgs(tf);
 				
-				tQueue.add(t);
+				tList.add(t);
 				continue stringLoop;
 			}
 			
 			Token t = new Token(TokenType.VAR, s);
 			t.setVariable(s); //TODO: Make a variable lookup list
 			
-			tQueue.add(t);
+			tList.add(t);
 		}
 			
 		Token end = new Token(TokenType.END, null);
-		tQueue.add(end);
+		tList.add(end);
 		
-		return tQueue;
+		return tList;
 	}
 	
-	public static void validateTokenQueue(Queue<Token> q) //TODO: call this in tokenize or shunt?
+	public static void validateTokenList(List<Token> q) //TODO: call this in tokenize or shunt?
 	{
 		Iterator<Token> iter = q.iterator();
 		
@@ -299,7 +299,7 @@ public class TextInterpret
 		/* Check that brackets are balanced and that commas only appear inside brackets TODO */
 	}
 	
-	public static Queue<Token> shunt(Queue<Token> q)
+	public static Queue<Token> shunt(List<Token> q)
 	{
 		Queue<Token> inQueue = new LinkedList<Token>(q);
 		Queue<Token> outQueue = new LinkedList<Token>();
