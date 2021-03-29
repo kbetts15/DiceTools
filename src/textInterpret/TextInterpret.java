@@ -173,6 +173,13 @@ public class TextInterpret
 				{
 					t = new Token(TokenType.BRACKET_OPEN, Character.toString(c));
 					t.setOpenSymbol(c);
+					
+					if (!tList.isEmpty())
+					{
+						Token tPrev = tList.peek();
+						if (tPrev.type == TokenType.FUNC_ARGS)
+							t.setFuncOwner(tList.peekLast());
+					}
 				}
 				else
 				{
@@ -298,7 +305,57 @@ public class TextInterpret
 			lastToken = t;
 		}
 		
-		/* Check that brackets are balanced and that commas only appear inside brackets TODO */
+		/* Check that brackets are balanced and that commas only appear inside brackets
+		 * (eg throw an error for "(2+2", "2+2)", "1+(2,2)") */
+		
+		iter = q.iterator();
+		
+		Stack<Integer> argStack = new Stack<Integer>();
+		Stack<Token> bracketStack = new Stack<Token>();
+		
+		while (iter.hasNext())
+		{
+			Token t = iter.next();
+			
+			if (t.type == TokenType.BRACKET_OPEN)
+			{
+				argStack.push(1);
+				bracketStack.push(t);
+			}
+			else if (t.type == TokenType.BRACKET_CLOSE)
+			{
+				if (bracketStack.isEmpty())
+					throw new RuntimeException(String.format("Unbalanced brackets: Bracket is closed without opening bracket '%c'",
+							t.getOpenSymbol()));
+				
+				Token open = bracketStack.pop();
+				int numArgs = argStack.pop();
+						
+				if (open.getOpenSymbol() != t.getOpenSymbol())
+					throw new RuntimeException(String.format("Unbalanced brackets: '%c' cannot be followed by '%c'",
+							open.getOpenSymbol(), t.getOpenSymbol()));
+				
+				if (numArgs > 1 && open.getFuncOwner() == null)
+					throw new RuntimeException("Brackets must belong to a function to accept multiple arguments");
+			}
+			else if (t.type == TokenType.COMMA)
+			{
+				if (bracketStack.isEmpty())
+					throw new RuntimeException("Commas must only be used to separate arguments inside function brackets");
+				
+				int numArgs = argStack.pop();
+				numArgs++;
+				argStack.push(numArgs);
+			}
+		}
+		
+		if (!bracketStack.isEmpty())
+		{
+			Token open = bracketStack.pop();
+			
+			throw new RuntimeException(String.format("Unbalanced brackets: No matching close bracket after '%c'",
+					open.getOpenSymbol()));
+		}
 	}
 	
 	public static Queue<Token> shunt(List<Token> q)
@@ -360,8 +417,6 @@ public class TextInterpret
 					if (nextToken.type != TokenType.BRACKET_OPEN
 							|| nextToken.getOpenSymbol() != '(')
 						throw new RuntimeException("Functions must be followed by '('");
-					
-					nextToken.setFuncOwner(t);
 					
 					opStack.push(t);
 					break;
