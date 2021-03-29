@@ -92,10 +92,10 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	public DiceRollVector(ProbVector pv)
 	{
 		super();
-		List<Integer> pvInt = new ArrayList<Integer>(1);
 		for (Entry<Integer, Double> pvEntry : pv.entrySet())
 		{
-			pvInt.set(0, pvEntry.getKey());
+			List<Integer> pvInt = new ArrayList<Integer>(1);
+			pvInt.add(pvEntry.getKey());
 			this.put(pvInt, pvEntry.getValue());
 		}
 	}
