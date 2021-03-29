@@ -1,7 +1,6 @@
 package textInterpret;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,9 +24,11 @@ import textInterpret.unary.NegativeUnary;
 
 public class TextInterpret
 {
+	//TODO: replace RuntimeExceptions with exceptions extending some exception defined in textInterpret which can be caught
+	
 	private static final List<TokenUnary> unaryOperators;
 	private static final List<PriorityEntry<? extends TokenInfix>> infixOperators;
-	private static final List<TokenFunc> funcOperators; //TODO: This doesn't need to be priority based
+	private static final List<TokenFunc> funcOperators;
 	
 	private static final EnumMap<TokenType, ImmutableList<TokenType>> tokenTypeOrder;
 	
@@ -64,7 +65,7 @@ public class TextInterpret
 		tokenTypeOrder.put(TokenType.END,			new ImmutableList<TokenType>(new TokenType[]{}));
 	}
 	
-	public static List<String> group(String s) //TODO: return a list
+	public static List<String> group(String s)
 	{
 		List<String> tokenList = new LinkedList<String>();
 		TokenState state = TokenState.READY;
@@ -152,7 +153,7 @@ public class TextInterpret
 		return tokenList;
 	}
 	
-	public static List<Token> tokenize(Iterable<String> q) //TODO: return a list
+	public static List<Token> tokenize(Iterable<String> q)
 	{
 		LinkedList<Token> tList = new LinkedList<Token>();
 		
@@ -206,8 +207,6 @@ public class TextInterpret
 			if (isNumeric(s.charAt(0)))
 			{
 				Token t = new Token(TokenType.VAR, s);
-				
-				//TODO: handle cases with multiple decimal points
 				
 				if (!s.contains("."))
 					t.setVariable(Integer.parseInt(s));
@@ -514,9 +513,14 @@ public class TextInterpret
 				
 				case FUNC_INFIX:
 					
-					//TODO: check for empty stack
+					if (stack.isEmpty())
+						throw new RuntimeException(String.format("Cannot perform infix function %s on empty stack", t.toString()));
 					
 					Token b = stack.pop();
+					
+					if (stack.isEmpty())
+						throw new RuntimeException(String.format("Cannot perform infix function %s on stack with only one token", t.toString()));
+					
 					Token a = stack.pop();
 					
 					stack.push(t.getFuncInfix().apply(a, b));
@@ -541,7 +545,6 @@ public class TextInterpret
 					
 				case END:
 					
-					//TODO: does this make sense? Is the END token necessary?
 					return stack.pop().getVariable();
 					
 				default:
