@@ -541,14 +541,14 @@ public class TextInterpret
 					
 					final int numArgs = t.getNumArgs();
 					
-					List<Token> li = new ArrayList<Token>(numArgs);
+					LinkedList<Token> li = new LinkedList<Token>();
 					
 					for (int i = 0; i < numArgs; i++)
 					{
 						if (stack.isEmpty())
 							throw new NoSuchElementException();
 						
-						li.add(stack.pop());
+						li.addFirst(stack.pop());
 					}
 					
 					stack.push(t.getFuncArgs().apply(li));
