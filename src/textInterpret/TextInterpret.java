@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 import diceTools.ImmutableList;
+import textInterpret.function.DicePoolFunc;
 import textInterpret.function.DiceRollFunc;
 import textInterpret.infix.AddInfix;
 import textInterpret.infix.CombineInfix;
@@ -57,6 +58,7 @@ public class TextInterpret
 		funcOperators = new LinkedList<TokenFunc>();
 		
 		funcOperators.add(new DiceRollFunc());
+		funcOperators.add(new DicePoolFunc());
 		
 		tokenTypeOrder = new EnumMap<TokenType, ImmutableList<TokenType>>(TokenType.class);
 		
