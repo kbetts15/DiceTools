@@ -13,7 +13,6 @@ public class DiceRollFunc extends TokenFunc
 	@Override
 	public Object operate(List<? extends Object> li)
 	{
-		System.out.println(li);
 		ProbVector rollMap = new ProbVector();
 		for (Object obj : li)
 		{
