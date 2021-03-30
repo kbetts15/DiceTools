@@ -135,8 +135,6 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	@Override
 	public List<Integer> makeKey(Object oKey)
 	{
-		System.out.printf("oKey: %s\n", oKey.toString());
-		
 		if ((oKey instanceof Integer[]) || (oKey instanceof int[]))
 		{
 			Integer[] keyArr = (Integer[]) oKey;
