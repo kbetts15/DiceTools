@@ -15,9 +15,7 @@ public abstract class TokenFunc implements Function<List<Token>, Token>
 		
 		Object variable = operate(objList);
 		
-		Token newToken = new Token(TokenType.VAR, variable.toString());
-		newToken.setVariable(variable);
-		return newToken;
+		return new Token.VarToken(variable);
 	}
 	
 	public abstract Object operate(List<? extends Object> li);

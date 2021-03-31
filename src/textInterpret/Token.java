@@ -1,31 +1,11 @@
 package textInterpret;
 
-public final class Token
+public class Token
 {
 	public final TokenType type;
 	private final String name;
 	
-	//VAR
-	private Object var = null;
-	
-	//FUNC_UNARY
-	private TokenUnary funcUnary = null;
-	
-	//FUNC_INFIX
-	private TokenInfix funcInfix = null;
-	private int priority = -1;
-	
-	//FUNC_ARGS
-	private TokenFunc funcArgs = null;
-	private int numArgs = 0;
-	
-	//BRACKET_OPEN
-	private Token funcOwner = null;
-	
-	//BRACKET_xxxx
-	private char openSymbol = '\0';
-	
-	public Token(TokenType type, String name)
+	private Token(TokenType type, String name)
 	{
 		this.type = type;
 		this.name = name;
@@ -58,7 +38,7 @@ public final class Token
 				break;
 			case FUNC_ARGS:
 				sb.append('A');
-				sb.append(numArgs);
+				sb.append(getNumArgs());
 				break;
 			case END:
 				sb.append('E');
@@ -69,141 +49,171 @@ public final class Token
 		return sb.toString();
 	}
 	
-	public Object getVariable()
+	//These functions are overwritten in subclasses
+	public Object getVariable()					{throw new TokenTypeMismatchException();}
+	public int getPriority()					{throw new TokenTypeMismatchException();}
+	public void setPriority(int priority)		{throw new TokenTypeMismatchException();}
+	public TokenUnary getFuncUnary()			{throw new TokenTypeMismatchException();}
+	public TokenInfix getFuncInfix()			{throw new TokenTypeMismatchException();}
+	public TokenFunc getFuncArgs()				{throw new TokenTypeMismatchException();}
+	public char getOpenSymbol() 				{throw new TokenTypeMismatchException();}
+	public int getNumArgs() 					{throw new TokenTypeMismatchException();}
+	public void setNumArgs(int numArgs)			{throw new TokenTypeMismatchException();}
+	public void incNumArgs()					{throw new TokenTypeMismatchException();}
+	public Token getFuncOwner()					{throw new TokenTypeMismatchException();}
+	public void setFuncOwner(Token funcOwner)	{throw new TokenTypeMismatchException();}
+	
+	public static final class VarToken extends Token
 	{
-		if (type != TokenType.VAR)
-			throw new TokenTypeMismatchException();
+		private final Object var;
 		
-		return var;
-	}
-
-	public void setVariable(Object var)
-	{
-		if (type != TokenType.VAR)
-			throw new TokenTypeMismatchException();
+		public VarToken(Object var)
+		{
+			super(TokenType.VAR, var.toString());
+			this.var = var;
+		}
 		
-		this.var = var;
-	}
-
-	public int getPriority()
-	{
-		if (type != TokenType.FUNC_INFIX)
-			throw new TokenTypeMismatchException();
-		
-		return priority;
-	}
-
-	public void setPriority(int priority)
-	{
-		if (type != TokenType.FUNC_INFIX)
-			throw new TokenTypeMismatchException();
-		
-		this.priority = priority;
-	}
-
-	public TokenUnary getFuncUnary()
-	{
-		if (type != TokenType.FUNC_UNARY)
-			throw new TokenTypeMismatchException();
-		
-		return funcUnary;
-	}
-
-	public void setFuncUnary(TokenUnary funcUnary)
-	{
-		if (type != TokenType.FUNC_UNARY)
-			throw new TokenTypeMismatchException();
-		
-		this.funcUnary = funcUnary;
-	}
-
-	public TokenInfix getFuncInfix()
-	{
-		if (type != TokenType.FUNC_INFIX)
-			throw new TokenTypeMismatchException();
-		
-		return funcInfix;
-	}
-
-	public void setFuncInfix(TokenInfix funcInfix)
-	{
-		if (type != TokenType.FUNC_INFIX)
-			throw new TokenTypeMismatchException();
-		
-		this.funcInfix = funcInfix;
-	}
-
-	public TokenFunc getFuncArgs()
-	{
-		if (type != TokenType.FUNC_ARGS)
-			throw new TokenTypeMismatchException();
-		
-		return funcArgs;
-	}
-
-	public void setFuncArgs(TokenFunc funcArgs)
-	{
-		if (type != TokenType.FUNC_ARGS)
-			throw new TokenTypeMismatchException();
-		
-		this.funcArgs = funcArgs;
+		@Override
+		public Object getVariable()
+		{
+			return var;
+		}
 	}
 	
-	public char getOpenSymbol()
+	public static final class UnaryToken extends Token
 	{
-		if (type != TokenType.BRACKET_OPEN
-				&& type != TokenType.BRACKET_CLOSE)
-			throw new TokenTypeMismatchException();
+		private final TokenUnary unary;
 		
-		return openSymbol;
-	}
-
-	public void setOpenSymbol(char openSymbol)
-	{
-		if (type != TokenType.BRACKET_OPEN
-				&& type != TokenType.BRACKET_CLOSE)
-			throw new TokenTypeMismatchException();
+		public UnaryToken(TokenUnary unary)
+		{
+			super(TokenType.FUNC_UNARY, unary.getName());
+			this.unary = unary;
+		}
 		
-		this.openSymbol = openSymbol;
-	}
-
-	public int getNumArgs()
-	{
-		if (type != TokenType.FUNC_ARGS)
-			throw new TokenTypeMismatchException();
-		
-		return numArgs;
-	}
-
-	public void setNumArgs(int numArgs)
-	{
-		if (type != TokenType.FUNC_ARGS)
-			throw new TokenTypeMismatchException();
-		
-		this.numArgs = numArgs;
+		@Override
+		public TokenUnary getFuncUnary()
+		{
+			return unary;
+		}
 	}
 	
-	public void incNumArgs()
+	public static final class InfixToken extends Token
 	{
-		if (type != TokenType.FUNC_ARGS)
-			throw new TokenTypeMismatchException();
+		private final TokenInfix infix;
+		private final int priority;
 		
-		this.numArgs++;
+		public InfixToken(TokenInfix infix, int priority)
+		{
+			super(TokenType.FUNC_INFIX, infix.getName());
+			this.infix = infix;
+			this.priority = priority;
+		}
+		
+		@Override
+		public int getPriority()
+		{
+			return priority;
+		}
+		
+		@Override
+		public TokenInfix getFuncInfix()
+		{
+			return infix;
+		}
 	}
+	
+	public static final class FuncToken extends Token
+	{
+		private final TokenFunc func;
+		private int numArgs;
+		
+		public FuncToken(TokenFunc func)
+		{
+			super(TokenType.FUNC_ARGS, func.getName());
+			this.func = func;
+		}
+		
+		@Override
+		public TokenFunc getFuncArgs()
+		{
+			return func;
+		}
+		
+		@Override
+		public int getNumArgs()
+		{
+			return numArgs;
+		}
 
-	public Token getFuncOwner()
-	{
-		if (type != TokenType.BRACKET_OPEN)
-			throw new TokenTypeMismatchException();
-		
-		return funcOwner;
+		@Override
+		public void setNumArgs(int numArgs)
+		{
+			this.numArgs = numArgs;
+		}
 	}
+	
+	public static final class BracketOpenToken extends Token
+	{
+		private final char openSymbol;
+		private Token funcOwner;
+		
+		public BracketOpenToken(char openSymbol)
+		{
+			super(TokenType.BRACKET_OPEN, Character.toString(openSymbol));
+			this.openSymbol = openSymbol;
+		}
 
-	public void setFuncOwner(Token funcOwner)
-	{
-		if (type != TokenType.BRACKET_OPEN)
-			throw new TokenTypeMismatchException();
-		
-		this.funcOwner = funcOwner;
+		@Override
+		public char getOpenSymbol()
+		{
+			return openSymbol;
+		}
+
+		@Override
+		public Token getFuncOwner()
+		{
+			return funcOwner;
+		}
+
+		@Override
+		public void setFuncOwner(Token funcOwner)
+		{
+			this.funcOwner = funcOwner;
+		}
 	}
+	
+	public static final class BracketCloseToken extends Token
+	{
+		private final char openSymbol;
+		
+		public BracketCloseToken(char openSymbol, char closeSymbol)
+		{
+			super(TokenType.BRACKET_CLOSE, Character.toString(closeSymbol));
+			this.openSymbol = openSymbol;
+		}
+		
+		@Override
+		public char getOpenSymbol()
+		{
+			return openSymbol;
+		}
+	}
+	
+	public static final class CommaToken extends Token
+	{
+		public CommaToken()
+		{
+			super(TokenType.COMMA, ",");
+		}
+	}
+	
+	public static final class EndToken extends Token
+	{
+		public EndToken()
+		{
+			super(TokenType.END, "END");
+		}
+	}
+	
+//	END
 }

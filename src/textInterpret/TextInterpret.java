@@ -176,11 +176,10 @@ public class TextInterpret
 				boolean foundChar = true;
 				
 				if (c == ',')
-					t = new Token(TokenType.COMMA, ",");
+					t = new Token.CommaToken();
 				else if (isOpenBracket(c))
 				{
-					t = new Token(TokenType.BRACKET_OPEN, Character.toString(c));
-					t.setOpenSymbol(c);
+					t = new Token.BracketOpenToken(c);
 					
 					if (!tList.isEmpty())
 					{
@@ -199,8 +198,7 @@ public class TextInterpret
 					}
 					else
 					{
-						t = new Token(TokenType.BRACKET_CLOSE, Character.toString(c));
-						t.setOpenSymbol(openBracket);
+						t = new Token.BracketCloseToken(openBracket, c);
 					}
 				}
 				
@@ -213,12 +211,12 @@ public class TextInterpret
 			
 			if (isNumeric(s.charAt(0)))
 			{
-				Token t = new Token(TokenType.VAR, s);
+				Token t;
 				
 				if (!s.contains("."))
-					t.setVariable(Integer.parseInt(s));
+					t = new Token.VarToken(Integer.parseInt(s));
 				else
-					t.setVariable(Double.parseDouble(s));
+					t = new Token.VarToken(Double.parseDouble(s));
 				
 				tList.add(t);
 				
@@ -235,8 +233,7 @@ public class TextInterpret
 					if (!tu.getName().equals(s))
 						continue;
 					
-					Token t = new Token(TokenType.FUNC_UNARY, tu.getName());
-					t.setFuncUnary(tu);
+					Token t = new Token.UnaryToken(tu);
 					
 					tList.add(t);
 					continue stringLoop;
@@ -248,8 +245,7 @@ public class TextInterpret
 					if (!tf.getName().equals(s))
 						continue;
 					
-					Token t = new Token(TokenType.FUNC_ARGS, tf.getName());
-					t.setFuncArgs(tf);
+					Token t = new Token.FuncToken(tf);
 					
 					tList.add(t);
 					continue stringLoop;
@@ -264,21 +260,18 @@ public class TextInterpret
 					if (!ti.getName().equals(s))
 						continue;
 					
-					Token t = new Token(TokenType.FUNC_INFIX, ti.getName());
-					t.setFuncInfix(ti);
-					t.setPriority(prio);
+					Token t = new Token.InfixToken(ti, prio);
 					
 					tList.add(t);
 					continue stringLoop;
 				}
 			
-			Token t = new Token(TokenType.VAR, s);
-			t.setVariable(s); //TODO: Make a variable lookup list
+			Token t = new Token.VarToken(s); //TODO: Make a variable lookup list
 			
 			tList.add(t);
 		}
 			
-		Token end = new Token(TokenType.END, null);
+		Token end = new Token.EndToken();
 		tList.add(end);
 		
 		return tList;
