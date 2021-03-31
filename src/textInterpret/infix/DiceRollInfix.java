@@ -1,35 +1,25 @@
 package textInterpret.infix;
 
 import diceTools.DiceRollMap;
-import textInterpret.TokenFuncInputTypeException;
-import textInterpret.TokenInfix;
+import diceTools.ProbMap;
 
-public class DiceRollInfix extends TokenInfix
+public class DiceRollInfix extends RollingInfix<Integer>
 {
 	
-	//TODO: implement variable number of dice and sides
-
-	@Override
-	public Object operate(Object objA, Object objB)
+	public DiceRollInfix()
 	{
-		if (objA == null || objB == null)
-			throw new NullPointerException();
-		
-		if (!(objA instanceof Number) || !(objB instanceof Number))
-			throw new TokenFuncInputTypeException();
-		
-		int numDice = ((Number) objA).intValue();
-		int numSides = ((Number) objB).intValue();
-		
-		return DiceRollMap.diceRoll(numDice, numSides);
+		super(new DiceRollMap());
 	}
 
+	@Override
+	public ProbMap<Integer> operateCase(Integer a, Integer b)
+	{
+		return DiceRollMap.diceRoll(a, b);
+	}
+	
 	@Override
 	public String getName()
 	{
 		return "d";
 	}
-
-	
-
 }
