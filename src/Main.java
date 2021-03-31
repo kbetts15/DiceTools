@@ -14,7 +14,7 @@ import diceTools.DiceRollIterable;
 import diceTools.DicePoolMap;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 import textInterpret.TextInterpret;
 import textInterpret.Token;
 
@@ -28,7 +28,7 @@ public class Main
 //		groupTest();
 //		iterSortTest();
 //		testPutting();
-//		testPVrolls();
+//		testDRMrolls();
 //		testDPMrolls();
 //		testDPMflatten();
 //		diceRollIterTest();
@@ -36,15 +36,15 @@ public class Main
 //		averageTest();
 	}
 
-	public static void testPVrolls()
+	public static void testDRMrolls()
 	{
-		System.out.println("##### Testing ProbVector rolls #####");
+		System.out.println("##### Testing DiceRollMap rolls #####");
 		
 		for (int numDice = 0; numDice < 4; numDice++)
 		{
 			System.out.printf("%dd6: ", numDice);
-			ProbVector pv = ProbVector.diceRoll(numDice, 6);
-			System.out.println(pv.toString());
+			DiceRollMap drm = DiceRollMap.diceRoll(numDice, 6);
+			System.out.println(drm.toString());
 		}
 	}
 	
@@ -80,20 +80,20 @@ public class Main
 					}
 				};
 				
-		ProbVector flattened = dpm.flatten(sumFlatten);
+		DiceRollMap flattened = dpm.flatten(sumFlatten);
 		System.out.println(flattened.toString());
 	}
 	
 	public static void testPutting()
 	{
-		System.out.println("##### Testing DicePoolMap and ProbVector putting #####");
+		System.out.println("##### Testing DicePoolMap and DiceRollMap putting #####");
 		
-		ProbVector pv = new ProbVector();
+		DiceRollMap drm = new DiceRollMap();
 		
-		pv.put(1, new Double(0.5));
-		pv.put(2, new Double(0.5));
+		drm.put(1, new Double(0.5));
+		drm.put(2, new Double(0.5));
 		
-		System.out.println(pv.toString());
+		System.out.println(drm.toString());
 		
 		DicePoolMap dpm = new DicePoolMap();
 		
@@ -188,27 +188,27 @@ public class Main
 			return liNew;
 		};
 		
-		ProbVector pv = dpm.flatten();
-		System.out.printf("%15s: %s\n", "flattened", pv.toString());
+		DiceRollMap drm = dpm.flatten();
+		System.out.printf("%15s: %s\n", "flattened", drm.toString());
 		
 		Map.Entry<Integer, Double> entry;
-		entry = ProbMap.getMode(pv);
+		entry = ProbMap.getMode(drm);
 		System.out.printf("\t%15s: %2d, %.3f\n", "mode", entry.getKey(), entry.getValue());
-		entry = ProbMap.getMedian(pv);
+		entry = ProbMap.getMedian(drm);
 		System.out.printf("\t%15s: %2d, %.3f\n", "median", entry.getKey(), entry.getValue());
-		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(pv));
+		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(drm));
 		
 		dpm = (DicePoolMap) dpm.morph(f);
 		System.out.printf("%15s: %s\n", "min->6", dpm.toString());
 		
-		pv = dpm.flatten();
-		System.out.printf("%15s: %s\n", "flattened", pv.toString());
+		drm = dpm.flatten();
+		System.out.printf("%15s: %s\n", "flattened", drm.toString());
 		
-		entry = ProbMap.getMode(pv);
+		entry = ProbMap.getMode(drm);
 		System.out.printf("\t%15s: %2d, %.3f\n", "mode", entry.getKey(), entry.getValue());
-		entry = ProbMap.getMedian(pv);
+		entry = ProbMap.getMedian(drm);
 		System.out.printf("\t%15s: %2d, %.3f\n", "median", entry.getKey(), entry.getValue());
-		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(pv));
+		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(drm));
 	}
 	
 	public static void iterSortTest()

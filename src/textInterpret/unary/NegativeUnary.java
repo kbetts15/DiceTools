@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 import diceTools.DicePoolMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 
 public class NegativeUnary extends ArgSortedUnary
 {
@@ -23,7 +23,7 @@ public class NegativeUnary extends ArgSortedUnary
 	}
 
 	@Override
-	public Object operateCase(ProbVector operand)
+	public Object operateCase(DiceRollMap operand)
 	{
 		UnaryOperator<Integer> f = (x) -> {return -x;};
 		return operand.morph(f);

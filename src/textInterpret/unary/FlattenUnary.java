@@ -1,7 +1,7 @@
 package textInterpret.unary;
 
 import diceTools.DicePoolMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
 
 public class FlattenUnary extends ArgSortedUnary
@@ -14,7 +14,7 @@ public class FlattenUnary extends ArgSortedUnary
 	}
 
 	@Override
-	public Object operateCase(ProbVector operand)
+	public Object operateCase(DiceRollMap operand)
 	{
 		throw new TokenFuncInputTypeException();
 	}

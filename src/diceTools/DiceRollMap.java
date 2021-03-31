@@ -11,7 +11,7 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class ProbVector extends ProbMap<Integer>
+public class DiceRollMap extends ProbMap<Integer>
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -51,22 +51,22 @@ public class ProbVector extends ProbMap<Integer>
 		};
 	}
 	
-	public ProbVector()
+	public DiceRollMap()
 	{
 		super();
 	}
 	
-	public ProbVector(ProbVector pv)
+	public DiceRollMap(DiceRollMap drm)
 	{
-		super(pv);
+		super(drm);
 	}
 	
-	public ProbVector(int initialCapacity)
+	public DiceRollMap(int initialCapacity)
 	{
 		super(initialCapacity);
 	}
 	
-	public ProbVector(int initialCapacity, float loadFactor)
+	public DiceRollMap(int initialCapacity, float loadFactor)
 	{
 		super(initialCapacity, loadFactor);
 	}
@@ -84,46 +84,46 @@ public class ProbVector extends ProbMap<Integer>
 	}
 	
 	@Override
-	public ProbVector get()
+	public DiceRollMap get()
 	{
-		return new ProbVector();
+		return new DiceRollMap();
 	}
 	
 	/**
-	 * Generate the {@link ProbVector} which results from rolling a set of identical unbiased dice
+	 * Generate the {@link DiceRollMap} which results from rolling a set of identical unbiased dice
 	 * @param numDice	number of dice to be rolled
 	 * @param sides		number of sides on the dice
 	 * @return			probabilities of all possible outcomes
 	 */
-	public static ProbVector diceRoll(int numDice, int sides)
+	public static DiceRollMap diceRoll(int numDice, int sides)
 	{
-		ProbVector pv = new ProbVector();
+		DiceRollMap drm = new DiceRollMap();
 		
 		DiceRollIterable dri = new DiceRollIterable(numDice, sides);
 		for (Entry<List<Integer>, Double> entry : dri)
 		{
 			Integer key = sumFlattener.apply(entry.getKey());
-			pv.merge(key, entry.getValue());
+			drm.merge(key, entry.getValue());
 		}
 		
-		return pv;
+		return drm;
 	}
 	
 	/**
 	 * Generate all the possible results of summing the roll outcomes
-	 * of the calling {@link ProbVector} with the given <code>ProbVector</code>.
-	 * @param pv	<code>ProbVector</code> to combine
-	 * @return		resulting <code>ProbVector</code>
+	 * of the calling {@link DiceRollMap} with the given <code>DiceRollMap</code>.
+	 * @param drm	<code>DiceRollMap</code> to combine
+	 * @return		resulting <code>DiceRollMap</code>
 	 */
-	public ProbVector combine(ProbVector pv)
+	public DiceRollMap combine(DiceRollMap drm)
 	{
 		if (this.isEmpty())
 		{
-			ProbVector pvNew = new ProbVector();
-			pvNew.putAll(pv);
-			return pvNew;
+			DiceRollMap drmNew = new DiceRollMap();
+			drmNew.putAll(drm);
+			return drmNew;
 		}
 		
-		return (ProbVector) combine(sumCombiner, pv);
+		return (DiceRollMap) combine(sumCombiner, drm);
 	}
 }

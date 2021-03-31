@@ -89,7 +89,7 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 		super(dpm);
 	}
 	
-	public DicePoolMap(ProbVector pv)
+	public DicePoolMap(DiceRollMap pv)
 	{
 		super();
 		for (Entry<Integer, Double> pvEntry : pv.entrySet())
@@ -170,11 +170,11 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	
 	/**
 	 * Generate all the possible results of combining each roll array from the calling
-	 * {@link DicePoolMap} with each possible roll from the given {@link ProbVector}.
+	 * {@link DicePoolMap} with each possible roll from the given {@link DiceRollMap}.
 	 * @param pv	<code>ProbVector</code> to be combined
 	 * @return		resulting <code>DicePoolMap</code>
 	 */
-	public DicePoolMap combine(ProbVector pv)
+	public DicePoolMap combine(DiceRollMap pv)
 	{
 		if (this.isEmpty())
 		{
@@ -214,18 +214,18 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	/**
 	 * Combine the rolls in each roll array to a single Integer
 	 * @param function	function which combines the rolls
-	 * @return			{@link ProbVector} storing the combined rolls and their probabilities
+	 * @return			{@link DiceRollMap} storing the combined rolls and their probabilities
 	 */
-	public ProbVector flatten(Function<? super List<Integer>, ? extends Integer> function)
+	public DiceRollMap flatten(Function<? super List<Integer>, ? extends Integer> function)
 	{
-		return (ProbVector) super.morph(function, new ProbVector().supplyMe());
+		return (DiceRollMap) super.morph(function, new DiceRollMap().supplyMe());
 	}
 	
 	/**
 	 * Combine the rolls in each roll array to a single Integer
-	 * @return			{@link ProbVector} storing the summed rolls and their probabilities
+	 * @return			{@link DiceRollMap} storing the summed rolls and their probabilities
 	 */
-	public ProbVector flatten()
+	public DiceRollMap flatten()
 	{
 		return flatten(sumFlatten);
 	}

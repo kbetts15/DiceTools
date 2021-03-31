@@ -4,7 +4,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 import diceTools.DicePoolMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 
 public abstract class NumericInfix extends ArgSortedInfix
 {
@@ -19,43 +19,43 @@ public abstract class NumericInfix extends ArgSortedInfix
 	public abstract Integer operateCase(Integer a, Integer b);
 
 	@Override
-	public ProbVector operateCase(DicePoolMap dpm1, DicePoolMap dpm2)
+	public DiceRollMap operateCase(DicePoolMap dpm1, DicePoolMap dpm2)
 	{
 		return operateCase(dpm1.flatten(), dpm2.flatten());
 	}
 	
 	@Override
-	public ProbVector operateCase(DicePoolMap dpm, ProbVector pv)
+	public DiceRollMap operateCase(DicePoolMap dpm, DiceRollMap drm)
 	{
-		return operateCase(dpm.flatten(), pv);
+		return operateCase(dpm.flatten(), drm);
 	}
 	
 	@Override
-	public ProbVector operateCase(ProbVector pv, DicePoolMap dpm)
+	public DiceRollMap operateCase(DiceRollMap drm, DicePoolMap dpm)
 	{
-		return operateCase(pv, dpm.flatten());
+		return operateCase(drm, dpm.flatten());
 	}
 	
 	@Override
-	public ProbVector operateCase(DicePoolMap dpm, Integer i)
+	public DiceRollMap operateCase(DicePoolMap dpm, Integer i)
 	{
 		return operateCase(dpm.flatten(), i);
 	}
 	
 	@Override
-	public ProbVector operateCase(Integer i, DicePoolMap dpm)
+	public DiceRollMap operateCase(Integer i, DicePoolMap dpm)
 	{
 		return operateCase(i, dpm.flatten());
 	}
 	
 	@Override
-	public ProbVector operateCase(ProbVector pv1, ProbVector pv2)
+	public DiceRollMap operateCase(DiceRollMap drm1, DiceRollMap drm2)
 	{
-		return (ProbVector) pv1.combine(operator, pv2);
+		return (DiceRollMap) drm1.combine(operator, drm2);
 	}
 	
 	@Override
-	public ProbVector operateCase(ProbVector pv, Integer i)
+	public DiceRollMap operateCase(DiceRollMap drm, Integer i)
 	{
 		UnaryOperator<Integer> unary = new UnaryOperator<Integer>() {
 			@Override
@@ -65,11 +65,11 @@ public abstract class NumericInfix extends ArgSortedInfix
 			}
 		};
 		
-		return (ProbVector) pv.morph(unary);
+		return (DiceRollMap) drm.morph(unary);
 	}
 	
 	@Override
-	public ProbVector operateCase(Integer i, ProbVector pv)
+	public DiceRollMap operateCase(Integer i, DiceRollMap drm)
 	{
 		UnaryOperator<Integer> unary = new UnaryOperator<Integer>() {
 			@Override
@@ -79,7 +79,7 @@ public abstract class NumericInfix extends ArgSortedInfix
 			}
 		};
 		
-		return (ProbVector) pv.morph(unary);
+		return (DiceRollMap) drm.morph(unary);
 	}
 	
 	private class Infix implements BinaryOperator<Integer>

@@ -1,6 +1,6 @@
 package textInterpret.infix;
 
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
 import textInterpret.TokenInfix;
 
@@ -21,7 +21,7 @@ public class DiceRollInfix extends TokenInfix
 		int numDice = ((Number) objA).intValue();
 		int numSides = ((Number) objB).intValue();
 		
-		return ProbVector.diceRoll(numDice, numSides);
+		return DiceRollMap.diceRoll(numDice, numSides);
 	}
 
 	@Override

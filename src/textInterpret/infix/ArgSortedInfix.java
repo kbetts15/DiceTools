@@ -1,7 +1,7 @@
 package textInterpret.infix;
 
 import diceTools.DicePoolMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
 import textInterpret.TokenInfix;
 
@@ -17,8 +17,8 @@ public abstract class ArgSortedInfix extends TokenInfix
 			if (objB instanceof DicePoolMap) {
 				DicePoolMap b = (DicePoolMap) objB;
 				return operateCase(a, b);}
-			else if (objB instanceof ProbVector) {
-				ProbVector b = (ProbVector) objB;
+			else if (objB instanceof DiceRollMap) {
+				DiceRollMap b = (DiceRollMap) objB;
 				return operateCase(a, b);}
 			else if (objB instanceof Integer) {
 				Integer b = (Integer) objB;
@@ -26,15 +26,15 @@ public abstract class ArgSortedInfix extends TokenInfix
 			else
 				throw new TokenFuncInputTypeException();
 		}
-		else if (objA instanceof ProbVector)
+		else if (objA instanceof DiceRollMap)
 		{
-			ProbVector a = (ProbVector) objA;
+			DiceRollMap a = (DiceRollMap) objA;
 			
 			if (objB instanceof DicePoolMap) {
 				DicePoolMap b = (DicePoolMap) objB;
 				return operateCase(a, b);}
-			else if (objB instanceof ProbVector) {
-				ProbVector b = (ProbVector) objB;
+			else if (objB instanceof DiceRollMap) {
+				DiceRollMap b = (DiceRollMap) objB;
 				return operateCase(a, b);}
 			else if (objB instanceof Integer) {
 				Integer b = (Integer) objB;
@@ -49,8 +49,8 @@ public abstract class ArgSortedInfix extends TokenInfix
 			if (objB instanceof DicePoolMap) {
 				DicePoolMap b = (DicePoolMap) objB;
 				return operateCase(a, b);}
-			else if (objB instanceof ProbVector) {
-				ProbVector b = (ProbVector) objB;
+			else if (objB instanceof DiceRollMap) {
+				DiceRollMap b = (DiceRollMap) objB;
 				return operateCase(a, b);}
 			else if (objB instanceof Integer) {
 				Integer b = (Integer) objB;
@@ -63,14 +63,14 @@ public abstract class ArgSortedInfix extends TokenInfix
 	}
 	
 	public abstract Object operateCase(DicePoolMap a, DicePoolMap b);
-	public abstract Object operateCase(DicePoolMap a, ProbVector b);
+	public abstract Object operateCase(DicePoolMap a, DiceRollMap b);
 	public abstract Object operateCase(DicePoolMap a, Integer b);
 	
-	public abstract Object operateCase(ProbVector a, DicePoolMap b);
-	public abstract Object operateCase(ProbVector a, ProbVector b);
-	public abstract Object operateCase(ProbVector a, Integer b);
+	public abstract Object operateCase(DiceRollMap a, DicePoolMap b);
+	public abstract Object operateCase(DiceRollMap a, DiceRollMap b);
+	public abstract Object operateCase(DiceRollMap a, Integer b);
 	
 	public abstract Object operateCase(Integer a, DicePoolMap b);
-	public abstract Object operateCase(Integer a, ProbVector b);
+	public abstract Object operateCase(Integer a, DiceRollMap b);
 	public abstract Object operateCase(Integer a, Integer b);
 }

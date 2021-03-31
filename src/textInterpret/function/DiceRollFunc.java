@@ -2,7 +2,7 @@ package textInterpret.function;
 
  import java.util.List;
 
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 import textInterpret.KeyValuePair;
 import textInterpret.TokenFunc;
 import textInterpret.TokenFuncInputTypeException;
@@ -13,7 +13,7 @@ public class DiceRollFunc extends TokenFunc
 	@Override
 	public Object operate(List<? extends Object> li)
 	{
-		ProbVector rollMap = new ProbVector();
+		DiceRollMap rollMap = new DiceRollMap();
 		for (Object obj : li)
 		{
 			KeyValuePair kvp;

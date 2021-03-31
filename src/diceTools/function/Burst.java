@@ -7,23 +7,23 @@ import java.util.function.Function;
 import diceTools.DicePoolMap;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 
 public class Burst implements Function<List<Integer>, ProbMap<? extends List<Integer>>>
 {
 	private final List<Integer> matchList;
-	private final ProbVector explodeOptions;
+	private final DiceRollMap explodeOptions;
 	
-	public Burst(List<? extends Integer> matchList, ProbVector explodeOptions)
+	public Burst(List<? extends Integer> matchList, DiceRollMap explodeOptions)
 	{
 		this.matchList = new ImmutableList<Integer>(matchList);
-		this.explodeOptions = new ProbVector(explodeOptions);
+		this.explodeOptions = new DiceRollMap(explodeOptions);
 	}
 	
 	public Burst(List<? extends Integer> matchList, int numSides)
 	{
 		this.matchList = new ImmutableList<Integer>(matchList);
-		this.explodeOptions = ProbVector.diceRoll(1, numSides);
+		this.explodeOptions = DiceRollMap.diceRoll(1, numSides);
 	}
 
 	@Override

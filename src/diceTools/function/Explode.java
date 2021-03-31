@@ -5,14 +5,14 @@ import java.util.function.Function;
 
 import diceTools.DicePoolMap;
 import diceTools.ProbMap;
-import diceTools.ProbVector;
+import diceTools.DiceRollMap;
 
 public class Explode implements Function<List<Integer>, ProbMap<? extends List<Integer>>>
 {
 	private final int numBursts;
 	private final Burst burst;
 	
-	public Explode(List<? extends Integer> matchList, ProbVector explodeOptions, int numTimes)
+	public Explode(List<? extends Integer> matchList, DiceRollMap explodeOptions, int numTimes)
 	{
 		if (numTimes < 0)
 			throw new IndexOutOfBoundsException();
