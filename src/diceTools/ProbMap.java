@@ -242,6 +242,32 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		return merge(key, value, sumMerger);
 	}
 	
+	/**
+	 * {@link #merge(K,Double) merge} each <code>Entry</code> from a </code>Map</code> into this <code>ProbMap</code>
+	 * using a given <code>BiFunction</code> defining the merging behaviour.
+	 * 
+	 * @param map				<code>Map</code> containing <code>Entry</code>s to be merged
+	 * @param remappingFunction	<code>BiFunction</code> defining the rule for performing merging
+	 */
+	public void mergeAll(Map<? extends K, Double> map, BiFunction<? super Double, ? super Double, ? extends Double> remappingFunction)
+	{
+		for (Entry<? extends K, Double> entry : map.entrySet())
+		{
+			merge(entry.getKey(), entry.getValue(), remappingFunction);
+		}
+	}
+	
+	/**
+	 * {@link #merge(K,Double,BiFunction) merge} each <code>Entry</code> from a </code>Map</code> into this <code>ProbMap</code>
+	 * with {@link diceTools.ProbMap#sumMerger sumMerger} defining the merging behaviour.
+	 * 
+	 * @param map	<code>Map</code> containing <code>Entry</code>s to be merged
+	 */
+	public void mergeAll(Map<? extends K, Double> map)
+	{
+		mergeAll(map, sumMerger);
+	}
+	
 	@Override
 	public Double compute(K key, BiFunction<? super K, ? super Double, ? extends Double> remappingFunction)
 	{
