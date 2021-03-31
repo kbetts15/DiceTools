@@ -3,7 +3,7 @@ package diceTools.function;
 import java.util.List;
 import java.util.function.Function;
 
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import diceTools.ProbMap;
 import diceTools.ProbVector;
 
@@ -31,15 +31,15 @@ public class Explode implements Function<List<Integer>, ProbMap<? extends List<I
 	}
 	
 	@Override
-	public DiceRollVector apply(List<Integer> li)
+	public DicePoolMap apply(List<Integer> li)
 	{
-		DiceRollVector drv = new DiceRollVector();
-		drv.put(li, 1.0);
+		DicePoolMap dpm = new DicePoolMap();
+		dpm.put(li, 1.0);
 		
 		for (int b = 0; b < numBursts; b++)
-			drv = (DiceRollVector) drv.fork(burst);
+			dpm = (DicePoolMap) dpm.fork(burst);
 		
-		return drv;
+		return dpm;
 	}
 
 }

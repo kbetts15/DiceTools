@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
 import diceTools.ProbVector;
@@ -27,25 +27,25 @@ public class Burst implements Function<List<Integer>, ProbMap<? extends List<Int
 	}
 
 	@Override
-	public DiceRollVector apply(List<Integer> li)
+	public DicePoolMap apply(List<Integer> li)
 	{
 		if (li == null)
 			throw new NullPointerException();
 		
-		DiceRollVector drv = new DiceRollVector();
+		DicePoolMap dpm = new DicePoolMap();
 		
 		if (li.isEmpty())
-			return drv;
+			return dpm;
 		
 		Integer checkInt = li.get(0);
 		
 		if (matchList.contains(checkInt))
-			drv = new DiceRollVector(explodeOptions);
+			dpm = new DicePoolMap(explodeOptions);
 		else
 		{
 			List<Integer> key = new LinkedList<Integer>();
 			key.add(checkInt);
-			drv.put(key, 1.0);
+			dpm.put(key, 1.0);
 		}
 		
 		for (int checkPos = 1; checkPos < matchList.size(); checkPos++)
@@ -53,15 +53,15 @@ public class Burst implements Function<List<Integer>, ProbMap<? extends List<Int
 			checkInt = li.get(checkPos);
 			
 			if (matchList.contains(checkInt))
-				drv = drv.combine(explodeOptions);
+				dpm = dpm.combine(explodeOptions);
 			else
 			{
 				Append<Integer> app = new Append<Integer>(checkInt);
-				drv = (DiceRollVector) drv.morph(app);
+				dpm = (DicePoolMap) dpm.morph(app);
 			}
 		}
 		
-		return drv;
+		return dpm;
 	}
 
 }

@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import diceTools.ProbVector;
 
 public class NegativeUnary extends ArgSortedUnary
 {
 	
 	@Override
-	public Object operateCase(DiceRollVector operand)
+	public Object operateCase(DicePoolMap operand)
 	{
 		UnaryOperator<List<Integer>> f = (x) -> {
 			List<Integer> liNew = new LinkedList<Integer>();

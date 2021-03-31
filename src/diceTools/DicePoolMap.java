@@ -18,7 +18,7 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiceRollVector extends ProbMap<List<Integer>>
+public class DicePoolMap extends ProbMap<List<Integer>>
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -79,17 +79,17 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		};
 	}
 	
-	public DiceRollVector()
+	public DicePoolMap()
 	{
 		super();
 	}
 	
-	public DiceRollVector(DiceRollVector drv)
+	public DicePoolMap(DicePoolMap dpm)
 	{
-		super(drv);
+		super(dpm);
 	}
 	
-	public DiceRollVector(ProbVector pv)
+	public DicePoolMap(ProbVector pv)
 	{
 		super();
 		for (Entry<Integer, Double> pvEntry : pv.entrySet())
@@ -100,12 +100,12 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 		}
 	}
 	
-	public DiceRollVector(int initialCapacity)
+	public DicePoolMap(int initialCapacity)
 	{
 		super(initialCapacity);
 	}
 	
-	public DiceRollVector(int initialCapacity, float loadFactor)
+	public DicePoolMap(int initialCapacity, float loadFactor)
 	{
 		super(initialCapacity, loadFactor);
 	}
@@ -147,68 +147,68 @@ public class DiceRollVector extends ProbMap<List<Integer>>
 	}
 	
 	@Override
-	public DiceRollVector get()
+	public DicePoolMap get()
 	{
-		return new DiceRollVector();
+		return new DicePoolMap();
 	}
 	
 	/**
-	 * Generate the {@link DiceRollVector} which results from rolling a set of identical unbiased dice 
+	 * Generate the {@link DicePoolMap} which results from rolling a set of identical unbiased dice 
 	 * @param numDice	number of dice to be rolled
 	 * @param sides		number of sides on the dice
 	 * @return			probabilities of all possible outcomes
 	 */
-	public static DiceRollVector diceRoll(int numDice, int sides)
+	public static DicePoolMap diceRoll(int numDice, int sides)
 	{
 		DiceRollIterable dri = new DiceRollIterable(numDice, sides);
 		
-		DiceRollVector drv = new DiceRollVector();
-		drv.putAll(dri);
+		DicePoolMap dpm = new DicePoolMap();
+		dpm.putAll(dri);
 
-		return drv;
+		return dpm;
 	}
 	
 	/**
 	 * Generate all the possible results of combining each roll array from the calling
-	 * {@link DiceRollVector} with each possible roll from the given {@link ProbVector}.
+	 * {@link DicePoolMap} with each possible roll from the given {@link ProbVector}.
 	 * @param pv	<code>ProbVector</code> to be combined
-	 * @return		resulting <code>DiceRollVector</code>
+	 * @return		resulting <code>DicePoolMap</code>
 	 */
-	public DiceRollVector combine(ProbVector pv)
+	public DicePoolMap combine(ProbVector pv)
 	{
 		if (this.isEmpty())
 		{
-			DiceRollVector drvNew = new DiceRollVector();
+			DicePoolMap dpmNew = new DicePoolMap();
 			
 			for (Entry<Integer, Double> entry : pv.entrySet())
 			{
 				List<Integer> listNew = new LinkedList<Integer>();
 				listNew.add(entry.getKey());
-				drvNew.put(listNew, entry.getValue());
+				dpmNew.put(listNew, entry.getValue());
 			}
 			
-			return drvNew;
+			return dpmNew;
 		}
 		
-		return (DiceRollVector) combine(listAdd, pv, this);
+		return (DicePoolMap) combine(listAdd, pv, this);
 	}
 	
 	/**
 	 * Generate all the possible results of combining each roll array from the calling
-	 * {@link DiceRollVector} with each roll array from the given <code>DiceRollVector</code>.
-	 * @param drv	<code>DiceRollVector</code> to be combined
-	 * @return		resulting <code>DiceRollVector</code>
+	 * {@link DicePoolMap} with each roll array from the given <code>DicePoolMap</code>.
+	 * @param dpm	<code>DicePoolMap</code> to be combined
+	 * @return		resulting <code>DicePoolMap</code>
 	 */
-	public DiceRollVector combine(DiceRollVector drv)
+	public DicePoolMap combine(DicePoolMap dpm)
 	{
 		if (this.isEmpty())
 		{
-			DiceRollVector drvNew = new DiceRollVector();
-			drvNew.putAll(drv);
-			return drvNew;
+			DicePoolMap dpmNew = new DicePoolMap();
+			dpmNew.putAll(dpm);
+			return dpmNew;
 		}
 		
-		return (DiceRollVector) combine(listAddAll, drv, this);
+		return (DicePoolMap) combine(listAddAll, dpm, this);
 	}
 	
 	/**

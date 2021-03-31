@@ -16,7 +16,7 @@ import diceTools.ImmutableList;
  * to a new <code>List</code>, which is returned.
  * 
  * <p><code>KeepN&ltInteger&gt</code> is a valid argument for
- * {@link diceTools.DiceRollVector#morph(Function) DiceRollVector.morph(Function)}
+ * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap.morph(Function)}
  * 
  * @param <T> type of the elements in the <code>List</code>
  * 

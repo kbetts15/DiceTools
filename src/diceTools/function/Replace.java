@@ -12,7 +12,7 @@ import java.util.function.Function;
  * which is returned.
  *
  * <p><code>Replace&ltInteger&gt</code> is a valid argument for
- * {@link diceTools.DiceRollVector#morph(Function) DiceRollVector.morph(Function)}
+ * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap.morph(Function)}
  *
  * <T> type of the elements in the <code>List</code>
  *

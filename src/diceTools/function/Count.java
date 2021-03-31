@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * the count iff it returns true.
  * 
  * <p><code>Count</code> is a valid argument for
- * {@link diceTools.DiceRollVector#flatten(Function) DiceRollVector.flatten(Function)}
+ * {@link diceTools.DicePoolMap#flatten(Function) DicePoolMap.flatten(Function)}
  * 
  * @author kieran
  */

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import diceTools.ProbVector;
 import textInterpret.TokenFuncInputTypeException;
 
@@ -12,19 +12,19 @@ public class CombineInfix extends ArgSortedInfix
 {
 
 	@Override
-	public Object operateCase(DiceRollVector a, DiceRollVector b)
+	public Object operateCase(DicePoolMap a, DicePoolMap b)
 	{
 		return a.combine(b);
 	}
 
 	@Override
-	public Object operateCase(DiceRollVector a, ProbVector b)
+	public Object operateCase(DicePoolMap a, ProbVector b)
 	{
 		return a.combine(b);
 	}
 
 	@Override
-	public Object operateCase(DiceRollVector a, Integer b)
+	public Object operateCase(DicePoolMap a, Integer b)
 	{
 		Function<? super List<Integer>, ? extends List<Integer>> f = (li) -> {
 			
@@ -39,7 +39,7 @@ public class CombineInfix extends ArgSortedInfix
 	}
 
 	@Override
-	public Object operateCase(ProbVector a, DiceRollVector b)
+	public Object operateCase(ProbVector a, DicePoolMap b)
 	{
 		return operateCase(b, a);
 	}
@@ -47,19 +47,19 @@ public class CombineInfix extends ArgSortedInfix
 	@Override
 	public Object operateCase(ProbVector a, ProbVector b)
 	{
-		DiceRollVector dicePool = new DiceRollVector(a);
+		DicePoolMap dicePool = new DicePoolMap(a);
 		return dicePool.combine(b);
 	}
 
 	@Override
 	public Object operateCase(ProbVector a, Integer b)
 	{
-		DiceRollVector dicePool = new DiceRollVector(a);
+		DicePoolMap dicePool = new DicePoolMap(a);
 		return operateCase(dicePool, b);
 	}
 
 	@Override
-	public Object operateCase(Integer a, DiceRollVector b)
+	public Object operateCase(Integer a, DicePoolMap b)
 	{
 		return operateCase(b, a);
 	}

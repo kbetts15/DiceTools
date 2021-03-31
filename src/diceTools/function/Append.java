@@ -15,7 +15,7 @@ import diceTools.ImmutableList;
  * which is returned.
  *
  * <p><code>Append&ltInteger&gt</code> is a valid argument for
- * {@link diceTools.DiceRollVector#morph(Function) DiceRollVector(Function)}
+ * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap(Function)}
  *
  * <T> type of the elements in the <code>List</code>
  *

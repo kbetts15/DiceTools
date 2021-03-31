@@ -3,7 +3,7 @@ package textInterpret.function;
 import java.util.LinkedList;
 import java.util.List;
 
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import textInterpret.KeyValuePair;
 import textInterpret.TokenFunc;
 import textInterpret.TokenFuncInputTypeException;
@@ -15,7 +15,7 @@ public class DicePoolFunc extends TokenFunc
 	public Object operate(List<? extends Object> li)
 	{
 		List<Integer> rollList = new LinkedList<Integer>();
-		DiceRollVector dicePool = new DiceRollVector();
+		DicePoolMap dicePool = new DicePoolMap();
 		
 		for (Object obj : li)
 		{

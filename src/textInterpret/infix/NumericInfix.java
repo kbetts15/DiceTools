@@ -3,7 +3,7 @@ package textInterpret.infix;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import diceTools.ProbVector;
 
 public abstract class NumericInfix extends ArgSortedInfix
@@ -19,33 +19,33 @@ public abstract class NumericInfix extends ArgSortedInfix
 	public abstract Integer operateCase(Integer a, Integer b);
 
 	@Override
-	public ProbVector operateCase(DiceRollVector drv1, DiceRollVector drv2)
+	public ProbVector operateCase(DicePoolMap dpm1, DicePoolMap dpm2)
 	{
-		return operateCase(drv1.flatten(), drv2.flatten());
+		return operateCase(dpm1.flatten(), dpm2.flatten());
 	}
 	
 	@Override
-	public ProbVector operateCase(DiceRollVector drv, ProbVector pv)
+	public ProbVector operateCase(DicePoolMap dpm, ProbVector pv)
 	{
-		return operateCase(drv.flatten(), pv);
+		return operateCase(dpm.flatten(), pv);
 	}
 	
 	@Override
-	public ProbVector operateCase(ProbVector pv, DiceRollVector drv)
+	public ProbVector operateCase(ProbVector pv, DicePoolMap dpm)
 	{
-		return operateCase(pv, drv.flatten());
+		return operateCase(pv, dpm.flatten());
 	}
 	
 	@Override
-	public ProbVector operateCase(DiceRollVector drv, Integer i)
+	public ProbVector operateCase(DicePoolMap dpm, Integer i)
 	{
-		return operateCase(drv.flatten(), i);
+		return operateCase(dpm.flatten(), i);
 	}
 	
 	@Override
-	public ProbVector operateCase(Integer i, DiceRollVector drv)
+	public ProbVector operateCase(Integer i, DicePoolMap dpm)
 	{
-		return operateCase(i, drv.flatten());
+		return operateCase(i, dpm.flatten());
 	}
 	
 	@Override

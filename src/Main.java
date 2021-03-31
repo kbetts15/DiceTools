@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 import diceTools.DiceRollIterable;
-import diceTools.DiceRollVector;
+import diceTools.DicePoolMap;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
 import diceTools.ProbVector;
@@ -29,8 +29,8 @@ public class Main
 //		iterSortTest();
 //		testPutting();
 //		testPVrolls();
-//		testDRVrolls();
-//		testDRVflatten();
+//		testDPMrolls();
+//		testDPMflatten();
 //		diceRollIterTest();
 //		immListEqualsTest();
 //		averageTest();
@@ -48,23 +48,23 @@ public class Main
 		}
 	}
 	
-	public static void testDRVrolls()
+	public static void testDPMrolls()
 	{
-		System.out.println("##### Testing DiceRollVector rolls #####");
+		System.out.println("##### Testing DicePoolMap rolls #####");
 		
 		for (int numDice = 0; numDice < 4; numDice++)
 		{
 			System.out.printf("%dd2: ", numDice);
-			DiceRollVector drv = DiceRollVector.diceRoll(numDice, 2);
-			System.out.println(drv.toString());
+			DicePoolMap dpm = DicePoolMap.diceRoll(numDice, 2);
+			System.out.println(dpm.toString());
 		}
 	}
 	
-	public static void testDRVflatten()
+	public static void testDPMflatten()
 	{
-		System.out.println("##### Testing DiceRollVector flattening #####");
+		System.out.println("##### Testing DicePoolMap flattening #####");
 		
-		DiceRollVector drv = DiceRollVector.diceRoll(3, 6);
+		DicePoolMap dpm = DicePoolMap.diceRoll(3, 6);
 		
 		Function<List<Integer>, Integer> sumFlatten = new Function<List<Integer>, Integer>()
 				{
@@ -80,13 +80,13 @@ public class Main
 					}
 				};
 				
-		ProbVector flattened = drv.flatten(sumFlatten);
+		ProbVector flattened = dpm.flatten(sumFlatten);
 		System.out.println(flattened.toString());
 	}
 	
 	public static void testPutting()
 	{
-		System.out.println("##### Testing DiceRollVector and ProbVector putting #####");
+		System.out.println("##### Testing DicePoolMap and ProbVector putting #####");
 		
 		ProbVector pv = new ProbVector();
 		
@@ -95,7 +95,7 @@ public class Main
 		
 		System.out.println(pv.toString());
 		
-		DiceRollVector drv = new DiceRollVector();
+		DicePoolMap dpm = new DicePoolMap();
 		
 		Integer[] key1arr = {1, 1};
 		Integer[] key2arr = {2, 1};
@@ -105,21 +105,21 @@ public class Main
 		List<Integer> key2 = new LinkedList<Integer>(Arrays.asList(key2arr));
 		List<Integer> key3 = new ArrayList<Integer>(Arrays.asList(key3arr));
 		
-		drv.put(key1, new Double(0.2));
-		drv.put(key2, new Double(0.3));
-		drv.put(key3, new Double(0.5));
+		dpm.put(key1, new Double(0.2));
+		dpm.put(key2, new Double(0.3));
+		dpm.put(key3, new Double(0.5));
 		
-		System.out.println(drv.toString());
+		System.out.println(dpm.toString());
 		
 		Integer[] keyXarr = {1, 3};
 		List<Integer> keyX = new ArrayList<Integer>(Arrays.asList(keyXarr));
 		
-		System.out.printf("get(keyX) = %.3f\n", drv.get(keyX));
-		System.out.printf("get(keyXarr) = %.3f\n", drv.get(keyXarr));
+		System.out.printf("get(keyX) = %.3f\n", dpm.get(keyX));
+		System.out.printf("get(keyXarr) = %.3f\n", dpm.get(keyXarr));
 		
 		System.out.printf("keyX: %s\n", keyX.toString());
 		
-		for (List<Integer> li : drv.keySet())
+		for (List<Integer> li : dpm.keySet())
 		{
 			System.out.printf("(keyX) %s %c= %s (li) | Hash codes %smatch\n",
 					keyX.toString(),
@@ -161,8 +161,8 @@ public class Main
 	{
 		System.out.println("##### Testing averaging #####");
 		
-		DiceRollVector drv = DiceRollVector.diceRoll(3, 6);
-		System.out.printf("%15s: %s\n", "Dice rolled", drv.toString());
+		DicePoolMap dpm = DicePoolMap.diceRoll(3, 6);
+		System.out.printf("%15s: %s\n", "Dice rolled", dpm.toString());
 		
 		Function<List<Integer>, List<Integer>> f = (li) -> {
 			if (li == null)
@@ -188,7 +188,7 @@ public class Main
 			return liNew;
 		};
 		
-		ProbVector pv = drv.flatten();
+		ProbVector pv = dpm.flatten();
 		System.out.printf("%15s: %s\n", "flattened", pv.toString());
 		
 		Map.Entry<Integer, Double> entry;
@@ -198,10 +198,10 @@ public class Main
 		System.out.printf("\t%15s: %2d, %.3f\n", "median", entry.getKey(), entry.getValue());
 		System.out.printf("\t%15s: %.3f\n", "mean", ProbMap.getMean(pv));
 		
-		drv = (DiceRollVector) drv.morph(f);
-		System.out.printf("%15s: %s\n", "min->6", drv.toString());
+		dpm = (DicePoolMap) dpm.morph(f);
+		System.out.printf("%15s: %s\n", "min->6", dpm.toString());
 		
-		pv = drv.flatten();
+		pv = dpm.flatten();
 		System.out.printf("%15s: %s\n", "flattened", pv.toString());
 		
 		entry = ProbMap.getMode(pv);
