@@ -11,7 +11,7 @@ public class Token
 		this.name = name;
 	}
 	
-	public String toString()
+	public final String toString()
 	{
 		StringBuilder sb = new StringBuilder(type == TokenType.END ? "END" : name);
 		sb.append('<');
