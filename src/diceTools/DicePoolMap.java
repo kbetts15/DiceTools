@@ -89,14 +89,14 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 		super(dpm);
 	}
 	
-	public DicePoolMap(DiceRollMap pv)
+	public DicePoolMap(DiceRollMap drm)
 	{
 		super();
-		for (Entry<Integer, Double> pvEntry : pv.entrySet())
+		for (Entry<Integer, Double> drmEntry : drm.entrySet())
 		{
-			List<Integer> pvInt = new ArrayList<Integer>(1);
-			pvInt.add(pvEntry.getKey());
-			this.put(pvInt, pvEntry.getValue());
+			List<Integer> drmInt = new ArrayList<Integer>(1);
+			drmInt.add(drmEntry.getKey());
+			this.put(drmInt, drmEntry.getValue());
 		}
 	}
 	
@@ -171,16 +171,16 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	/**
 	 * Generate all the possible results of combining each roll array from the calling
 	 * {@link DicePoolMap} with each possible roll from the given {@link DiceRollMap}.
-	 * @param pv	<code>ProbVector</code> to be combined
+	 * @param drm	<code>DiceRollMap</code> to be combined
 	 * @return		resulting <code>DicePoolMap</code>
 	 */
-	public DicePoolMap combine(DiceRollMap pv)
+	public DicePoolMap combine(DiceRollMap drm)
 	{
 		if (this.isEmpty())
 		{
 			DicePoolMap dpmNew = new DicePoolMap();
 			
-			for (Entry<Integer, Double> entry : pv.entrySet())
+			for (Entry<Integer, Double> entry : drm.entrySet())
 			{
 				List<Integer> listNew = new LinkedList<Integer>();
 				listNew.add(entry.getKey());
@@ -190,7 +190,7 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 			return dpmNew;
 		}
 		
-		return (DicePoolMap) combine(listAdd, pv, this);
+		return (DicePoolMap) combine(listAdd, drm, this);
 	}
 	
 	/**
