@@ -16,6 +16,8 @@ import textInterpret.infix.CombineInfix;
 import textInterpret.infix.DicePoolInfix;
 import textInterpret.infix.DiceRollInfix;
 import textInterpret.infix.DivideInfix;
+import textInterpret.infix.KeepHighestInfix;
+import textInterpret.infix.KeepLowestInfix;
 import textInterpret.infix.KeyValueInfix;
 import textInterpret.infix.ModuloInfix;
 import textInterpret.infix.MultiplyInfix;
@@ -43,16 +45,18 @@ public class TextInterpret
 		
 		infixOperators = new LinkedList<PriorityEntry<? extends TokenInfix>>();
 		
-		infixOperators.add(new PriorityEntry<TokenInfix>(new KeyValueInfix(),	0));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new AddInfix(),		1));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new SubtractInfix(),	1));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DivideInfix(),		2));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new MultiplyInfix(),	2));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new ModuloInfix(),		3));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new PowerInfix(),		4));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new CombineInfix(),	5));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),	6));
-		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),	6));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new KeyValueInfix(),		0));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new AddInfix(),			1));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new SubtractInfix(),		1));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DivideInfix(),			2));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new MultiplyInfix(),		2));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new ModuloInfix(),			3));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new PowerInfix(),			4));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new CombineInfix(),		5));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new KeepHighestInfix(),	6));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new KeepLowestInfix(),		6));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DiceRollInfix(),		7));
+		infixOperators.add(new PriorityEntry<TokenInfix>(new DicePoolInfix(),		7));
 		
 		funcOperators = new LinkedList<TokenFunc>();
 		
