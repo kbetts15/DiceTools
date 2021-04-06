@@ -2,9 +2,21 @@ package textInterpret;
 
 import java.util.Map;
 
+/**
+ * Concrete class implementing {@link java.util.Map#Map.Entry Map.Entry}<code>&ltObject, Object&gt</code>
+ * 
+ * @author kieran
+ */
 public class KeyValuePair implements Map.Entry<Object, Object>
 {
+	/**
+	 * Stores the pair's key
+	 */
 	private final Object key;
+	
+	/**
+	 * Stores the pair's value
+	 */
 	private Object value;
 	
 	public KeyValuePair(Object key, Object value)
