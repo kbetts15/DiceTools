@@ -1,7 +1,8 @@
 package textInterpret.function;
 
- import java.util.List;
+import java.util.List;
 
+import diceTools.DiceNumber;
 import diceTools.DiceRollMap;
 import textInterpret.KeyValuePair;
 import textInterpret.TokenFunc;
@@ -22,9 +23,9 @@ public class DiceRollFunc extends TokenFunc
 			else
 				throw new TokenFuncInputTypeException();
 			
-			if ((kvp.getKey() instanceof Integer)
+			if ((kvp.getKey() instanceof DiceNumber)
 					&& (kvp.getValue() instanceof Double))
-				rollMap.put((Integer) kvp.getKey(), (Double) kvp.getValue());
+				rollMap.put((DiceNumber) kvp.getKey(), (Double) kvp.getValue());
 			else
 				throw new TokenFuncInputTypeException();
 		}

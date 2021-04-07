@@ -18,61 +18,77 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DicePoolMap extends ProbMap<List<Integer>>
+public class DicePoolMap extends ProbMap<List<? extends DiceNumber>>
 {
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
 	 */
-	private static final Function<List<Integer>, Integer> sumFlatten;
+	private static final Function<List<? extends DiceNumber>, ? extends DiceNumber> sumFlatten;
 	
 	/**
 	 * Copies a <code>List</code> of <code>Integer</code>s
 	 * and <code>add</code>s an <code>Integer</code> to the copy
 	 */
-	private static final BiFunction<List<Integer>, Integer, List<Integer>> listAdd;
+	private static final BiFunction<List<? extends DiceNumber>, DiceNumber, List<DiceNumber>> listAdd;
 	
 	/**
 	 * Copies a <code>List</code> of <code>Integer</code>s
 	 * and <code>add</code>s all <code>Integer</code>s
 	 * from another <code>List</code> to the copy.
 	 */
-	private static final BiFunction<List<Integer>, List<Integer>, List<Integer>> listAddAll;
+	private static final BiFunction<List<? extends DiceNumber>, List<? extends DiceNumber>, List<DiceNumber>> listAddAll;
 	
 	static
 	{
-		sumFlatten = new Function<List<Integer>, Integer>()
+		sumFlatten = new Function<List<? extends DiceNumber>, DiceNumber>()
 		{
 			@Override
-			public Integer apply(List<Integer> key)
+			public DiceNumber apply(List<? extends DiceNumber> key)
 			{
-				int total = 0;
+				boolean isDouble = false;
+				int intTotal = 0;
+				double doubleTotal = 0.0;
 				
-				for (Integer myInt : key)
-					total += myInt;
+				for (DiceNumber myNum : key)
+				{
+					if (!isDouble && !myNum.isInt())
+					{
+						isDouble = true;
+						doubleTotal = intTotal;
+					}
+					
+					if (isDouble)
+						doubleTotal += myNum.doubleValue();
+					else
+						intTotal += myNum.intValue();
+				}
 				
-				return total;
+				if (isDouble)
+					return new DiceNumber.DiceDouble(doubleTotal);
+				else
+					return new DiceNumber.DiceInteger(intTotal);
 			}
 		};
 		
-		listAdd = new BiFunction<List<Integer>, Integer, List<Integer>>()
+		listAdd = new BiFunction<List<? extends DiceNumber>, DiceNumber, List<DiceNumber>>()
 		{
 			@Override
-			public List<Integer> apply(List<Integer> t, Integer u)
+			public List<DiceNumber> apply(List<? extends DiceNumber> t, DiceNumber u)
 			{
-				List<Integer> newList = new LinkedList<Integer>(t);
+				List<DiceNumber> newList = new LinkedList<DiceNumber>(t);
 				newList.add(u);
 				return newList;
 			}
 		};
 		
-		listAddAll = new BiFunction<List<Integer>, List<Integer>, List<Integer>>()
+		listAddAll = new BiFunction<List<? extends DiceNumber>, List<? extends DiceNumber>, List<DiceNumber>>()
 		{
 			@Override
-			public List<Integer> apply(List<Integer> t, List<Integer> u)
+			public List<DiceNumber> apply(List<? extends DiceNumber> t, List<? extends DiceNumber> u)
 			{
-				List<Integer> newList = new LinkedList<Integer>(t);
+				List<DiceNumber> newList = new LinkedList<DiceNumber>(t);
 				newList.addAll(u);
 				return newList;
 			}
@@ -92,9 +108,9 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	public DicePoolMap(DiceRollMap drm)
 	{
 		super();
-		for (Entry<Integer, Double> drmEntry : drm.entrySet())
+		for (Entry<DiceNumber, Double> drmEntry : drm.entrySet())
 		{
-			List<Integer> drmInt = new ArrayList<Integer>(1);
+			List<DiceNumber> drmInt = new ArrayList<DiceNumber>(1);
 			drmInt.add(drmEntry.getKey());
 			this.put(drmInt, drmEntry.getValue());
 		}
@@ -111,12 +127,12 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	}
 	
 	@Override
-	public boolean keyIsValid(List<Integer> key)
+	public boolean keyIsValid(List<? extends DiceNumber> key)
 	{
 		if (key == null)
 			return false;
 		
-		for (Integer keyInt : key)
+		for (DiceNumber keyInt : key)
 			if (keyInt == null)
 				return false;
 		
@@ -124,26 +140,48 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	}
 	
 	@Override
-	public List<Integer> sanitizeKey(List<Integer> key)
+	public List<DiceNumber> sanitizeKey(List<? extends DiceNumber> key)
 	{
-		List<Integer> sanitizedKey = new LinkedList<Integer>(key);
+		List<DiceNumber> sanitizedKey = new LinkedList<DiceNumber>(key);
 		Collections.sort(sanitizedKey);
-		sanitizedKey = new ImmutableList<Integer>(sanitizedKey);
+		sanitizedKey = new ImmutableList<DiceNumber>(sanitizedKey);
 		return sanitizedKey;
 	}
 	
 	@Override
-	public List<Integer> makeKey(Object oKey)
+	public List<DiceNumber> makeKey(Object oKey)
 	{
-		if ((oKey instanceof Integer[]) || (oKey instanceof int[]))
+		if (oKey instanceof DiceNumber[])
 		{
-			Integer[] keyArr = (Integer[]) oKey;
+			DiceNumber[] keyArr = (DiceNumber[]) oKey;
+			return Arrays.asList(keyArr);
+		}
+		
+		if (oKey instanceof Integer[])
+		{
+			Integer[] intArr = (Integer[]) oKey;
+			DiceNumber[] keyArr = new DiceNumber[intArr.length];
+			
+			for (int i = 0; i < intArr.length; i++)
+				keyArr[i] = new DiceNumber.DiceInteger(intArr[i]);
+			
+			return Arrays.asList(keyArr);
+		}
+		
+		if (oKey instanceof Double[])
+		{
+			Double[] doubleArr = (Double[]) oKey;
+			DiceNumber[] keyArr = new DiceNumber[doubleArr.length];
+			
+			for (int i = 0; i < doubleArr.length; i++)
+				keyArr[i] = new DiceNumber.DiceDouble(doubleArr[i]);
+			
 			return Arrays.asList(keyArr);
 		}
 		
 		@SuppressWarnings("unchecked")
-		List<Integer> key = (List<Integer>) oKey;
-		return key;
+		List<? extends DiceNumber> key = (List<? extends DiceNumber>) oKey;
+		return new LinkedList<DiceNumber>(key);
 	}
 	
 	@Override
@@ -180,9 +218,9 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 		{
 			DicePoolMap dpmNew = new DicePoolMap();
 			
-			for (Entry<Integer, Double> entry : drm.entrySet())
+			for (Entry<? extends DiceNumber, Double> entry : drm.entrySet())
 			{
-				List<Integer> listNew = new LinkedList<Integer>();
+				List<DiceNumber> listNew = new LinkedList<DiceNumber>();
 				listNew.add(entry.getKey());
 				dpmNew.put(listNew, entry.getValue());
 			}
@@ -216,7 +254,7 @@ public class DicePoolMap extends ProbMap<List<Integer>>
 	 * @param function	function which combines the rolls
 	 * @return			{@link DiceRollMap} storing the combined rolls and their probabilities
 	 */
-	public DiceRollMap flatten(Function<? super List<Integer>, ? extends Integer> function)
+	public DiceRollMap flatten(Function<? super List<? extends DiceNumber>, ? extends DiceNumber> function)
 	{
 		return (DiceRollMap) super.morph(function, new DiceRollMap().supplyMe());
 	}

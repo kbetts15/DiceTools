@@ -3,6 +3,7 @@ package textInterpret.infix;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 import diceTools.ProbMap;
@@ -17,19 +18,19 @@ public abstract class RollingInfix<T> extends ArgSortedInfix
 		this.supplier = supplier;
 	}
 	
-	@Override public Object operateCase(DicePoolMap a, DicePoolMap b)	{return operateCase(a.flatten(), b.flatten());}
-	@Override public Object operateCase(DicePoolMap a, DiceRollMap b)	{return operateCase(a.flatten(), b);}
-	@Override public Object operateCase(DicePoolMap a, Integer b)		{return operateCase(a.flatten(), b);}
-	@Override public Object operateCase(DiceRollMap a, DicePoolMap b)	{return operateCase(a, b.flatten());}
-	@Override public Object operateCase(Integer a, DicePoolMap b)		{return operateCase(a, b.flatten());}
+	@Override public ProbMap<T> operateCase(DicePoolMap a,	DicePoolMap b)	{return operateCase(a.flatten(), b.flatten());}
+	@Override public ProbMap<T> operateCase(DicePoolMap a,	DiceRollMap b)	{return operateCase(a.flatten(), b);}
+	@Override public ProbMap<T> operateCase(DicePoolMap a,	DiceNumber b)	{return operateCase(a.flatten(), b);}
+	@Override public ProbMap<T> operateCase(DiceRollMap a,	DicePoolMap b)	{return operateCase(a, b.flatten());}
+	@Override public ProbMap<T> operateCase(DiceNumber a,	DicePoolMap b)	{return operateCase(a, b.flatten());}
 
 	@Override
-	public Object operateCase(DiceRollMap a, DiceRollMap b)
+	public ProbMap<T> operateCase(DiceRollMap a, DiceRollMap b)
 	{
 		ProbMap<T> outRoll = supplier.get();
 		
-		for (Map.Entry<Integer, Double> entryA : a.entrySet())
-			for (Map.Entry<Integer, Double> entryB : b.entrySet())
+		for (Map.Entry<DiceNumber, Double> entryA : a.entrySet())
+			for (Map.Entry<DiceNumber, Double> entryB : b.entrySet())
 			{
 				ProbMap<T> roll = operateCase(entryA.getKey(), entryB.getKey());
 				
@@ -44,11 +45,11 @@ public abstract class RollingInfix<T> extends ArgSortedInfix
 	}
 
 	@Override
-	public Object operateCase(DiceRollMap a, Integer b)
+	public ProbMap<T> operateCase(DiceRollMap a, DiceNumber b)
 	{
 		ProbMap<T> outRoll = supplier.get();
 		
-		for (Map.Entry<Integer, Double> entry : a.entrySet())
+		for (Map.Entry<DiceNumber, Double> entry : a.entrySet())
 		{
 			ProbMap<T> roll = operateCase(entry.getKey(), b);
 			
@@ -63,11 +64,11 @@ public abstract class RollingInfix<T> extends ArgSortedInfix
 	}
 
 	@Override
-	public Object operateCase(Integer a, DiceRollMap b)
+	public ProbMap<T> operateCase(DiceNumber a, DiceRollMap b)
 	{
 		ProbMap<T> outRoll = supplier.get();
 		
-		for (Map.Entry<Integer, Double> entry : b.entrySet())
+		for (Map.Entry<DiceNumber, Double> entry : b.entrySet())
 		{
 			ProbMap<T> roll = operateCase(a, entry.getKey());
 			
@@ -82,6 +83,6 @@ public abstract class RollingInfix<T> extends ArgSortedInfix
 	}
 	
 	@Override
-	public abstract ProbMap<T> operateCase(Integer a, Integer b);
+	public abstract ProbMap<T> operateCase(DiceNumber a, DiceNumber b);
 
 }

@@ -1,5 +1,6 @@
 package textInterpret.unary;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
@@ -11,8 +12,8 @@ public abstract class ArgSortedUnary extends TokenUnary
 	@Override
 	public Object operate(Object obj)
 	{
-		if (obj instanceof Integer)
-			return operateCase((Integer) obj);
+		if (obj instanceof DiceNumber)
+			return operateCase((DiceNumber) obj);
 		else if (obj instanceof DiceRollMap)
 			return operateCase((DiceRollMap) obj);
 		else if (obj instanceof DicePoolMap)
@@ -23,5 +24,5 @@ public abstract class ArgSortedUnary extends TokenUnary
 
 	public abstract Object operateCase(DicePoolMap operand);
 	public abstract Object operateCase(DiceRollMap operand);
-	public abstract Object operateCase(Integer operand);
+	public abstract Object operateCase(DiceNumber operand);
 }

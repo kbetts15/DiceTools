@@ -11,6 +11,8 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 import diceTools.DiceRollIterable;
+import diceTools.DiceNumber;
+import diceTools.DiceNumber.DiceInteger;
 import diceTools.DicePoolMap;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
@@ -66,17 +68,33 @@ public class Main
 		
 		DicePoolMap dpm = DicePoolMap.diceRoll(3, 6);
 		
-		Function<List<Integer>, Integer> sumFlatten = new Function<List<Integer>, Integer>()
+		Function<List<? extends DiceNumber>, DiceNumber> sumFlatten = new Function<List<? extends DiceNumber>, DiceNumber>()
 				{
 					@Override
-					public Integer apply(List<Integer> key)
+					public DiceNumber apply(List<? extends DiceNumber> key)
 					{
-						int total = 0;
+						boolean doubleFound = false;
+						int intTotal = 0;
+						double doubleTotal = 0.0;
 						
-						for (Integer myInt : key)
-							total += myInt;
+						for (DiceNumber myInt : key)
+						{
+							if (!doubleFound && !myInt.isInt())
+							{
+								doubleFound = true;
+								doubleTotal = intTotal;
+							}
+							
+							if (doubleFound)
+								doubleTotal += myInt.doubleValue();
+							else
+								intTotal += myInt.intValue();
+						}
 						
-						return total;
+						if (doubleFound)
+							return new DiceNumber.DiceDouble(doubleTotal);
+						else
+							return new DiceNumber.DiceInteger(intTotal);
 					}
 				};
 				
@@ -90,8 +108,8 @@ public class Main
 		
 		DiceRollMap drm = new DiceRollMap();
 		
-		drm.put(1, new Double(0.5));
-		drm.put(2, new Double(0.5));
+		drm.put(new DiceNumber.DiceInteger(1), new Double(0.5));
+		drm.put(new DiceNumber.DiceInteger(2), new Double(0.5));
 		
 		System.out.println(drm.toString());
 		
@@ -101,9 +119,19 @@ public class Main
 		Integer[] key2arr = {2, 1};
 		Integer[] key3arr = {1, 3};
 		
-		List<Integer> key1 = new LinkedList<Integer>(Arrays.asList(key1arr));
-		List<Integer> key2 = new LinkedList<Integer>(Arrays.asList(key2arr));
-		List<Integer> key3 = new ArrayList<Integer>(Arrays.asList(key3arr));
+		List<DiceInteger> key1 = new LinkedList<DiceInteger>();
+		for (Integer val : key1arr)
+			key1.add(new DiceNumber.DiceInteger(val));
+		
+		
+		List<DiceInteger> key2 = new LinkedList<DiceInteger>();
+		for (Integer val : key2arr)
+			key2.add(new DiceNumber.DiceInteger(val));
+		
+		
+		List<DiceInteger> key3 = new LinkedList<DiceInteger>();
+		for (Integer val : key3arr)
+			key3.add(new DiceNumber.DiceInteger(val));
 		
 		dpm.put(key1, new Double(0.2));
 		dpm.put(key2, new Double(0.3));
@@ -119,7 +147,7 @@ public class Main
 		
 		System.out.printf("keyX: %s\n", keyX.toString());
 		
-		for (List<Integer> li : dpm.keySet())
+		for (List<? extends DiceNumber> li : dpm.keySet())
 		{
 			System.out.printf("(keyX) %s %c= %s (li) | Hash codes %smatch\n",
 					keyX.toString(),
@@ -135,7 +163,7 @@ public class Main
 		
 		DiceRollIterable iter = new DiceRollIterable(3, 4);
 		
-		for (Entry<List<Integer>, Double> entry : iter)
+		for (Entry<List<DiceNumber.DiceInteger>, Double> entry : iter)
 			System.out.println(entry.getKey().toString());
 	}
 	
@@ -164,11 +192,11 @@ public class Main
 		DicePoolMap dpm = DicePoolMap.diceRoll(3, 6);
 		System.out.printf("%15s: %s\n", "Dice rolled", dpm.toString());
 		
-		Function<List<Integer>, List<Integer>> f = (li) -> {
+		Function<List<? extends DiceNumber>, List<DiceNumber>> f = (li) -> {
 			if (li == null)
 				return null;
 			
-			List<Integer> liNew = new LinkedList<Integer>(li);
+			List<DiceNumber> liNew = new LinkedList<DiceNumber>(li);
 			
 			if (li.isEmpty())
 				return liNew;
@@ -177,13 +205,13 @@ public class Main
 			int minPos = 0;
 			
 			for (int i = 0; i < li.size(); i++)
-				if (liNew.get(i) < minRoll)
+				if (liNew.get(i).intValue() < minRoll)
 				{
 					minRoll = i;
 					minPos = i;
 				}
 			
-			liNew.set(minPos, 6);
+			liNew.set(minPos, new DiceNumber.DiceInteger(6));
 			
 			return liNew;
 		};
@@ -191,7 +219,7 @@ public class Main
 		DiceRollMap drm = dpm.flatten();
 		System.out.printf("%15s: %s\n", "flattened", drm.toString());
 		
-		Map.Entry<Integer, Double> entry;
+		Map.Entry<DiceNumber, Double> entry;
 		entry = ProbMap.getMode(drm);
 		System.out.printf("\t%15s: %2d, %.3f\n", "mode", entry.getKey(), entry.getValue());
 		entry = ProbMap.getMedian(drm);

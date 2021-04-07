@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+import diceTools.DiceNumber;
+
 /**
  * {@link java.util.function.Function#Function Function} to discard some values
  * in a <code>List</code>. This process is performed by copying all but the first
@@ -111,7 +113,7 @@ public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 	 * @param nDiscard		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the highest <code>nDiscard</code> elements
 	 */
-	public static <N extends Number & Comparable<? super N>> Function<List<? extends N>, List<N>> discardHighestN(int nDiscard)
+	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> discardHighestN(int nDiscard)
 	{
 		return new DiscardN<N>(nDiscard, Comparator.naturalOrder());
 	}
@@ -121,7 +123,7 @@ public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 	 * @param nDiscard		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the lowest <code>nDiscard</code> elements
 	 */
-	public static <N extends Number & Comparable<? super N>> Function<List<? extends N>, List<N>> discardLowestN(int nDiscard)
+	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> discardLowestN(int nDiscard)
 	{
 		return new DiscardN<N>(nDiscard, Comparator.reverseOrder());
 	}

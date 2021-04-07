@@ -2,8 +2,10 @@ package diceTools;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
@@ -16,7 +18,7 @@ import java.util.Map.Entry;
  * 
  * @author kieran
  */
-public class DiceRollIterable implements Iterable<Entry<List<Integer>, Double>>
+public class DiceRollIterable implements Iterable<Entry<List<DiceNumber.DiceInteger>, Double>>
 {
 	/**
 	 * Number of dice to roll
@@ -35,7 +37,7 @@ public class DiceRollIterable implements Iterable<Entry<List<Integer>, Double>>
 	}
 	
 	@Override
-	public Iterator<Entry<List<Integer>, Double>> iterator()
+	public Iterator<Entry<List<DiceNumber.DiceInteger>, Double>> iterator()
 	{
 		return new DiceRollIterator();
 	}
@@ -46,7 +48,7 @@ public class DiceRollIterable implements Iterable<Entry<List<Integer>, Double>>
 	 * 
 	 * @author kieran
 	 */
-	private class DiceRollIterator implements Iterator<Entry<List<Integer>, Double>>
+	private class DiceRollIterator implements Iterator<Entry<List<DiceNumber.DiceInteger>, Double>>
 	{
 		/**
 		 * Last generated roll combination
@@ -85,14 +87,28 @@ public class DiceRollIterable implements Iterable<Entry<List<Integer>, Double>>
 		}
 
 		@Override
-		public Entry<List<Integer>, Double> next()
+		public Entry<List<DiceNumber.DiceInteger>, Double> next()
 		{
 			nextRoll(lastRoll);
 			
-			List<Integer> key = Arrays.asList(lastRoll);
+			List<Integer> intList = Arrays.asList(lastRoll);
+			List<DiceNumber.DiceInteger> keyList = new LinkedList<DiceNumber.DiceInteger>();
+
+			Consumer<Integer> adder = new Consumer<Integer>() {
+
+				@Override
+				public void accept(Integer x)
+				{
+					keyList.add(new DiceNumber.DiceInteger(x));
+				}
+				
+			};
+			
+			intList.forEach(adder);
+			
 			double prob = getProb(lastRoll);
 
-			return new SimpleEntry<List<Integer>, Double>(key, prob);
+			return new SimpleEntry<List<DiceNumber.DiceInteger>, Double>(keyList, prob);
 		}
 		
 		/**

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 
@@ -11,28 +12,33 @@ public class NegativeUnary extends ArgSortedUnary
 {
 	
 	@Override
-	public Object operateCase(DicePoolMap operand)
+	public DicePoolMap operateCase(DicePoolMap operand)
 	{
-		UnaryOperator<List<Integer>> f = (x) -> {
-			List<Integer> liNew = new LinkedList<Integer>();
-			for (Integer i : x)
-				liNew.add(-i);
+		UnaryOperator<List<? extends DiceNumber>> f = (x) -> {
+			
+			List<DiceNumber> liNew = new LinkedList<DiceNumber>();
+			for (DiceNumber val : x)
+				liNew.add(operateCase(val));
 			return liNew;
 		};
-		return operand.morph(f);
+		
+		return (DicePoolMap) operand.morph(f);
 	}
 
 	@Override
-	public Object operateCase(DiceRollMap operand)
+	public DiceRollMap operateCase(DiceRollMap operand)
 	{
-		UnaryOperator<Integer> f = (x) -> {return -x;};
-		return operand.morph(f);
+		UnaryOperator<DiceNumber> f = (x) -> {return operateCase(x);};
+		return (DiceRollMap) operand.morph(f);
 	}
 
 	@Override
-	public Object operateCase(Integer operand)
+	public DiceNumber operateCase(DiceNumber operand)
 	{
-		return -operand;
+		if (operand.isInt())
+			return new DiceNumber.DiceInteger(-operand.intValue());
+		else
+			return new DiceNumber.DiceDouble(-operand.doubleValue());
 	}
 
 	@Override

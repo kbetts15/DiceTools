@@ -4,30 +4,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.ImmutableList;
 import diceTools.ProbMap;
 import diceTools.DiceRollMap;
 
-public class Burst implements Function<List<Integer>, ProbMap<? extends List<Integer>>>
+//TODO: Burst JavaDoc
+public class Burst implements Function<List<? extends DiceNumber>, ProbMap<? extends List<? extends DiceNumber>>>
 {
-	private final List<Integer> matchList;
+	private final List<DiceNumber> matchList;
 	private final DiceRollMap explodeOptions;
 	
-	public Burst(List<? extends Integer> matchList, DiceRollMap explodeOptions)
+	public Burst(List<? extends DiceNumber> matchList, DiceRollMap explodeOptions)
 	{
-		this.matchList = new ImmutableList<Integer>(matchList);
+		this.matchList = new ImmutableList<DiceNumber>(matchList);
 		this.explodeOptions = new DiceRollMap(explodeOptions);
 	}
 	
-	public Burst(List<? extends Integer> matchList, int numSides)
+	public Burst(List<? extends DiceNumber> matchList, int numSides)
 	{
-		this.matchList = new ImmutableList<Integer>(matchList);
+		this.matchList = new ImmutableList<DiceNumber>(matchList);
 		this.explodeOptions = DiceRollMap.diceRoll(1, numSides);
 	}
 
 	@Override
-	public DicePoolMap apply(List<Integer> li)
+	public DicePoolMap apply(List<? extends DiceNumber> li)
 	{
 		if (li == null)
 			throw new NullPointerException();
@@ -37,13 +39,13 @@ public class Burst implements Function<List<Integer>, ProbMap<? extends List<Int
 		if (li.isEmpty())
 			return dpm;
 		
-		Integer checkInt = li.get(0);
+		DiceNumber checkInt = li.get(0);
 		
 		if (matchList.contains(checkInt))
 			dpm = new DicePoolMap(explodeOptions);
 		else
 		{
-			List<Integer> key = new LinkedList<Integer>();
+			List<DiceNumber> key = new LinkedList<DiceNumber>();
 			key.add(checkInt);
 			dpm.put(key, 1.0);
 		}
@@ -56,7 +58,7 @@ public class Burst implements Function<List<Integer>, ProbMap<? extends List<Int
 				dpm = dpm.combine(explodeOptions);
 			else
 			{
-				Append<Integer> app = new Append<Integer>(checkInt);
+				Append<DiceNumber> app = new Append<DiceNumber>(checkInt);
 				dpm = (DicePoolMap) dpm.morph(app);
 			}
 		}

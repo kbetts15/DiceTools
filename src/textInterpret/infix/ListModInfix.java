@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
@@ -17,8 +18,8 @@ public abstract class ListModInfix extends TokenInfix
 	{
 		if (objA instanceof DicePoolMap)
 		{
-			if (objB instanceof Integer)
-				return operateSingle((DicePoolMap) objA, (Integer) objB);
+			if (objB instanceof DiceNumber)
+				return operateSingle((DicePoolMap) objA, (DiceNumber) objB);
 			else if (objB instanceof DiceRollMap)
 				return operateProb((DicePoolMap) objA, (DiceRollMap) objB);
 			else
@@ -30,9 +31,10 @@ public abstract class ListModInfix extends TokenInfix
 			throw new TokenFuncInputTypeException();
 	}
 	
-	private DicePoolMap operateSingle(DicePoolMap mapIn, Integer intMod)
+	private DicePoolMap operateSingle(DicePoolMap mapIn, DiceNumber intMod)
 	{
-		Function<? super List<Integer>, ? extends List<Integer>> liMod = listMod(intMod);
+		Function<? super List<? extends DiceNumber>, ? extends List<DiceNumber>> liMod = listMod(intMod.intValue());
+		//TODO: this makes no allowance for double-based operations - is this important?
 		return (DicePoolMap) mapIn.morph(liMod);
 	}
 	
@@ -40,9 +42,10 @@ public abstract class ListModInfix extends TokenInfix
 	{
 		DicePoolMap outPool = new DicePoolMap();
 		
-		for (Entry<Integer, Double> entry : mapMod.entrySet())
+		for (Entry<DiceNumber, Double> entry : mapMod.entrySet())
 		{
-			Function<? super List<Integer>, ? extends List<Integer>> liMod = listMod(entry.getKey());
+			Function<? super List<? extends DiceNumber>, List<DiceNumber>> liMod = listMod(entry.getKey().intValue());
+			//TODO: this makes no allowance for double-based operations - is this important?
 			DicePoolMap roll = new DicePoolMap();
 			
 			mapIn.forEach((key, value) -> {
@@ -55,6 +58,6 @@ public abstract class ListModInfix extends TokenInfix
 		return outPool;
 	}
 	
-	public abstract Function<? super List<Integer>, ? extends List<Integer>> listMod(Integer intMod);
+	public abstract Function<? super List<? extends DiceNumber>, List<DiceNumber>> listMod(int intMod);
 	
 }

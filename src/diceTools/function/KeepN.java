@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+import diceTools.DiceNumber;
 import diceTools.ImmutableList;
 
 /**
@@ -112,7 +113,7 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 	 * @param nKeep		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return			<code>KeepN</code> which keeps the highest <code>nKeep</code> elements
 	 */
-	public static <N extends Number & Comparable<? super N>> Function<List<? extends N>, List<N>> keepHighestN(int nKeep)
+	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> keepHighestN(int nKeep)
 	{
 		return new KeepN<N>(nKeep, Comparator.naturalOrder());
 	}
@@ -122,7 +123,7 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 	 * @param nKeep		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return			<code>KeepN</code> which keeps the lowest <code>nKeep</code> elements
 	 */
-	public static <N extends Number & Comparable<? super N>> Function<List<? extends N>, List<N>> keepLowestN(int nKeep)
+	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> keepLowestN(int nKeep)
 	{
 		return new KeepN<N>(nKeep, Comparator.reverseOrder());
 	}

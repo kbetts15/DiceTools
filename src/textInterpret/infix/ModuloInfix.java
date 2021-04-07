@@ -1,12 +1,17 @@
 package textInterpret.infix;
 
+import diceTools.DiceNumber;
+
 public class ModuloInfix extends NumericInfix
 {
 
 	@Override
-	public Integer operateCase(Integer a, Integer b)
+	public DiceNumber operateCase(DiceNumber a, DiceNumber b)
 	{
-		return a % b;
+		if (a.isInt() && b.isInt())
+			return new DiceNumber.DiceInteger(a.intValue() % b.intValue());
+		else
+			return new DiceNumber.DiceDouble(a.doubleValue() % b.doubleValue());
 	}
 
 	@Override

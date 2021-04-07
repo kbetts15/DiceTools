@@ -11,42 +11,62 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiceRollMap extends ProbMap<Integer>
+public class DiceRollMap extends ProbMap<DiceNumber>
 {
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Sums together two <code>Integer</code>s
 	 */
-	private static final BiFunction<Integer, Integer, Integer> sumCombiner;
+	private static final BiFunction<DiceNumber, DiceNumber, DiceNumber> sumCombiner;
 	
 	/**
 	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
 	 */
-	private static final Function<List<Integer>, Integer> sumFlattener;
+	private static final Function<List<? extends DiceNumber>, DiceNumber> sumFlattener;
 	
 	static
 	{
-		sumCombiner = new BiFunction<Integer, Integer, Integer>()
+		sumCombiner = new BiFunction<DiceNumber, DiceNumber, DiceNumber>()
 		{
 			@Override
-			public Integer apply(Integer a, Integer b)
+			public DiceNumber apply(DiceNumber a, DiceNumber b)
 			{
-				return a + b;
+				if (a.isInt() && b.isInt())
+					return new DiceNumber.DiceInteger(a.intValue() + b.intValue());
+				else
+					return new DiceNumber.DiceDouble(a.doubleValue() + b.doubleValue());
 			}
 		};
 		
-		sumFlattener = new Function<List<Integer>, Integer>()
+		sumFlattener = new Function<List<? extends DiceNumber>, DiceNumber>()
 		{
+			
 			@Override
-			public Integer apply(List<Integer> key)
+			public DiceNumber apply(List<? extends DiceNumber> key)
 			{
-				int total = 0;
+				boolean doubleFound = false;
+				int intSum = 0;
+				double doubleSum = 0;
 				
-				for (Integer myInt : key)
-					total += myInt;
+				for (DiceNumber myNum : key)
+				{
+					if (!doubleFound && !myNum.isInt())
+					{
+						doubleSum = intSum;
+						doubleFound = true;
+					}
+					
+					if (doubleFound)
+						doubleSum += myNum.doubleValue();
+					else
+						intSum += myNum.intValue();
+				}
 				
-				return total;
+				if (doubleFound)
+					return new DiceNumber.DiceDouble(doubleSum);
+				else
+					return new DiceNumber.DiceInteger(intSum);
 			}
 		};
 	}
@@ -72,13 +92,13 @@ public class DiceRollMap extends ProbMap<Integer>
 	}
 	
 	@Override
-	public boolean keyIsValid(Integer key) throws InvalidKeyException
+	public boolean keyIsValid(DiceNumber key) throws InvalidKeyException
 	{
 		return key != null;
 	}
 	
 	@Override
-	public Integer sanitizeKey(Integer key)
+	public DiceNumber sanitizeKey(DiceNumber key)
 	{
 		return key;
 	}
@@ -100,9 +120,9 @@ public class DiceRollMap extends ProbMap<Integer>
 		DiceRollMap drm = new DiceRollMap();
 		
 		DiceRollIterable dri = new DiceRollIterable(numDice, sides);
-		for (Entry<List<Integer>, Double> entry : dri)
+		for (Entry<List<DiceNumber.DiceInteger>, Double> entry : dri)
 		{
-			Integer key = sumFlattener.apply(entry.getKey());
+			DiceNumber key = sumFlattener.apply(entry.getKey());
 			drm.merge(key, entry.getValue());
 		}
 		

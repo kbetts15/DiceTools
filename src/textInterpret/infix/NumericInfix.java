@@ -3,12 +3,13 @@ package textInterpret.infix;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 
 public abstract class NumericInfix extends ArgSortedInfix
 {
-	private final BinaryOperator<Integer> operator;
+	private final BinaryOperator<DiceNumber> operator;
 	
 	public NumericInfix()
 	{
@@ -16,7 +17,7 @@ public abstract class NumericInfix extends ArgSortedInfix
 	}
 	
 	@Override
-	public abstract Integer operateCase(Integer a, Integer b);
+	public abstract DiceNumber operateCase(DiceNumber a, DiceNumber b);
 
 	@Override
 	public DiceRollMap operateCase(DicePoolMap dpm1, DicePoolMap dpm2)
@@ -37,15 +38,15 @@ public abstract class NumericInfix extends ArgSortedInfix
 	}
 	
 	@Override
-	public DiceRollMap operateCase(DicePoolMap dpm, Integer i)
+	public DiceRollMap operateCase(DicePoolMap dpm, DiceNumber n)
 	{
-		return operateCase(dpm.flatten(), i);
+		return operateCase(dpm.flatten(), n);
 	}
 	
 	@Override
-	public DiceRollMap operateCase(Integer i, DicePoolMap dpm)
+	public DiceRollMap operateCase(DiceNumber n, DicePoolMap dpm)
 	{
-		return operateCase(i, dpm.flatten());
+		return operateCase(n, dpm.flatten());
 	}
 	
 	@Override
@@ -55,13 +56,13 @@ public abstract class NumericInfix extends ArgSortedInfix
 	}
 	
 	@Override
-	public DiceRollMap operateCase(DiceRollMap drm, Integer i)
+	public DiceRollMap operateCase(DiceRollMap drm, DiceNumber n)
 	{
-		UnaryOperator<Integer> unary = new UnaryOperator<Integer>() {
+		UnaryOperator<DiceNumber> unary = new UnaryOperator<DiceNumber>() {
 			@Override
-			public Integer apply(Integer arg)
+			public DiceNumber apply(DiceNumber arg)
 			{
-				return operator.apply(arg, i);
+				return operator.apply(arg, n);
 			}
 		};
 		
@@ -69,23 +70,23 @@ public abstract class NumericInfix extends ArgSortedInfix
 	}
 	
 	@Override
-	public DiceRollMap operateCase(Integer i, DiceRollMap drm)
+	public DiceRollMap operateCase(DiceNumber n, DiceRollMap drm)
 	{
-		UnaryOperator<Integer> unary = new UnaryOperator<Integer>() {
+		UnaryOperator<DiceNumber> unary = new UnaryOperator<DiceNumber>() {
 			@Override
-			public Integer apply(Integer arg)
+			public DiceNumber apply(DiceNumber arg)
 			{
-				return operator.apply(i, arg);
+				return operator.apply(n, arg);
 			}
 		};
 		
 		return (DiceRollMap) drm.morph(unary);
 	}
 	
-	private class Infix implements BinaryOperator<Integer>
+	private class Infix implements BinaryOperator<DiceNumber>
 	{
 		@Override
-		public Integer apply(Integer a, Integer b)
+		public DiceNumber apply(DiceNumber a, DiceNumber b)
 		{
 			return operateCase(a, b);
 		}

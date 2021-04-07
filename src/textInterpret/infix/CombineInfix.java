@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
@@ -24,11 +25,11 @@ public class CombineInfix extends ArgSortedInfix
 	}
 
 	@Override
-	public Object operateCase(DicePoolMap a, Integer b)
+	public Object operateCase(DicePoolMap a, DiceNumber b)
 	{
-		Function<? super List<Integer>, ? extends List<Integer>> f = (li) -> {
+		Function<? super List<? extends DiceNumber>, List<DiceNumber>> f = (li) -> {
 			
-			List<Integer> liNew = new ArrayList<Integer>(li.size() + 1);
+			List<DiceNumber> liNew = new ArrayList<DiceNumber>(li.size() + 1);
 			liNew.addAll(li);
 			liNew.add(b);
 			return liNew;
@@ -52,26 +53,26 @@ public class CombineInfix extends ArgSortedInfix
 	}
 
 	@Override
-	public Object operateCase(DiceRollMap a, Integer b)
+	public Object operateCase(DiceRollMap a, DiceNumber b)
 	{
 		DicePoolMap dicePool = new DicePoolMap(a);
 		return operateCase(dicePool, b);
 	}
 
 	@Override
-	public Object operateCase(Integer a, DicePoolMap b)
+	public Object operateCase(DiceNumber a, DicePoolMap b)
 	{
 		return operateCase(b, a);
 	}
 
 	@Override
-	public Object operateCase(Integer a, DiceRollMap b)
+	public Object operateCase(DiceNumber a, DiceRollMap b)
 	{
 		return operateCase(b, a);
 	}
 
 	@Override
-	public Object operateCase(Integer a, Integer b)
+	public Object operateCase(DiceNumber a, DiceNumber b)
 	{
 		throw new TokenFuncInputTypeException();
 	}

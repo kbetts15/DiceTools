@@ -1,5 +1,6 @@
 package textInterpret.unary;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.DiceRollMap;
 import textInterpret.TokenFuncInputTypeException;
@@ -8,7 +9,7 @@ public class FlattenUnary extends ArgSortedUnary
 {
 
 	@Override
-	public Object operateCase(DicePoolMap operand)
+	public DiceRollMap operateCase(DicePoolMap operand)
 	{
 		return operand.flatten();
 	}
@@ -20,7 +21,7 @@ public class FlattenUnary extends ArgSortedUnary
 	}
 
 	@Override
-	public Object operateCase(Integer operand)
+	public Object operateCase(DiceNumber operand)
 	{
 		throw new TokenFuncInputTypeException();
 	}

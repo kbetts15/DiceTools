@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Stack;
 
+import diceTools.DiceNumber;
 import diceTools.ImmutableList;
 import textInterpret.function.DicePoolFunc;
 import textInterpret.function.DiceRollFunc;
@@ -217,10 +218,10 @@ public class TextInterpret
 			{
 				Token t;
 				
-				if (!s.contains("."))
-					t = new Token.VarToken(Integer.parseInt(s));
+				if (s.contains("."))
+					t = new Token.VarToken(new DiceNumber.DiceDouble(Double.valueOf(s)));
 				else
-					t = new Token.VarToken(Double.parseDouble(s));
+					t = new Token.VarToken(new DiceNumber.DiceInteger(Integer.valueOf(s)));
 				
 				tList.add(t);
 				

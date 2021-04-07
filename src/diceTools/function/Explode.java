@@ -3,16 +3,18 @@ package diceTools.function;
 import java.util.List;
 import java.util.function.Function;
 
+import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 import diceTools.ProbMap;
 import diceTools.DiceRollMap;
 
-public class Explode implements Function<List<Integer>, ProbMap<? extends List<Integer>>>
+//TODO: Explode JavaDoc
+public class Explode implements Function<List<? extends DiceNumber>, ProbMap<? extends List<? extends DiceNumber>>>
 {
 	private final int numBursts;
 	private final Burst burst;
 	
-	public Explode(List<? extends Integer> matchList, DiceRollMap explodeOptions, int numTimes)
+	public Explode(List<? extends DiceNumber> matchList, DiceRollMap explodeOptions, int numTimes)
 	{
 		if (numTimes < 0)
 			throw new IndexOutOfBoundsException();
@@ -31,7 +33,7 @@ public class Explode implements Function<List<Integer>, ProbMap<? extends List<I
 	}
 	
 	@Override
-	public DicePoolMap apply(List<Integer> li)
+	public DicePoolMap apply(List<? extends DiceNumber> li)
 	{
 		DicePoolMap dpm = new DicePoolMap();
 		dpm.put(li, 1.0);

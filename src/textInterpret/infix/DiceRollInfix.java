@@ -1,9 +1,9 @@
 package textInterpret.infix;
 
+import diceTools.DiceNumber;
 import diceTools.DiceRollMap;
-import diceTools.ProbMap;
 
-public class DiceRollInfix extends RollingInfix<Integer>
+public class DiceRollInfix extends RollingInfix<DiceNumber>
 {
 	
 	public DiceRollInfix()
@@ -12,9 +12,12 @@ public class DiceRollInfix extends RollingInfix<Integer>
 	}
 
 	@Override
-	public ProbMap<Integer> operateCase(Integer a, Integer b)
+	public DiceRollMap operateCase(DiceNumber a, DiceNumber b)
 	{
-		return DiceRollMap.diceRoll(a, b);
+		if (!a.isInt() || !b.isInt())
+			throw new RuntimeException("Cannot create dice roll from non-integers"); //TODO: write a proper exception class for this
+		
+		return DiceRollMap.diceRoll(a.intValue(), b.intValue());
 	}
 	
 	@Override
