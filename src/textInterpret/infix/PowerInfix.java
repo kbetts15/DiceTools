@@ -9,7 +9,7 @@ public class PowerInfix extends NumericInfix
 	public DiceNumber operateCase(DiceNumber a, DiceNumber b)
 	{
 		if (a.isInt() && b.isInt())
-			return new DiceNumber.DiceInteger(a.intValue() ^ b.intValue());
+			return new DiceNumber.DiceInteger((int) Math.round(Math.pow(a.intValue(), b.intValue())));
 		else
 			return new DiceNumber.DiceDouble(Math.pow(a.doubleValue(), b.doubleValue()));
 	}
