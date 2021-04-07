@@ -21,7 +21,7 @@ import diceTools.ImmutableList;
  *
  * @author kieran
  **/
-public class Append <T> implements Function<List<T>, List<T>>
+public class Append <T> implements Function<List<? extends T>, List<T>>
 {
 	/**
 	 * Elements to append to each <code>List</code>
@@ -61,7 +61,7 @@ public class Append <T> implements Function<List<T>, List<T>>
 	}
 
 	@Override
-	public List<T> apply(List<T> li)
+	public List<T> apply(List<? extends T> li)
 	{
 		List<T> liNew = new LinkedList<T>(li);
 		for (T t : it)
