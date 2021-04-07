@@ -596,7 +596,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	 * 				probabilities of all preceding keys, results in a probability
 	 * 				greater than or equal to the sum of all the probabilities
 	 */
-	public static <T extends Comparable<T>> Entry<T, Double> getMedian(ProbMap<T> pm)
+	public static <T extends Comparable<? super T>> Entry<T, Double> getMedian(ProbMap<T> pm)
 	{
 		Comparator<T> comp = Comparator.naturalOrder();
 		
