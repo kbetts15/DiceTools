@@ -19,10 +19,10 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
-public class DiscardN<T> implements Function<List<T>, List<T>>
+public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 {
 	/**
-	 * Number of elements to discard
+	 * DiceNumber of elements to discard
 	 */
 	private final int nDiscard;
 	
@@ -37,7 +37,7 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	 * <code>nDiscard<code> elements of a <code>List</code>
 	 * according to the ordering defined by a
 	 * {@link java.util.Comparator#Comparator Comparator}
-	 * @param nDiscard		number of elements to discard
+	 * @param nDiscard		DiceNumber of elements to discard
 	 * @param comp			<code>Comparator</code> defining an ordering
 	 * 						of elements
 	 */
@@ -48,7 +48,7 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	}
 	
 	@Override
-	public List<T> apply(List<T> li)
+	public List<T> apply(List<? extends T> li)
 	{
 		if (li == null)
 			throw new NullPointerException();
@@ -84,44 +84,44 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	
 	/**
 	 * Creates a <code>DiscardN</code> which orders elements by their natural ordering
-	 * @param nDiscard		number of elements to discard
+	 * @param nDiscard		DiceNumber of elements to discard
 	 * @return				<code>KeepN</code> which keeps the first <code>nDiscard</code>
 	 * 						elements of a <code>List</code> according to the elements'
 	 * 						natural ordering
 	 */
-	public static <C extends Comparable<? super C>> Function<List<C>, List<C>> discardNaturalN(int nDiscard)
+	public static <C extends Comparable<? super C>> Function<List<? extends C>, List<C>> discardNaturalN(int nDiscard)
 	{
 		return new DiscardN<C>(nDiscard, Comparator.naturalOrder());
 	}
 	
 	/**
 	 * Creates a <code>DiscardN</code> which orders elements by their reversed natual ordering
-	 * @param nDiscard		number of elements to discard
+	 * @param nDiscard		DiceNumber of elements to discard
 	 * @return				<code>DiscardN</code> which discards the lasy <code>nDiscard<code>
 	 * 						elements of a <code>List</code> according to elements'
 	 * 						natural ordering
 	 */
-	public static <C extends Comparable<? super C>> Function<List<C>, List<C>> discardReverseN(int nDiscard)
+	public static <C extends Comparable<? super C>> Function<List<? extends C>, List<C>> discardReverseN(int nDiscard)
 	{
 		return new DiscardN<C>(nDiscard, Comparator.reverseOrder());
 	}
 	
 	/**
-	 * Creates a <code>DiscardN</code> which orders <code>Number<code>'s in descending order
-	 * @param nDiscard		number of <code>Number</code>'s to keep
+	 * Creates a <code>DiscardN</code> which orders <code>DiceNumber<code>'s in descending order
+	 * @param nDiscard		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the highest <code>nDiscard</code> elements
 	 */
-	public static <N extends Number & Comparable<? super N>> Function<List<N>, List<N>> discardHighestN(int nDiscard)
+	public static <N extends Number & Comparable<? super N>> Function<List<? extends N>, List<N>> discardHighestN(int nDiscard)
 	{
 		return new DiscardN<N>(nDiscard, Comparator.naturalOrder());
 	}
 	
 	/**
-	 * Creates a <code>DiscardN</code> which orders <code>Number<code>'s in ascending order
-	 * @param nDiscard		number of <code>Number</code>'s to keep
+	 * Creates a <code>DiscardN</code> which orders <code>DiceNumber<code>'s in ascending order
+	 * @param nDiscard		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the lowest <code>nDiscard</code> elements
 	 */
-	public static <N extends Number & Comparable<? super N>> Function<List<N>, List<N>> discardLowestN(int nDiscard)
+	public static <N extends Number & Comparable<? super N>> Function<List<? extends N>, List<N>> discardLowestN(int nDiscard)
 	{
 		return new DiscardN<N>(nDiscard, Comparator.reverseOrder());
 	}
