@@ -91,7 +91,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	 * @return			<code>KeepN</code> which keeps the first <code>nKeep</code> elements of
 	 * 					a <code>List</code> according to the elements' natural ordering
 	 */
-	public static <C extends Comparable<C>> Function<List<C>, List<C>> keepNaturalN(int nKeep)
+	public static <C extends Comparable<? super C>> Function<List<C>, List<C>> keepNaturalN(int nKeep)
 	{
 		return new KeepN<C>(nKeep, Comparator.naturalOrder());
 	}
@@ -102,7 +102,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	 * @return			<code>KeepN<code> which keeps the last <code>nKeep</code> elements of
 	 * 					a <code>List</code> according to the elements' natural ordering
 	 */
-	public static <C extends Comparable<C>> Function<List<C>, List<C>> keepReverseN(int nKeep)
+	public static <C extends Comparable<? super C>> Function<List<C>, List<C>> keepReverseN(int nKeep)
 	{
 		return new KeepN<C>(nKeep, Comparator.reverseOrder());
 	}
@@ -112,7 +112,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	 * @param nKeep		number of <code>Number</code>'s to keep
 	 * @return			<code>KeepN</code> which keeps the highest <code>nKeep</code> elements
 	 */
-	public static <N extends Number & Comparable<N>> Function<List<N>, List<N>> keepHighestN(int nKeep)
+	public static <N extends Number & Comparable<? super N>> Function<List<N>, List<N>> keepHighestN(int nKeep)
 	{
 		return new KeepN<N>(nKeep, Comparator.naturalOrder());
 	}
@@ -122,7 +122,7 @@ public class KeepN<T> implements Function<List<T>, List<T>>
 	 * @param nKeep		number of <code>Number</code>'s to keep
 	 * @return			<code>KeepN</code> which keeps the lowest <code>nKeep</code> elements
 	 */
-	public static <N extends Number & Comparable<N>> Function<List<N>, List<N>> keepLowestN(int nKeep)
+	public static <N extends Number & Comparable<? super N>> Function<List<N>, List<N>> keepLowestN(int nKeep)
 	{
 		return new KeepN<N>(nKeep, Comparator.reverseOrder());
 	}

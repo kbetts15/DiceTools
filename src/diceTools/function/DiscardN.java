@@ -89,7 +89,7 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	 * 						elements of a <code>List</code> according to the elements'
 	 * 						natural ordering
 	 */
-	public static <C extends Comparable<C>> Function<List<C>, List<C>> discardNaturalN(int nDiscard)
+	public static <C extends Comparable<? super C>> Function<List<C>, List<C>> discardNaturalN(int nDiscard)
 	{
 		return new DiscardN<C>(nDiscard, Comparator.naturalOrder());
 	}
@@ -101,7 +101,7 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	 * 						elements of a <code>List</code> according to elements'
 	 * 						natural ordering
 	 */
-	public static <C extends Comparable<C>> Function<List<C>, List<C>> discardReverseN(int nDiscard)
+	public static <C extends Comparable<? super C>> Function<List<C>, List<C>> discardReverseN(int nDiscard)
 	{
 		return new DiscardN<C>(nDiscard, Comparator.reverseOrder());
 	}
@@ -111,7 +111,7 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	 * @param nDiscard		number of <code>Number</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the highest <code>nDiscard</code> elements
 	 */
-	public static <N extends Number & Comparable<N>> Function<List<N>, List<N>> discardHighestN(int nDiscard)
+	public static <N extends Number & Comparable<? super N>> Function<List<N>, List<N>> discardHighestN(int nDiscard)
 	{
 		return new DiscardN<N>(nDiscard, Comparator.naturalOrder());
 	}
@@ -121,7 +121,7 @@ public class DiscardN<T> implements Function<List<T>, List<T>>
 	 * @param nDiscard		number of <code>Number</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the lowest <code>nDiscard</code> elements
 	 */
-	public static <N extends Number & Comparable<N>> Function<List<N>, List<N>> discardLowestN(int nDiscard)
+	public static <N extends Number & Comparable<? super N>> Function<List<N>, List<N>> discardLowestN(int nDiscard)
 	{
 		return new DiscardN<N>(nDiscard, Comparator.reverseOrder());
 	}
