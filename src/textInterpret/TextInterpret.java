@@ -33,6 +33,13 @@ public class TextInterpret
 {
 	//TODO: replace RuntimeExceptions with exceptions extending some exception defined in textInterpret which can be caught
 	
+	private static enum TokenState
+	{
+		READY,
+		NUMBER,
+		STRING
+	}
+	
 	private static final List<TokenUnary> unaryOperators;
 	private static final List<PriorityEntry<? extends TokenInfix>> infixOperators;
 	private static final List<TokenFunc> funcOperators;
