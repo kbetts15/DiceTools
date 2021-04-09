@@ -5,24 +5,35 @@ import java.util.function.Function;
 
 import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
-import diceTools.ProbMap;
-import diceTools.DiceRollMap;
 
-//TODO: Explode JavaDoc
-public class Explode implements Function<List<? extends DiceNumber>, ProbMap<? extends List<? extends DiceNumber>>>
+/**
+ * {@link java.util.function.Function#Function Function} to repeatedly apply
+ * <code>Burst.{@link Burst#apply(List) apply}(List)</code> to a
+ * <code>List&lt{@link DiceNumber}&gt</code>
+ * 
+ * @see Burst
+ * 
+ * @author kieran
+ */
+public class Explode implements Function<List<? extends DiceNumber>, DicePoolMap>
 {
-	private final int numBursts;
+	/**
+	 * <code>Burst</code> to repeatedly apply to a <code>List</code>
+	 */
 	private final Burst burst;
 	
-	public Explode(List<? extends DiceNumber> matchList, DiceRollMap explodeOptions, int numTimes)
-	{
-		if (numTimes < 0)
-			throw new IndexOutOfBoundsException();
-		
-		this.numBursts = numTimes;
-		this.burst = new Burst(matchList, explodeOptions);
-	}
+	/**
+	 * Number of times to apply a <code>Burst</code> to a <code>List</code>
+	 */
+	private final int numBursts;
 	
+	/**
+	 * Constructs an <code>Explode</code> with a specified <code>Burst</code>
+	 * and number of times to apply it
+	 * 
+	 * @param burst		<code>Burst</code> to repeatedly apply to <code>List</code>s
+	 * @param numTimes	Number of times to apply the <code>Burst</code>
+	 */
 	public Explode(Burst burst, int numTimes)
 	{
 		if (numTimes < 0)
