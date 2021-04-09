@@ -7,15 +7,35 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+/**
+ * <code>List</code> implementation which does not allow any modification
+ * to the contents or structure of the list after construction.
+ * 
+ * @param <T> type of the elements stored in the <code>List</code>
+ * 
+ * @author kieran
+ */
 public class ImmutableList<T> implements List<T>
 {
+	/**
+	 * Array storing the elements in the <code>ImmutableList</code>
+	 */
 	private final T[] myArray;
 	
+	/**
+	 * Constructs an <code>ImmutableList</code> with elements copied in order from an array.
+	 * @param ts	array from which elements are copied
+	 */
 	public ImmutableList(T[] ts)
 	{
 		myArray = Arrays.copyOf(ts, ts.length);
 	}
 	
+	/**
+	 * Constructs an <code>ImmutableList</code> by converting a <code>Collection</code>
+	 * to an array, which is then stored.
+	 * @param ts
+	 */
 	@SuppressWarnings("unchecked")
 	public ImmutableList(Collection<? extends T> ts)
 	{
@@ -230,8 +250,16 @@ public class ImmutableList<T> implements List<T>
 		return s.toString();
 	}
 	
+	/**
+	 * {@link Iterator} for elements in an {@link ImmutableList}.
+	 * 
+	 * @author kieran
+	 */
 	private class ImmutIterator implements Iterator<T>
 	{
+		/**
+		 * Position of the next element to be returned by the <code>Iterator</code>
+		 */
 		private int nextPos = 0;
 		
 		@Override
@@ -250,10 +278,26 @@ public class ImmutableList<T> implements List<T>
 		}
 	}
 	
+	/**
+	 * {@link ListIterator} for elements in an {@link ImmutableList}.
+	 * 
+	 * @author kieran
+	 *
+	 */
 	private class ImmutListIterator implements ListIterator<T>
 	{
+		/**
+		 * Current position of the <code>ListIterator</code>, ie the position in the <code>List</code>
+		 * of the element which would be returned by a call to {@link ImmutListIterator#next() next()}
+		 */
 		private int currPos;
 		
+		/**
+		 * Constructs a list-iterator of the elements in the list (in proper sequence),
+		 * starting at the specified position in the list.
+		 * 
+		 * @param index		index of the first element to be returned from the list-iterator (by a call to next)
+		 */
 		public ImmutListIterator(int index)
 		{
 			currPos = index;
