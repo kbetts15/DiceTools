@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Implementation of {@link ProbMap} with <code>Integer</code> values used for event keys.
+ * Implementation of {@link ProbMap} with {@link DiceNumber} values used for event keys.
  * 
  * <p>Event keys are never permitted to be <code>null</code>.
  * 
