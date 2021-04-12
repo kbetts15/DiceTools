@@ -1,5 +1,6 @@
 package textInterpret.function;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import diceTools.DiceNumber;
@@ -14,22 +15,66 @@ public class DiceRollFunc extends TokenFunc
 	@Override
 	public Object operate(List<? extends Object> li)
 	{
-		DiceRollMap rollMap = new DiceRollMap();
-		for (Object obj : li)
+		if (li == null || li.isEmpty())
+			return new DiceRollMap();
+		
+		final Object objFirst = li.get(0);
+		
+		if (objFirst instanceof KeyValuePair)
 		{
-			KeyValuePair kvp;
-			if (obj instanceof KeyValuePair)
-				kvp = (KeyValuePair) obj;
-			else
-				throw new TokenFuncInputTypeException();
+			DiceRollMap roll = new DiceRollMap();
 			
-			if ((kvp.getKey() instanceof DiceNumber)
-					&& (kvp.getValue() instanceof Double))
-				rollMap.put((DiceNumber) kvp.getKey(), (Double) kvp.getValue());
-			else
-				throw new TokenFuncInputTypeException();
+			for (Object obj : li)
+			{
+				if (!(obj instanceof KeyValuePair))
+					throw new TokenFuncInputTypeException(String.format("Dice roll construct must contain only numbers"
+							+ "or only number-probability pairs - innapropriate Object type found in pair list (%s)",
+							obj.getClass().getName()));
+				
+				KeyValuePair kvp = (KeyValuePair) obj;
+				
+				if (!(kvp.getKey() instanceof DiceNumber))
+					throw new TokenFuncInputTypeException(String.format("Dice roll construct must contain only numbers"
+							+ "or only number-probability pairs - pair with invalid key type found (%s)",
+							kvp.getValue().getClass().getName()));
+				
+				if (!(kvp.getKey() instanceof Number))
+					throw new TokenFuncInputTypeException(String.format("Dice roll construct must contain only numbers"
+							+ "or only number-probability pairs - pair with invalid value type found (%s)",
+							kvp.getKey().getClass().getName()));
+				
+				roll.put((DiceNumber) kvp.getKey(), ((Number) kvp.getValue()).doubleValue());
+			}
+			
+			return roll;
 		}
-		return rollMap;
+		else if (objFirst instanceof DiceNumber)
+		{
+			List<DiceNumber> numbers = new LinkedList<DiceNumber>();
+			
+			for (Object obj : li)
+			{
+				if (!(obj instanceof DiceNumber))
+					throw new TokenFuncInputTypeException(String.format("Dice roll construct must contain only numbers"
+							+ "or only number-probability pairs - innapropriate Object found in number list (%s)",
+							obj.getClass().getName()));
+				
+				numbers.add((DiceNumber) obj);
+			}
+			
+			DiceRollMap roll = new DiceRollMap();
+			double prob = 1.0 / numbers.size();
+			
+			for (DiceNumber n : numbers)
+				roll.merge(n, prob);
+			
+			return roll;
+		}
+		else
+			throw new TokenFuncInputTypeException(String.format("Dice roll construct must contain only numbers"
+					+ "or only number-probability pairs - first element has invalid type (%s)",
+					objFirst.getClass().getName()));
+		
 	}
 
 	@Override
