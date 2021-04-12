@@ -33,7 +33,7 @@ public class DicePoolFunc extends TokenFunc
 					if (dicePool.containsKey(rollList))
 						throw new RuntimeException("Duplicate key in dice pool construct");
 					
-					dicePool.put(rollList, (double) kvp.getValue());
+					dicePool.put(rollList, ((Number) kvp.getValue()).doubleValue());
 					rollList = new LinkedList<DiceNumber>();
 				}
 			}
