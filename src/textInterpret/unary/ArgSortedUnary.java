@@ -19,7 +19,8 @@ public abstract class ArgSortedUnary extends TokenUnary
 		else if (obj instanceof DicePoolMap)
 			return operateCase((DicePoolMap) obj);
 		else
-			throw new TokenFuncInputTypeException();
+			throw new TokenFuncInputTypeException(String.format("The argument to %s.operate cannot be of type %s",
+					getClass().getName(), obj.getClass().getName()));
 	}
 
 	public abstract Object operateCase(DicePoolMap operand);

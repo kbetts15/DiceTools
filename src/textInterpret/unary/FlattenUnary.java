@@ -17,13 +17,15 @@ public class FlattenUnary extends ArgSortedUnary
 	@Override
 	public Object operateCase(DiceRollMap operand)
 	{
-		throw new TokenFuncInputTypeException();
+		throw new TokenFuncInputTypeException(String.format("The argument to %s.operate cannot be of type %s",
+				getClass().getName(), DiceRollMap.class.getName()));
 	}
 
 	@Override
 	public Object operateCase(DiceNumber operand)
 	{
-		throw new TokenFuncInputTypeException();
+		throw new TokenFuncInputTypeException(String.format("The argument to %s.operate cannot be of type %s",
+				getClass().getName(), DiceNumber.class.getName()));
 	}
 
 	@Override

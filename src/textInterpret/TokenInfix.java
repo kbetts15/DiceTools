@@ -8,7 +8,9 @@ public abstract class TokenInfix implements BinaryOperator<Token>
 	public final Token apply(Token a, Token b)
 	{
 		if (a == null || b == null)
-			throw new NullPointerException();
+			throw new NullPointerException(String.format("Argument %s of %s.apply cannot be null",
+					getClass().getName(),
+					a == null ? (b == null ? "a, b" : "a") : ("b")));
 		
 		Object varA = a.getVariable();
 		Object varB = b.getVariable();

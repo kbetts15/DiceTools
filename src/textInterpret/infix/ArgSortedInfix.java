@@ -25,7 +25,8 @@ public abstract class ArgSortedInfix extends TokenInfix
 				DiceNumber b = (DiceNumber) objB;
 				return operateCase(a, b);}
 			else
-				throw new TokenFuncInputTypeException();
+				throw new TokenFuncInputTypeException(String.format("Invalid type (%s) of argument 2 passed to %s.operate",
+						objB.getClass().getName(), getClass().getName()));
 		}
 		else if (objA instanceof DiceRollMap)
 		{
@@ -41,7 +42,8 @@ public abstract class ArgSortedInfix extends TokenInfix
 				DiceNumber b = (DiceNumber) objB;
 				return operateCase(a, b);}
 			else
-				throw new TokenFuncInputTypeException();
+				throw new TokenFuncInputTypeException(String.format("Invalid type (%s) of argument 2 passed to %s.operate",
+						objB.getClass().getName(), getClass().getName()));
 		}
 		else if (objA instanceof DiceNumber)
 		{
@@ -57,10 +59,12 @@ public abstract class ArgSortedInfix extends TokenInfix
 				DiceNumber b = (DiceNumber) objB;
 				return operateCase(a, b);}
 			else
-				throw new TokenFuncInputTypeException();
+				throw new TokenFuncInputTypeException(String.format("Invalid type (%s) of argument 2 passed to %s.operate",
+						objB.getClass().getName(), getClass().getName()));
 		}
 		else
-			throw new TokenFuncInputTypeException();
+			throw new TokenFuncInputTypeException(String.format("Invalid type (%s) of argument 1 passed to %s.operate",
+					objA.getClass().getName(), getClass().getName()));
 	}
 	
 	public abstract Object operateCase(DicePoolMap a, DicePoolMap b);

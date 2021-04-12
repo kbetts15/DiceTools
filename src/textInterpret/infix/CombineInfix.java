@@ -74,7 +74,7 @@ public class CombineInfix extends ArgSortedInfix
 	@Override
 	public Object operateCase(DiceNumber a, DiceNumber b)
 	{
-		throw new TokenFuncInputTypeException();
+		throw new TokenFuncInputTypeException("Cannot combine two numbers");
 	}
 
 	@Override

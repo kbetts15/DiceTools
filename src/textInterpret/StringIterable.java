@@ -55,7 +55,7 @@ public class StringIterable implements Iterable<Character>
 		public Character next()
 		{
 			if (!hasNext())
-				throw new NoSuchElementException();
+				throw new NoSuchElementException("No more characters to get");
 			
 			Character c = s.charAt(pos);
 			pos++;

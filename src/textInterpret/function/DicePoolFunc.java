@@ -38,7 +38,9 @@ public class DicePoolFunc extends TokenFunc
 				}
 			}
 			else
-				throw new TokenFuncInputTypeException();
+				throw new TokenFuncInputTypeException(String.format("Dice pool construct must contain only numbers"
+						+ "and number-probability pairs - innapropriate Object found (%s)",
+						obj.getClass().getName()));
 		}
 		
 		if (!rollList.isEmpty())

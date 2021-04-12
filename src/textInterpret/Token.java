@@ -93,7 +93,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#VAR}
 	 * @see Token.VarToken
 	 */
-	public Object getVariable() {throw new TokenTypeMismatchException();}
+	public Object getVariable()
+	{
+		throw new TokenTypeMismatchException(String.format("getVariable method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Return the priority of the <code>Token</code>
@@ -103,7 +107,11 @@ public class Token
 	 * @see {@link Token#setPriority}
 	 * @see Token.InfixToken
 	 */
-	public int getPriority() {throw new TokenTypeMismatchException();}
+	public int getPriority()
+	{
+		throw new TokenTypeMismatchException(String.format("getPriority method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Set the priority of the <code>Token</code>
@@ -113,7 +121,11 @@ public class Token
 	 * @see {@link Token#getPriority}
 	 * @see Token.InfixToken
 	 */
-	public void setPriority(int priority) {throw new TokenTypeMismatchException();}
+	public void setPriority(int priority)
+	{
+		throw new TokenTypeMismatchException(String.format("setPriority method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Get the unary function represented by the <code>Token</code>
@@ -122,7 +134,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_UNARY}
 	 * @see Token.FuncToken
 	 */
-	public TokenUnary getFuncUnary() {throw new TokenTypeMismatchException();}
+	public TokenUnary getFuncUnary()
+	{
+		throw new TokenTypeMismatchException(String.format("getFuncUnary method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Get the infix function represented by the <code>Token</code>
@@ -131,7 +147,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_INFIX}
 	 * @see Token.InfixToken
 	 */
-	public TokenInfix getFuncInfix() {throw new TokenTypeMismatchException();}
+	public TokenInfix getFuncInfix()
+	{
+		throw new TokenTypeMismatchException(String.format("getFuncInfix method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Get the argumented function represented by the <code>Token</code>
@@ -140,7 +160,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_ARGS}
 	 * @see Token.InfixToken
 	 */
-	public TokenFunc getFuncArgs() {throw new TokenTypeMismatchException();}
+	public TokenFunc getFuncArgs()
+	{
+		throw new TokenTypeMismatchException(String.format("getFuncArgs method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Get the open bracket symbol represented by this <code>Token</code>
@@ -153,7 +177,11 @@ public class Token
 	 * @see Token.BracketOpenToken
 	 * @see Token.BracketCloseToken
 	 */
-	public char getOpenSymbol() {throw new TokenTypeMismatchException();}
+	public char getOpenSymbol()
+	{
+		throw new TokenTypeMismatchException(String.format("getOpenSymbol method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Get the number of arguments used as input to the argumented function represented by this <code>Token</code>
@@ -162,7 +190,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_ARGS}
 	 * @see FuncToken
 	 */
-	public int getNumArgs() {throw new TokenTypeMismatchException();}
+	public int getNumArgs()
+	{
+		throw new TokenTypeMismatchException(String.format("getNumArgs method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Set the number of arguments used as input to the argumented function represented by this <code>Token</code>
@@ -171,7 +203,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_ARGS}
 	 * @see FuncToken
 	 */
-	public void setNumArgs(int numArgs) {throw new TokenTypeMismatchException();}
+	public void setNumArgs(int numArgs)
+	{
+		throw new TokenTypeMismatchException(String.format("setNumArgs method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Increment the number of arguments used as input to the argumented function represented by this <code>Token</code>
@@ -179,7 +215,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_ARGS}
 	 * @see FuncToken
 	 */
-	public void incNumArgs() {throw new TokenTypeMismatchException();}
+	public void incNumArgs()
+	{
+		throw new TokenTypeMismatchException(String.format("incNumArgs method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Get the <code>Token</code> representing an argumented function
@@ -191,7 +231,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#BRACKET_OPEN}
 	 * @see BracketOpenToken
 	 */
-	public Token getFuncOwner() {throw new TokenTypeMismatchException();}
+	public Token getFuncOwner()
+	{
+		throw new TokenTypeMismatchException(String.format("getFuncOwner method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * Set the <code>Token</code> representing an argumented function
@@ -201,7 +245,11 @@ public class Token
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#BRACKET_OPEN}
 	 * @see BracketOpenToken
 	 */
-	public void setFuncOwner(Token funcOwner) {throw new TokenTypeMismatchException();}
+	public void setFuncOwner(Token funcOwner)
+	{
+		throw new TokenTypeMismatchException(String.format("setFuncOwner method not implemented by %s",
+				getClass().getName()));
+	}
 	
 	/**
 	 * {@link Token} of type {@link TokenType#VAR}.

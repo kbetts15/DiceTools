@@ -99,7 +99,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		validateKey(key);
 		
 		if (value == null)
-			throw new NullPointerException();
+			throw new NullPointerException("value cannot be null");
 		
 		K sanitizedKey = sanitizeKey(key);
 		
@@ -170,7 +170,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		validateKey(key);
 		
 		if (value == null)
-			throw new NullPointerException();
+			throw new NullPointerException("value cannot be null");
 		
 		K sanitizedKey = sanitizeKey(key);
 		
@@ -183,7 +183,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		validateKey(key);
 		
 		if (value == null)
-			throw new NullPointerException();
+			throw new NullPointerException("value cannot be null");
 		
 		K sanitizedKey = sanitizeKey(key);
 		
@@ -196,7 +196,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		validateKey(key);
 		
 		if (newValue == null)
-			throw new NullPointerException();
+			throw new NullPointerException("newValue cannot be null");
 		
 		K sanitizedKey = sanitizeKey(key);
 		
@@ -479,7 +479,7 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 	private void validateKey(K key)
 	{
 		if (!keyIsValid(key))
-			throw new InvalidKeyException();
+			throw new InvalidKeyException("Invalid key");
 	}
 	
 	/**

@@ -556,7 +556,7 @@ public class TextInterpret
 					for (int i = 0; i < numArgs; i++)
 					{
 						if (stack.isEmpty())
-							throw new NoSuchElementException();
+							throw new NoSuchElementException("Operating stack is empty");
 						
 						li.addFirst(stack.pop());
 					}

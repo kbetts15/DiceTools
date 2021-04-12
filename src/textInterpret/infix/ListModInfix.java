@@ -23,12 +23,14 @@ public abstract class ListModInfix extends TokenInfix
 			else if (objB instanceof DiceRollMap)
 				return operateProb((DicePoolMap) objA, (DiceRollMap) objB);
 			else
-				throw new TokenFuncInputTypeException();
+				throw new TokenFuncInputTypeException(String.format("The second argument to %s.operate must be of type %s or %s, not %s",
+						getClass().getName(), DiceRollMap.class.getName(), DicePoolMap.class.getName(), objB.getClass().getName()));
 		}
 		else if (objA instanceof DiceRollMap)
 			return operate(new DicePoolMap((DiceRollMap) objA), objB);
 		else
-			throw new TokenFuncInputTypeException();
+			throw new TokenFuncInputTypeException(String.format("The first argument to %s.operate must be of type %s or %s, not %s",
+					getClass().getName(), DiceRollMap.class.getName(), DicePoolMap.class.getName(), objA.getClass().getName()));
 	}
 	
 	private DicePoolMap operateSingle(DicePoolMap mapIn, DiceNumber intMod)

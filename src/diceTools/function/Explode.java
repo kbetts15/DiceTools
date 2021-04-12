@@ -37,7 +37,7 @@ public class Explode implements Function<List<? extends DiceNumber>, DicePoolMap
 	public Explode(Burst burst, int numTimes)
 	{
 		if (numTimes < 0)
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException("Cannot burst a negative number of times");
 		
 		this.numBursts = numTimes;
 		this.burst = burst;

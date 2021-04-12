@@ -81,7 +81,7 @@ public class Burst implements Function<List<? extends DiceNumber>, DicePoolMap>
 	public DicePoolMap apply(List<? extends DiceNumber> li)
 	{
 		if (li == null)
-			throw new NullPointerException();
+			throw new NullPointerException("Input List is null");
 		
 		DicePoolMap dpm = new DicePoolMap();
 		

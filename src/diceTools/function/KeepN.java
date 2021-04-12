@@ -53,7 +53,7 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 	public List<T> apply(List<? extends T> li)
 	{
 		if (li == null)
-			throw new NullPointerException();
+			throw new NullPointerException("Input List is null");
 		
 		final int size = li.size();
 		

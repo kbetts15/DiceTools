@@ -118,7 +118,7 @@ public class DiceRollIterable implements Iterable<Entry<List<DiceNumber.DiceInte
 		private void nextRoll(Integer roll[])
 		{
 			if (!hasNext())
-				throw new NoSuchElementException();
+				throw new NoSuchElementException("No next roll to go to");
 			
 			int incPos = 0;
 			
