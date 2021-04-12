@@ -271,6 +271,10 @@ public class Main
 		{
 			System.out.print(">> ");
 			String s = sc.nextLine();
+			s = s.trim();
+			
+			if (s.length() == 0)
+				continue;
 			
 			try
 			{
