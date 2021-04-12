@@ -18,6 +18,8 @@ import java.util.function.Predicate;
  */
 public class Count implements Function<List<Integer>, Integer>
 {
+	//TODO: reimplement Count to act on DiceNumbers rather than Integers
+	
 	/**
 	 * {@link java.util.function.Predicate#Predicate Predicate}
 	 * used to determine which <code>Integer</code>'s to count
@@ -27,21 +29,21 @@ public class Count implements Function<List<Integer>, Integer>
 	/**
 	 * Constructs a <code>Count</code> with a given
 	 * {@link java.util.function.Predicate#Predicate Predicate}.
-	 * @param pred <code>Predicate</code> to determine which <code>Integer</code> should be counted
+	 * @param pred <code>Predicate</code> to determine which <code>Integer</code>s should be counted
 	 */
 	public Count(Predicate<Integer> pred)
 	{
 		if (pred == null)
-			throw new NullPointerException();
-		
-		this.pred = pred;
+			this.pred = n -> true;
+		else
+			this.pred = pred;
 	}
 	
 	@Override
 	public Integer apply(List<Integer> li)
 	{
 		if (li == null)
-			throw new NullPointerException();
+			throw new NullPointerException("Input List is null");
 		
 		int count = 0;
 		
