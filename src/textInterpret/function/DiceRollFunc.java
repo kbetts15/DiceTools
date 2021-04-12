@@ -15,15 +15,15 @@ public class DiceRollFunc extends TokenFunc
 	@Override
 	public Object operate(List<? extends Object> li)
 	{
+		DiceRollMap roll = new DiceRollMap();
+		
 		if (li == null || li.isEmpty())
-			return new DiceRollMap();
+			return roll;
 		
 		final Object objFirst = li.get(0);
 		
 		if (objFirst instanceof KeyValuePair)
 		{
-			DiceRollMap roll = new DiceRollMap();
-			
 			for (Object obj : li)
 			{
 				if (!(obj instanceof KeyValuePair))
@@ -45,8 +45,6 @@ public class DiceRollFunc extends TokenFunc
 				
 				roll.put((DiceNumber) kvp.getKey(), ((Number) kvp.getValue()).doubleValue());
 			}
-			
-			return roll;
 		}
 		else if (objFirst instanceof DiceNumber)
 		{
@@ -62,18 +60,18 @@ public class DiceRollFunc extends TokenFunc
 				numbers.add((DiceNumber) obj);
 			}
 			
-			DiceRollMap roll = new DiceRollMap();
 			double prob = 1.0 / numbers.size();
 			
 			for (DiceNumber n : numbers)
 				roll.merge(n, prob);
-			
-			return roll;
 		}
 		else
 			throw new TokenFuncInputTypeException(String.format("Dice roll construct must contain only numbers"
 					+ "or only number-probability pairs - first element has invalid type (%s)",
 					objFirst.getClass().getName()));
+		
+		roll.normalise();
+		return roll;
 		
 	}
 

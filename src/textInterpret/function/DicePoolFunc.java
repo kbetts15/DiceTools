@@ -11,6 +11,7 @@ import textInterpret.TokenFuncInputTypeException;
 
 public class DicePoolFunc extends TokenFunc
 {
+	//TODO: provide a way to automatically make rolls with equal probabilities (use a ; operator?)
 
 	@Override
 	public Object operate(List<? extends Object> li)
@@ -46,6 +47,7 @@ public class DicePoolFunc extends TokenFunc
 		if (!rollList.isEmpty())
 			throw new RuntimeException("Dice pool construct cannot contain keys without values");
 		
+		dicePool.normalise();
 		return dicePool;
 	}
 
