@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -499,6 +500,47 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 			}
 			
 		};
+	}
+	
+	/**
+	 * Normalise the probabilities in the <code>ProbMap</code> so that they sum to unity.
+	 * This is equivalent to dividing each probability by the sum of all probabilities.
+	 */
+	public void normalise()
+	{
+		normalise(1.0);
+	}
+	
+	/**
+	 * Normalise the probabilities in the <code>ProbMap</code> so that they sum to a given value.
+	 * This is equivalent to dividing each probability by the ratio of the normalising value
+	 * to the summ of all probabilities.
+	 * 
+	 * @param norm		normalising value. After returning, the values in the
+	 * 					<code>ProbMap</code> sum to this value
+	 */
+	public void normalise(double norm)
+	{
+		double probTotal = 0.0;
+		
+		for (Double d : values())
+			probTotal += d;
+		
+		final double probMod = norm / probTotal;
+		
+		Consumer<Map.Entry<K, Double>> normalizer = new Consumer<Map.Entry<K, Double>>() {
+
+			@Override
+			public void accept(Entry<K, Double> entry)
+			{
+				double prob = entry.getValue();
+				prob *= probMod;
+				entry.setValue(prob);
+			}
+			
+		};
+		
+		entrySet().forEach(normalizer);
 	}
 	
 	/**
