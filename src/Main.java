@@ -267,6 +267,10 @@ public class Main
 		
 		Scanner sc = new Scanner(System.in);
 		
+		final int maxEvalChars = 100;
+		final String checkChars = String.format("%%.%ds", maxEvalChars + 1);
+		final String longFormat = String.format("%%18s: %%.%ds ...\n", maxEvalChars);
+		
 		while (true)
 		{
 			System.out.print(">> ");
@@ -293,8 +297,34 @@ public class Main
 				Queue<Token> shuntedQueue = TextInterpret.shunt(tokenQueue);
 				System.out.printf("%18s: %s\n", "Shunt to postfix", shuntedQueue.toString());
 				
-				System.out.printf("%18s: %s\n", "Evaluate results", TextInterpret.evaluate(shuntedQueue));
+				Object result = TextInterpret.evaluate(shuntedQueue);
 				
+				if (result instanceof Map)
+				{
+					System.out.printf("%18s:", "Evaluate results\n");
+					int numPrinted = 0;
+					
+					Map<?, ?> m = (Map<?, ?>) result;
+					
+					for (Object obj : m.entrySet())
+					{
+						Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+						
+						if (numPrinted++ >= 100)
+						{
+							System.out.println("\t...\n");
+							break;
+						}
+						
+						System.out.printf("\t%s: %s\n", entry.getKey(), entry.getValue());
+					}
+				}
+				else
+				{
+					String evalStr = String.format(checkChars, result);
+					System.out.printf(evalStr.length() <= maxEvalChars ? "%18s: %s\n" : longFormat,
+							"Evaluate results", TextInterpret.evaluate(shuntedQueue));
+				}
 			}
 			catch (Exception e)
 			{
