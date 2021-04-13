@@ -54,7 +54,10 @@ public abstract class DiceNumber extends Number implements Comparable<Number>
 		if (isInt() != dn.isInt())
 			return false;
 		
-		return doubleValue() == dn.doubleValue();
+		if (isInt())
+			return intValue() == dn.intValue();
+		else
+			return doubleValue() == dn.doubleValue();
 	}
 	
 	@Override
@@ -64,6 +67,12 @@ public abstract class DiceNumber extends Number implements Comparable<Number>
 			return Integer.toString(intValue());
 		else
 			return String.format("%.3f", doubleValue());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Double.hashCode(doubleValue());
 	}
 	
 	/**
