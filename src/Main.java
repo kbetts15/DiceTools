@@ -301,7 +301,7 @@ public class Main
 				
 				if (result instanceof Map)
 				{
-					System.out.printf("%18s:", "Evaluate results\n");
+					System.out.printf("%18s:\n", "Evaluate results");
 					int numPrinted = 0;
 					
 					Map<?, ?> m = (Map<?, ?>) result;
