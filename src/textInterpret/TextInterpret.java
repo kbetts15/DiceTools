@@ -25,9 +25,12 @@ import textInterpret.infix.MultiplyInfix;
 import textInterpret.infix.PowerInfix;
 import textInterpret.infix.SubtractInfix;
 import textInterpret.unary.FloaterUnary;
+import textInterpret.unary.FloorUnary;
 import textInterpret.unary.InterUnary;
+import textInterpret.unary.CeilUnary;
 import textInterpret.unary.FlattenUnary;
 import textInterpret.unary.NegativeUnary;
+import textInterpret.unary.RoundUnary;
 
 public class TextInterpret
 {
@@ -54,6 +57,9 @@ public class TextInterpret
 		unaryOperators.add(new FlattenUnary());
 		unaryOperators.add(new FloaterUnary());
 		unaryOperators.add(new InterUnary());
+		unaryOperators.add(new RoundUnary());
+		unaryOperators.add(new FloorUnary());
+		unaryOperators.add(new CeilUnary());
 		
 		infixOperators = new LinkedList<PriorityEntry<? extends TokenInfix>>();
 		
@@ -293,7 +299,7 @@ public class TextInterpret
 		return tList;
 	}
 	
-	public static void validateTokenList(List<Token> q) //TODO: call this in tokenize or shunt?
+	public static void validateTokenList(List<Token> q)
 	{
 		Iterator<Token> iter = q.iterator();
 		
