@@ -69,12 +69,6 @@ public abstract class DiceNumber extends Number implements Comparable<Number>
 			return String.format("%.3f", doubleValue());
 	}
 	
-	@Override
-	public int hashCode()
-	{
-		return Double.hashCode(doubleValue());
-	}
-	
 	/**
 	 * {@link DiceNumber} which stores its number internally as an <code>int</code>
 	 * 

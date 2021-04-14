@@ -2,9 +2,12 @@ package diceTools;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -22,10 +25,9 @@ import java.util.function.Supplier;
  *
  * @param <K>	Type of the keys
  */
-public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<ProbMap<K>>
+@SuppressWarnings("serial")
+public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<ProbMap<K>>
 {
-	private static final long serialVersionUID = 1L;
-	
 	/**
 	 * Sums together <code>Double</code> pairs
 	 */
@@ -79,19 +81,114 @@ public abstract class ProbMap<K> extends HashMap<K, Double> implements Supplier<
 		super();
 	}
 	
+	public ProbMap(Comparator<? super K> comp)
+	{
+		super(comp);
+	}
+	
 	public ProbMap(ProbMap<K> pm)
 	{
 		super(pm);
 	}
 	
-	public ProbMap(int initialCapacity)
+	@Override
+	public Entry<K, Double> ceilingEntry(K key)
 	{
-		super(initialCapacity);
+		validateKey(key);
+		return super.ceilingEntry(sanitizeKey(key));
 	}
-	
-	public ProbMap(int initialCapacity, float loadFactor)
+
+	@Override
+	public K ceilingKey(K key)
 	{
-		super(initialCapacity, loadFactor);
+		validateKey(key);
+		return super.ceilingKey(sanitizeKey(key));
+	}
+
+	@Override
+	public Entry<K, Double> floorEntry(K key)
+	{
+		validateKey(key);
+		return super.floorEntry(sanitizeKey(key));
+	}
+
+	@Override
+	public K floorKey(K key)
+	{
+		validateKey(key);
+		return super.floorKey(sanitizeKey(key));
+	}
+
+	@Override
+	public SortedMap<K, Double> headMap(K toKey)
+	{
+		validateKey(toKey);
+		return super.headMap(sanitizeKey(toKey));
+	}
+
+	@Override
+	public NavigableMap<K, Double> headMap(K toKey, boolean inclusive)
+	{
+		validateKey(toKey);
+		return super.headMap(sanitizeKey(toKey), inclusive);
+	}
+
+	@Override
+	public Entry<K, Double> higherEntry(K key)
+	{
+		validateKey(key);
+		return super.higherEntry(sanitizeKey(key));
+	}
+
+	@Override
+	public K higherKey(K key)
+	{
+		validateKey(key);
+		return super.higherKey(sanitizeKey(key));
+	}
+
+	@Override
+	public Entry<K, Double> lowerEntry(K key)
+	{
+		validateKey(key);
+		return super.lowerEntry(sanitizeKey(key));
+	}
+
+	@Override
+	public K lowerKey(K key)
+	{
+		validateKey(key);
+		return super.lowerKey(sanitizeKey(key));
+	}
+
+	@Override
+	public NavigableMap<K, Double> subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)
+	{
+		validateKey(fromKey);
+		validateKey(toKey);
+		return super.subMap(sanitizeKey(fromKey), fromInclusive, sanitizeKey(toKey), toInclusive);
+	}
+
+	@Override
+	public SortedMap<K, Double> subMap(K fromKey, K toKey)
+	{
+		validateKey(fromKey);
+		validateKey(toKey);
+		return super.subMap(sanitizeKey(fromKey), sanitizeKey(toKey));
+	}
+
+	@Override
+	public SortedMap<K, Double> tailMap(K fromKey)
+	{
+		validateKey(fromKey);
+		return super.tailMap(sanitizeKey(fromKey));
+	}
+
+	@Override
+	public NavigableMap<K, Double> tailMap(K fromKey, boolean inclusive)
+	{
+		validateKey(fromKey);
+		return super.tailMap(sanitizeKey(fromKey), inclusive);
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package diceTools;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -11,9 +12,9 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
+@SuppressWarnings("serial")
 public class DiceRollMap extends ProbMap<DiceNumber>
 {
-	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Sums together two <code>Integer</code>s
@@ -79,16 +80,6 @@ public class DiceRollMap extends ProbMap<DiceNumber>
 	public DiceRollMap(DiceRollMap drm)
 	{
 		super(drm);
-	}
-	
-	public DiceRollMap(int initialCapacity)
-	{
-		super(initialCapacity);
-	}
-	
-	public DiceRollMap(int initialCapacity, float loadFactor)
-	{
-		super(initialCapacity, loadFactor);
 	}
 	
 	@Override

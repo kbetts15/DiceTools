@@ -121,15 +121,6 @@ public class ImmutableList<T> implements List<T>
 	}
 	
 	@Override
-	public int hashCode()
-	{
-		int hash = 1;
-		for (T t : myArray)
-			hash = 31 * hash + (t == null ? 0 : t.hashCode());
-		return hash;
-	}
-
-	@Override
 	public int indexOf(Object o)
 	{
 		if (o == null)

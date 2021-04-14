@@ -3,8 +3,11 @@ package diceTools;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -18,9 +21,9 @@ import java.util.function.Function;
  * 
  * @author kieran
  */
+@SuppressWarnings("serial")
 public class DicePoolMap extends ProbMap<List<? extends DiceNumber>>
 {
-	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Sums each <code>Integer</code> in a <code>List&ltInteger&gt</code> key
@@ -39,6 +42,8 @@ public class DicePoolMap extends ProbMap<List<? extends DiceNumber>>
 	 * from another <code>List</code> to the copy.
 	 */
 	private static final BiFunction<List<? extends DiceNumber>, List<? extends DiceNumber>, List<DiceNumber>> listAddAll;
+	
+	private static final Comparator<List<? extends DiceNumber>> listCompare;
 	
 	static
 	{
@@ -93,11 +98,40 @@ public class DicePoolMap extends ProbMap<List<? extends DiceNumber>>
 				return newList;
 			}
 		};
+		
+		listCompare = new Comparator<List<? extends DiceNumber>>()
+		{
+
+			@Override
+			public int compare(List<? extends DiceNumber> listA, List<? extends DiceNumber> listB)
+			{
+				final int sizeA = listA.size();
+				final int sizeB = listB.size();
+				
+				if (sizeA != sizeB)
+					return Integer.compare(sizeA, sizeB);
+				
+				Iterator<? extends DiceNumber> iterA = listA.iterator();
+				Iterator<? extends DiceNumber> iterB = listB.iterator();
+				
+				while (iterA.hasNext())
+				{
+					DiceNumber nA = iterA.next();
+					DiceNumber nB = iterB.next();
+					
+					if (!nA.equals(nB))
+						return nA.compareTo(nB);
+				}
+				
+				return 0;
+			}
+			
+		};
 	}
 	
 	public DicePoolMap()
 	{
-		super();
+		super(listCompare);
 	}
 	
 	public DicePoolMap(DicePoolMap dpm)
@@ -114,16 +148,6 @@ public class DicePoolMap extends ProbMap<List<? extends DiceNumber>>
 			drmInt.add(drmEntry.getKey());
 			this.put(drmInt, drmEntry.getValue());
 		}
-	}
-	
-	public DicePoolMap(int initialCapacity)
-	{
-		super(initialCapacity);
-	}
-	
-	public DicePoolMap(int initialCapacity, float loadFactor)
-	{
-		super(initialCapacity, loadFactor);
 	}
 	
 	@Override
