@@ -76,10 +76,10 @@ public class ImmutableList<T> implements List<T>
 	public boolean containsAll(Collection<?> c)
 	{
 		for (Object o : c)
-			if (this.contains(o))
-				return true;
+			if (!this.contains(o))
+				return false;
 		
-		return false;
+		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -117,6 +117,9 @@ public class ImmutableList<T> implements List<T>
 	@Override
 	public T get(int index)
 	{
+		if (index < 0 || index >= size())
+			throw new IndexOutOfBoundsException();
+		
 		return myArray[index];
 	}
 	
