@@ -3,7 +3,7 @@ package textInterpret;
 import java.util.Map;
 
 /**
- * Concrete class implementing {@link java.util.Map#Map.Entry Map.Entry}<code>&ltObject, Object&gt</code>
+ * Concrete class implementing {@link java.util.Map.Entry Map.Entry}<code>&lt;Object, Object&gt;</code>
  * 
  * @author kieran
  */

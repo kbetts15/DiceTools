@@ -104,7 +104,7 @@ public class Token
 	 * 
 	 * @return priority used in infix operation hierarchy
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_INFIX}
-	 * @see {@link Token#setPriority}
+	 * @see Token#setPriority
 	 * @see Token.InfixToken
 	 */
 	public int getPriority()
@@ -118,7 +118,7 @@ public class Token
 	 * 
 	 * @param priority priority used in infix operation hierarchy
 	 * @throws TokenTypeMismatchException if the <code>Token</code> is not of type {@link TokenType#FUNC_INFIX}
-	 * @see {@link Token#getPriority}
+	 * @see Token#getPriority
 	 * @see Token.InfixToken
 	 */
 	public void setPriority(int priority)
@@ -317,7 +317,7 @@ public class Token
 	 * The priority is used when shunting to determine the
 	 * order in which infix operators are applied.
 	 * 
-	 * @see {@link TextInterpret#shunt(java.util.List) TextInterpret.shunt}
+	 * @see TextInterpret#shunt(java.util.List) TextInterpret.shunt
 	 * 
 	 * @author kieran
 	 */
