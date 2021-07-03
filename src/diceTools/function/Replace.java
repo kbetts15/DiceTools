@@ -6,15 +6,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * {@link java.util.function.Function#Function Function} to replace some
+ * {@link java.util.function.Function Function} to replace some
  * values in a list with others. This process is performed by copying the
  * <code>List</code>, then performing the replacement on the copy,
  * which is returned.
  *
- * <p><code>Replace&ltInteger&gt</code> is a valid argument for
+ * <p><code>Replace&lt;Integer&gt;</code> is a valid argument for
  * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap.morph(Function)}
  *
- * <T> type of the elements in the <code>List</code>
+ * @param <T> type of the elements in the <code>List</code>
  *
  * @author kieran
  **/
@@ -56,7 +56,7 @@ public class Replace <T> implements Function<List<T>, List<T>>
 	/**
 	 * Constructs a <code>Replace</code> which replaces elements in a
 	 * <code>List</code> according to the mapping defined by a
-	 * {@link java.util.function.Function#Function Function}.
+	 * {@link java.util.function.Function Function}.
 	 * When <code>Function.apply</code> returns null, the element is not replaced.
 	 * @param replaceFunc	<code>Function</code> defining the mappings from
 	 * 						elements to be replaced, to what they are replaced with

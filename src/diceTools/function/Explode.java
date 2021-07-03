@@ -7,9 +7,9 @@ import diceTools.DiceNumber;
 import diceTools.DicePoolMap;
 
 /**
- * {@link java.util.function.Function#Function Function} to repeatedly apply
+ * {@link java.util.function.Function Function} to repeatedly apply
  * <code>Burst.{@link Burst#apply(List) apply}(List)</code> to a
- * <code>List&lt{@link DiceNumber}&gt</code>
+ * <code>List&lt;{@link DiceNumber}&gt;</code>
  * 
  * @see Burst
  * 

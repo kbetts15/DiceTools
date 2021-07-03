@@ -34,7 +34,7 @@ public class ImmutableList<T> implements List<T>
 	/**
 	 * Constructs an <code>ImmutableList</code> by converting a <code>Collection</code>
 	 * to an array, which is then stored.
-	 * @param ts
+	 * @param ts	{@code Collection} to be converted
 	 */
 	@SuppressWarnings("unchecked")
 	public ImmutableList(Collection<? extends T> ts)

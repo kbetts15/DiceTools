@@ -15,10 +15,10 @@ public abstract class DiceNumber extends Number implements Comparable<Number>
 	private DiceNumber() {}
 	
 	/**
-	 * Create a <code>DiceNumber<code> which is a copy of a given <code>DiceNumber</code>
+	 * Create a {@code DiceNumber} which is a copy of a given {@code DiceNumber}
 	 * 
-	 * @param n		<code>DiceNumber</code> to copy
-	 * @return		copy of the given <code>DiceNumber</code>
+	 * @param n		{@code DiceNumber} to copy
+	 * @return		copy of the given {@code DiceNumber}
 	 */
 	public static DiceNumber copy(DiceNumber n)
 	{
@@ -82,8 +82,8 @@ public abstract class DiceNumber extends Number implements Comparable<Number>
 		public final int value;
 		
 		/**
-		 * Constructs a <code>DiceInteger</code> to store a given <code>int<code>
-		 * @param value		<code>int<code> to store
+		 * Constructs a <code>DiceInteger</code> to store a given <code>int</code>
+		 * @param value		<code>int</code> to store
 		 */
 		public DiceInteger(int value)
 		{
@@ -110,8 +110,8 @@ public abstract class DiceNumber extends Number implements Comparable<Number>
 		public final double value;
 		
 		/**
-		 * Constructs a <code>DiceDouble</code> to store a given <code>double<code>
-		 * @param value		<code>double<code> to store
+		 * Constructs a <code>DiceDouble</code> to store a given <code>double</code>
+		 * @param value		<code>double</code> to store
 		 */
 		public DiceDouble(double value)
 		{

@@ -10,13 +10,13 @@ import diceTools.DiceNumber;
 import diceTools.ImmutableList;
 
 /**
- * {@link java.util.function.Function#Function Function} to keep some values
+ * {@link java.util.function.Function Function} to keep some values
  * in a <code>List</code>, and discard the rest. This process is performed by
- * copying the first <code>nKeep<code> elements of the <code>List</code>
- * (according to a {@link java.util.Comparator#Comparator Comparator})
+ * copying the first <code>nKeep</code> elements of the <code>List</code>
+ * (according to a {@link java.util.Comparator Comparator})
  * to a new <code>List</code>, which is returned.
  * 
- * <p><code>KeepN&ltInteger&gt</code> is a valid argument for
+ * <p><code>KeepN&lt;Integer&gt;</code> is a valid argument for
  * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap.morph(Function)}
  * 
  * @param <T> type of the elements in the <code>List</code>
@@ -39,7 +39,7 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 	/**
 	 * Constructs a <code>KeepN</code> which keeps the first <code>nKeep</code>
 	 * elements of a <code>List</code> according to the ordering defined by
-	 * a {@link java.util.Comparator#Comparator Comparator}
+	 * a {@link java.util.Comparator Comparator}
 	 * @param nKeep		DiceNumber of elements to keep
 	 * @param comp		<code>Comparator</code> defining an ordering of elements
 	 */
@@ -88,6 +88,7 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 
 	/**
 	 * Creates a <code>KeepN</code> which orders elements by their natural ordering
+	 * @param <C>		{@code Comparable} capable of comparing itself
 	 * @param nKeep		DiceNumber of elements to keep
 	 * @return			<code>KeepN</code> which keeps the first <code>nKeep</code> elements of
 	 * 					a <code>List</code> according to the elements' natural ordering
@@ -99,8 +100,9 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 	
 	/**
 	 * Creates a <code>KeepN</code> which orders elements by their reversed natural ordering
+	 * @param <C>		{@code Comparable} capable of comparing itself
 	 * @param nKeep		DiceNumber of elements to keep
-	 * @return			<code>KeepN<code> which keeps the last <code>nKeep</code> elements of
+	 * @return			{@code KeepN} which keeps the last <code>nKeep</code> elements of
 	 * 					a <code>List</code> according to the elements' natural ordering
 	 */
 	public static <C extends Comparable<? super C>> Function<List<? extends C>, List<C>> keepReverseN(int nKeep)
@@ -109,22 +111,22 @@ public class KeepN<T> implements Function<List<? extends T>, List<T>>
 	}
 	
 	/**
-	 * Creates a <code>KeepN</code> which orders <code>DiceNumber<code>'s in descending order
+	 * Creates a <code>KeepN</code> which orders <code>DiceNumber</code>'s in descending order
 	 * @param nKeep		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return			<code>KeepN</code> which keeps the highest <code>nKeep</code> elements
 	 */
-	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> keepHighestN(int nKeep)
+	public static Function<List<? extends DiceNumber>, List<DiceNumber>> keepHighestN(int nKeep)
 	{
-		return new KeepN<N>(nKeep, Comparator.naturalOrder());
+		return new KeepN<DiceNumber>(nKeep, Comparator.naturalOrder());
 	}
 	
 	/**
-	 * Creates a <code>KeepN</code> which orders <code>DiceNumber<code>'s in ascending order
+	 * Creates a <code>KeepN</code> which orders <code>DiceNumber</code>'s in ascending order
 	 * @param nKeep		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return			<code>KeepN</code> which keeps the lowest <code>nKeep</code> elements
 	 */
-	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> keepLowestN(int nKeep)
+	public static Function<List<? extends DiceNumber>, List<DiceNumber>> keepLowestN(int nKeep)
 	{
-		return new KeepN<N>(nKeep, Comparator.reverseOrder());
+		return new KeepN<DiceNumber>(nKeep, Comparator.reverseOrder());
 	}
 }

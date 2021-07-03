@@ -9,15 +9,15 @@ import java.util.function.Function;
 import diceTools.ImmutableList;
 
 /**
- * {@link java.util.function.Function#Function Function} to append values
+ * {@link java.util.function.Function Function} to append values
  * to a <code>List</code>. This process is performed by copying the
  * <code>List</code>, then appending the new values to the copy,
  * which is returned.
  *
- * <p><code>Append&ltInteger&gt</code> is a valid argument for
- * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap(Function)}
+ * <p><code>Append&lt;Integer&gt;</code> is a valid argument for
+ * {@link diceTools.DicePoolMap#morph(Function)}
  *
- * <T> type of the elements in the <code>List</code>
+ * @param <T> type of the elements in the <code>List</code>
  *
  * @author kieran
  **/
@@ -40,7 +40,7 @@ public class Append <T> implements Function<List<? extends T>, List<T>>
 	
 	/**
 	 * Constructs an <code>Append</code> which appends the elements
-	 * in a <code>Collection<code> (in order) to a <code>List</code>
+	 * in a {@code Collection} (in order) to a <code>List</code>
 	 * @param c		<code>Collection</code> containing the elements
 					to be appended
 	 **/
@@ -50,7 +50,7 @@ public class Append <T> implements Function<List<? extends T>, List<T>>
 	}
 	
 	/**
-	 * Constructs an <code>Append<code> which appends all elements generated
+	 * Constructs an {@code Append} which appends all elements generated
 	 * by an <code>Iterable</code> (in order) to a <code>List</code>
 	 * @param it	<code>Iterable</code> which generates the elements
 	 * 				to be appended

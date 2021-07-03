@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Implementation of {@link ProbMap} with <code>List&lt{@link DiceNumber}&gt</code> values used for event keys.
+ * Implementation of {@link ProbMap} with <code>List&lt;{@link DiceNumber}&gt;</code> values used for event keys.
  * 
  * <p>Event keys are never permitted to be <code>null</code>,
  * nor are they permitted to contain <code>null</code> values.

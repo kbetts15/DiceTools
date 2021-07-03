@@ -10,7 +10,7 @@ import diceTools.ImmutableList;
 import diceTools.DiceRollMap;
 
 /**
- * {@link java.util.function.Function#Function Function} to replace values in a
+ * {@link java.util.function.Function Function} to replace values in a
  * <code>List</code> with each value from a {@link DiceRollMap} to generate a {@link DicePoolMap}
  * 
  * @author kieran

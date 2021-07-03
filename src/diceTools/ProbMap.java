@@ -341,7 +341,7 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * {@link #merge(K,Double) merge} each <code>Entry</code> from a </code>Map</code> into this <code>ProbMap</code>
+	 * {@link #merge(Object,Double) merge}{@code (K, Double)} each <code>Entry</code> from a <code>Map</code> into this <code>ProbMap</code>
 	 * using a given <code>BiFunction</code> defining the merging behaviour.
 	 * 
 	 * @param map				<code>Map</code> containing <code>Entry</code>s to be merged
@@ -356,7 +356,7 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * {@link #merge(K,Double,BiFunction) merge} each <code>Entry</code> from a </code>Map</code> into this <code>ProbMap</code>
+	 * {@link #merge(Object,Double,BiFunction) merge}{@code (K, Double, BiFunction)} each <code>Entry</code> from a <code>Map</code> into this <code>ProbMap</code>
 	 * with {@link diceTools.ProbMap#sumMerger sumMerger} defining the merging behaviour.
 	 * 
 	 * @param map	<code>Map</code> containing <code>Entry</code>s to be merged
@@ -431,13 +431,14 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	 * Map each key in the <code>ProbMap</code> to a key of a different type
 	 * in a new <code>ProbMap</code>.
 	 * @param f		rule for mapping keys
-	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
+	 * @param s		{@link java.util.function.Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
-	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
-	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
+	 * 				Note that all concrete <code>ProbMap&lt;K&gt;</code> subclasses
+	 * 				implement <code>Supplier&lt;ProbMap&lt;K&gt;&gt;</code>.
 	 * @return		<code>ProbMap</code> containing the morphed data,
 	 * 				created using <code>s.get()</code>
+	 * @param <T>	Type of the keys of the generated <code>ProbMap</code>
 	 */
 	public <T> ProbMap<T> morph(Function<? super K, ? extends T> f, Supplier<? extends ProbMap<T>> s)
 	{
@@ -466,7 +467,7 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	 * 				{@link java.util.function.Supplier#get Supplier.get}(),
 	 * 				which is implemented by the subclass.
 	 */
-	public <T>ProbMap<K> fork(Function<? super K, ? extends ProbMap<? extends K>> f)
+	public ProbMap<K> fork(Function<? super K, ? extends ProbMap<? extends K>> f)
 	{
 		return fork(f, this);
 	}
@@ -475,13 +476,14 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	 * Map each key-value pair in the <code>ProbMap</code> to a pair with a different
 	 * key type in a new <code>ProbMap</code>.
 	 * @param f		rule for mapping key-value pairs
-	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
+	 * @param s		{@link java.util.function.Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
-	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
-	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
+	 * 				Note that all concrete <code>ProbMap&lt;K&gt;</code> subclasses
+	 * 				implement <code>Supplier&lt;ProbMap&lt;K&gt;&gt;</code>.
 	 * @return		<code>ProbMap</code> containing the forked data,
 	 * 				created using <code>s.get()</code>
+	 * @param <T>	Type of the keys in the new <code>ProbMap</code>
 	 */
 	public <T> ProbMap<T> fork(Function<? super K, ? extends ProbMap<? extends T>> f, Supplier<? extends ProbMap<T>> s)
 	{
@@ -536,11 +538,11 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	 * @param <Y>	key type of the resulting <code>ProbMap</code>
 	 * @param f		rule for combining keys
 	 * @param p		<code>ProbMap</code> to combine
-	 * @param s		{@link java.util.function.Supplier#Supplier Supplier}
+	 * @param s		{@link java.util.function.Supplier Supplier}
 	 * 				which can {@link java.util.function.Supplier#get get}()
 	 * 				an empty <code>ProbMap</code> with keys of the new type.
-	 * 				Note that all concrete <code>ProbMap&ltK&gt</code> subclasses
-	 * 				implement <code>Supplier&ltProbMap&ltK&gt&gt</code>.
+	 * 				Note that all concrete <code>ProbMap&lt;K&gt;</code> subclasses
+	 * 				implement <code>Supplier&lt;ProbMap&lt;K&gt;&gt;</code>.
 	 * @return		<code>ProbMap</code> containing the combined data.
 	 * 				The <code>ProbMap</code> returned is created using
 	 * 				s.{@link java.util.function.Supplier#get get},
@@ -581,8 +583,8 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	}
 	
 	/**
-	 * Get a {@link java.util.function.Supplier#Supplier Supplier}
-	 * which {@link java.util.function.Supplier#Supplier.get get}s
+	 * Get a {@link java.util.function.Supplier Supplier}
+	 * which {@link java.util.function.Supplier#get get}s
 	 * this <code>ProbMap</code>.
 	 * @return		<code>Supplier</code> which supplies this <code>ProbMap</code>
 	 */
@@ -642,7 +644,7 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	
 	/**
 	 * Find the mode average of a <code>ProbMap</code>,
-	 * and return it as a {@link java.util.HashMap#Entry HashMap.Entry}.
+	 * and return it as a {@link java.util.Map.Entry HashMap.Entry}.
 	 * @param <T>	type of the <code>ProbMap</code> keys
 	 * @param pm	<code>ProbMap</code> to find the mode average of
 	 * @return		<code>Entry</code> with the highest probability in the <code>ProbMap</code>
@@ -661,11 +663,9 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	/**
 	 * Find the mean average of a <code>ProbMap</code>
 	 * by converting keys into <code>Double</code>s.
-	 * @param <X>		type of the <code>ProbMap</code> keys
-	 * @param <Y>		type which the <code>Function</code> accepts,
-	 * 					which includes <code>X</code>
 	 * @param pm		<code>ProbMap</code> for which the mean average is to be found
 	 * @param function	rule for converting keys into <code>Double</code>s
+	 * @param <T>		Type of the keys of the {@code ProbMap}
 	 * @return			the sum of key <code>Double</code>s multiplied by their probabilities
 	 **/
 	public static <T> Double getMean(ProbMap<T> pm, Function<? super T, ? extends Double> function)
@@ -685,6 +685,7 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	 * Find the mean average of a <code>ProbMap</code> of <code>Number</code>s
 	 * @param pm	<code>ProbMap</code> for which the mean average is to be found
 	 * @return		the sum of key <code>Double</code>s multiplied by their probabilities
+	 * @param <T>	Type of the keys of the {@code ProbMap}
 	 */
 	public static <T extends Number> Double getMean(ProbMap<T> pm)
 	{
@@ -693,10 +694,12 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	
 	/**
 	 * Find the median average of a <code>ProbMap</code> when keys are ordered.
+	 * @param pm	{@code ProbMap} for which the median is to be found
 	 * @param comp	rule for ordering keys
 	 * @return		the first key which, when its probability is summed with the
 	 * 				probabilities of all preceding keys, results in a probability
 	 * 				greater than or equal to the sum of all the probabilities
+	 * @param <T>	Type of the keys of the {@code ProbMap}
 	 */
 	public static <T> Entry<T, Double> getMedian(ProbMap<T> pm, Comparator<? super T> comp)
 	{
@@ -734,6 +737,7 @@ public abstract class ProbMap<K> extends TreeMap<K, Double> implements Supplier<
 	 * @return		the first key which, when its probability is summed with the
 	 * 				probabilities of all preceding keys, results in a probability
 	 * 				greater than or equal to the sum of all the probabilities
+	 * @param <T>	Type of the keys of the {@code ProbMap}
 	 */
 	public static <T extends Comparable<? super T>> Entry<T, Double> getMedian(ProbMap<T> pm)
 	{

@@ -5,7 +5,7 @@ package diceTools;
  * All keys are valid, sanitizing keys returns the same key.
  * @author kieran
  *
- * @param <K>
+ * @param <K> Type of the keys used by the {@link java.util.Map Map}
  */
 public class ConcreteProbMap<K> extends ProbMap<K>
 {

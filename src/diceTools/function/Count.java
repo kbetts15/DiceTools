@@ -5,10 +5,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * {@link java.util.function.Function#Function Function}
+ * {@link java.util.function.Function Function}
  * to count <code>Integer</code>'s in a <code>List</code>.
  * Counting is performed by checking each <code>Integer</code> with a
- * {@link java.util.function.Predicate#Predicate Predicate}, and incrementing
+ * {@link java.util.function.Predicate Predicate}, and incrementing
  * the count iff it returns true.
  * 
  * <p><code>Count</code> is a valid argument for
@@ -28,7 +28,7 @@ public class Count implements Function<List<Integer>, Integer>
 	
 	/**
 	 * Constructs a <code>Count</code> with a given
-	 * {@link java.util.function.Predicate#Predicate Predicate}.
+	 * {@link java.util.function.Predicate Predicate}.
 	 * @param pred <code>Predicate</code> to determine which <code>Integer</code>s should be counted
 	 */
 	public Count(Predicate<Integer> pred)

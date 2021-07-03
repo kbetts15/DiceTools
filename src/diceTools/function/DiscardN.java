@@ -8,13 +8,13 @@ import java.util.function.Function;
 import diceTools.DiceNumber;
 
 /**
- * {@link java.util.function.Function#Function Function} to discard some values
+ * {@link java.util.function.Function Function} to discard some values
  * in a <code>List</code>. This process is performed by copying all but the first
  * <code>nDiscard</code> elements of the <code>List</code> (according to a
- * {@link java.util.Comparator#Comparator Comparator}) to a new <code>List</code>,
+ * {@link java.util.Comparator Comparator}) to a new <code>List</code>,
  * which is returned.
  * 
- * <p><code>DiscardN&ltInteger&gt</code> is a valid argument for
+ * <p><code>DiscardN&lt;Integer&gt;</code> is a valid argument for
  * {@link diceTools.DicePoolMap#morph(Function) DicePoolMap.morph(Function)}
  * 
  * @param <T> type of the elements in the <code>List</code>
@@ -36,9 +36,9 @@ public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 	
 	/**
 	 * Constructs a <code>DiscardN</code> which discards the first
-	 * <code>nDiscard<code> elements of a <code>List</code>
+	 * {@code nDiscard} elements of a <code>List</code>
 	 * according to the ordering defined by a
-	 * {@link java.util.Comparator#Comparator Comparator}
+	 * {@link java.util.Comparator Comparator}
 	 * @param nDiscard		DiceNumber of elements to discard
 	 * @param comp			<code>Comparator</code> defining an ordering
 	 * 						of elements
@@ -86,6 +86,7 @@ public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 	
 	/**
 	 * Creates a <code>DiscardN</code> which orders elements by their natural ordering
+	 * @param <C>			{@link Comparable} capable of comparing itself
 	 * @param nDiscard		DiceNumber of elements to discard
 	 * @return				<code>KeepN</code> which keeps the first <code>nDiscard</code>
 	 * 						elements of a <code>List</code> according to the elements'
@@ -97,9 +98,10 @@ public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 	}
 	
 	/**
-	 * Creates a <code>DiscardN</code> which orders elements by their reversed natual ordering
+	 * Creates a <code>DiscardN</code> which orders elements by their reversed natural ordering
+	 * @param <C>			{@link Comparable} capable of comparing itself
 	 * @param nDiscard		DiceNumber of elements to discard
-	 * @return				<code>DiscardN</code> which discards the lasy <code>nDiscard<code>
+	 * @return				{@code DiscardN} which discards the last {@code nDiscard}
 	 * 						elements of a <code>List</code> according to elements'
 	 * 						natural ordering
 	 */
@@ -109,22 +111,22 @@ public class DiscardN<T> implements Function<List<? extends T>, List<T>>
 	}
 	
 	/**
-	 * Creates a <code>DiscardN</code> which orders <code>DiceNumber<code>'s in descending order
+	 * Creates a <code>DiscardN</code> which orders {@code DiceNumber}'s in descending order
 	 * @param nDiscard		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the highest <code>nDiscard</code> elements
 	 */
-	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> discardHighestN(int nDiscard)
+	public static Function<List<? extends DiceNumber>, List<DiceNumber>> discardHighestN(int nDiscard)
 	{
-		return new DiscardN<N>(nDiscard, Comparator.naturalOrder());
+		return new DiscardN<DiceNumber>(nDiscard, Comparator.naturalOrder());
 	}
 	
 	/**
-	 * Creates a <code>DiscardN</code> which orders <code>DiceNumber<code>'s in ascending order
+	 * Creates a <code>DiscardN</code> which orders {@code DiceNumber}'s in ascending order
 	 * @param nDiscard		DiceNumber of <code>DiceNumber</code>'s to keep
 	 * @return				<code>DiscardN</code> which discards the lowest <code>nDiscard</code> elements
 	 */
-	public static <N extends DiceNumber> Function<List<? extends N>, List<N>> discardLowestN(int nDiscard)
+	public static Function<List<? extends DiceNumber>, List<DiceNumber>> discardLowestN(int nDiscard)
 	{
-		return new DiscardN<N>(nDiscard, Comparator.reverseOrder());
+		return new DiscardN<DiceNumber>(nDiscard, Comparator.reverseOrder());
 	}
 }

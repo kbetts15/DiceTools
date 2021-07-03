@@ -28,7 +28,7 @@ public class DiceFileTools
 	 * 
 	 * @param <T>			type of the keys accepted by the save <code>Function</code>
 	 * @param pm			<code>ProbMap</code> containing the key-value pairs to be saved
-	 * @param saveFunc		<code>Function</code> defining the rule by which keys are converted to <code>String</code>
+	 * @param saveFunc		<code>Function</code> defining the rule by which keys are converted to <code>String</code>s
 	 * @param f				<code>File</code> to which the data is saved
 	 * @throws IOException	if an IO problem occurs while saving the data
 	 */
@@ -38,11 +38,14 @@ public class DiceFileTools
 	}
 	
 	/**
+	 * Save the contents of an {@link Iterable} of {@link java.util.Map.Entry Map.Entry}s
+	 * to a file
 	 * 
-	 * @param iter
-	 * @param saveFunc
-	 * @param f
-	 * @throws IOException
+	 * @param <T>			Type of the keys of the {@code Map.Entry}s
+	 * @param iter			{@code Iterable} for which each entry is to be saved
+	 * @param saveFunc		{@code Function} defining the rule by which keys are converted to {@code String}s
+	 * @param f				{@code File} to which the data is saved
+	 * @throws IOException	if an IO problem occurs while saving the data
 	 */
 	public static <T> void toFile(Iterable<? extends Map.Entry<? extends T, Double>> iter,
 			Function<T, String> saveFunc, File f) throws IOException
