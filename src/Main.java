@@ -108,8 +108,8 @@ public class Main
 		
 		DiceRollMap drm = new DiceRollMap();
 		
-		drm.put(new DiceNumber.DiceInteger(1), new Double(0.5));
-		drm.put(new DiceNumber.DiceInteger(2), new Double(0.5));
+		drm.put(new DiceNumber.DiceInteger(1), 0.5);
+		drm.put(new DiceNumber.DiceInteger(2), 0.5);
 		
 		System.out.println(drm.toString());
 		
@@ -133,9 +133,9 @@ public class Main
 		for (Integer val : key3arr)
 			key3.add(new DiceNumber.DiceInteger(val));
 		
-		dpm.put(key1, new Double(0.2));
-		dpm.put(key2, new Double(0.3));
-		dpm.put(key3, new Double(0.5));
+		dpm.put(key1, 0.2);
+		dpm.put(key2, 0.3);
+		dpm.put(key3, 0.5);
 		
 		System.out.println(dpm.toString());
 		
